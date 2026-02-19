@@ -5,48 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nan Yao | Portfolio</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/lucide.min.js"></script>
 </head>
-<body class="bg-slate-50">
-  <div id="root"></div>
-  <script type="module">
-    import React, { useState } from 'https://esm.sh/react@18';
-    import { createRoot } from 'https://esm.sh/react-dom@18/client';
-    import * as lucideReact from 'https://esm.sh/lucide-react@0.493.0?external=react';
+<body class="bg-slate-50 text-slate-800 font-sans selection:bg-blue-100">
+  <div id="app"></div>
 
-    const { 
-      Github, 
-      Linkedin, 
-      Mail, 
-      Phone, 
-      MapPin, 
-      ExternalLink, 
-      Globe, 
-      Award, 
-      BookOpen, 
-      Briefcase, 
-      Cpu,
-      FileText,
-      MessageCircle
-    } = lucideReact;
-
+  <script>
     const content = {
       en: {
         name: "Nan Yao",
         title: "Project Management | AI Ecosystems & Investment Operations",
         location: "New York, NY",
-        about: "NYU M.S. Candidate with a strong background in AI startup ecosystems, investment operations, and media growth. Passionate about bridging technology and business through efficient project management.",
+        about:
+          "NYU M.S. Candidate with a strong background in AI startup ecosystems, investment operations, and media growth. Passionate about bridging technology and business through efficient project management.",
         nav: {
           experience: "Experience",
           projects: "Projects",
           education: "Education",
           skills: "Skills",
           contact: "Contact",
-          resume: "Download CV"
+          resume: "Download CV",
         },
         contactInfo: {
           phone: "+1 (626) 230-7307",
           email: "yaonan1127@gmail.com",
-          linkedin: "https://www.linkedin.com/in/yaonanstarry"
+          linkedin: "https://www.linkedin.com/in/yaonanstarry",
         },
         experience: [
           {
@@ -57,8 +40,8 @@
             points: [
               "Collected and verified large datasets on startup financing and AI products, improving research accuracy.",
               "Built and maintained lightweight internal tools (tagging systems, tracking templates) to streamline data processing.",
-              "Managed high-volume research tasks in both Mandarin and English under strict confidentiality."
-            ]
+              "Managed high-volume research tasks in both Mandarin and English under strict confidentiality.",
+            ],
           },
           {
             company: "Crossing (AI Media Startup)",
@@ -68,8 +51,8 @@
             points: [
               "Researched global AI startup ecosystems and emerging technologies for content development.",
               "Authored podcast articles, newsletters, and industry features for WeChat Official Account.",
-              "Implemented standardized review templates, increasing content output efficiency by ~40%."
-            ]
+              "Implemented standardized review templates, increasing content output efficiency by ~40%.",
+            ],
           },
           {
             company: "Linear Capital",
@@ -78,8 +61,8 @@
             period: "Nov. 2024 - Apr. 2025",
             points: [
               "Synthesized industry insights and global AI trends for branding and communication strategies.",
-              "Assisted in 'Demo Day' event planning and developed branding materials."
-            ]
+              "Assisted in 'Demo Day' event planning and developed branding materials.",
+            ],
           },
           {
             company: "36Kr - Waves",
@@ -88,9 +71,9 @@
             period: "Jun. 2024 - Oct. 2024",
             points: [
               "Led Rednote content planning; top post reached 400k+ views and 3,000+ interactions.",
-              "Built SOPs for content workflows and data management for scalable operations."
-            ]
-          }
+              "Built SOPs for content workflows and data management for scalable operations.",
+            ],
+          },
         ],
         projects: [
           {
@@ -98,56 +81,70 @@
             role: "Deputy Project Lead",
             period: "Oct. 2024 - Dec. 2024",
             link: "https://mp.weixin.qq.com/s/0VYOR1ZFb41HbA2wt7oznQ",
-            desc: "Co-led a public AI education initiative helping non-technical users build AI products. Coordinated partners including Volcano Engine (ByteDance), ZhenFund, and Zhipu AI."
+            desc: "Co-led a public AI education initiative helping non-technical users build AI products. Coordinated partners including Volcano Engine (ByteDance), ZhenFund, and Zhipu AI.",
           },
           {
             name: "Waves Odyssey",
             role: "Project Assistant",
             period: "Jul. 2024 - Aug. 2024",
             link: "https://mp.weixin.qq.com/s/zEojryWXUlqI9le5rpOWgA",
-            desc: "Conducted market research for enterprise overseas expansion. Managed itinerary design and promotional material visuals."
-          }
+            desc: "Conducted market research for enterprise overseas expansion. Managed itinerary design and promotional material visuals.",
+          },
         ],
         education: [
           {
             school: "New York University (NYU)",
             degree: "M.S. in Project Management",
-            period: "2025 - Present"
+            period: "2025 - Present",
           },
           {
             school: "BNU-HKBU United International College",
             degree: "B.A. in Public Relations & Advertising",
             period: "2021 - 2025",
-            awards: "Second-Class Scholarship"
-          }
+            awards: "Second-Class Scholarship",
+          },
         ],
         skills: {
-          title: "Technical Skills",
           categories: [
-            { name: "AI Tools", items: ["ChatGPT", "Claude", "Gemini", "Cursor", "Midjourney"] },
-            { name: "Management", items: ["SOP Design", "Data Analysis", "Investment Ops", "Event Planning"] },
-            { name: "Languages", items: ["English (Professional)", "Mandarin (Native)", "Cantonese"] }
-          ]
-        }
+            {
+              name: "AI Tools",
+              items: ["ChatGPT", "Claude", "Gemini", "Cursor", "Midjourney"],
+            },
+            {
+              name: "Management",
+              items: [
+                "SOP Design",
+                "Data Analysis",
+                "Investment Ops",
+                "Event Planning",
+              ],
+            },
+            {
+              name: "Languages",
+              items: ["English (Professional)", "Mandarin (Native)", "Cantonese"],
+            },
+          ],
+        },
       },
       zh: {
         name: "姚楠 (Nan Yao)",
         title: "项目管理 | AI 生态与投资运营",
         location: "纽约",
-        about: "纽约大学 (NYU) 硕士在读。在 AI 初创生态、投资运营及媒体增长方面拥有深厚背景。致力于通过高效的项目管理架起技术与商业的桥梁。",
+        about:
+          "纽约大学 (NYU) 硕士在读。在 AI 初创生态、投资运营及媒体增长方面拥有深厚背景。致力于通过高效的项目管理架起技术与商业的桥梁。",
         nav: {
           experience: "实习经历",
           projects: "核心项目",
           education: "教育背景",
           skills: "技能专长",
           contact: "联系方式",
-          resume: "查看/下载简历"
+          resume: "查看/下载简历",
         },
         contactInfo: {
           phone: "18926078654",
           wechat: "18926078654",
-          email: "yaonan1127@gmail@gmail.com",
-          linkedin: "https://www.linkedin.com/in/yaonanstarry"
+          email: "yaonan1127@gmail.com",
+          linkedin: "https://www.linkedin.com/in/yaonanstarry",
         },
         experience: [
           {
@@ -158,8 +155,8 @@
             points: [
               "收集并验证关于初创企业融资和 AI 产品的大型数据集，提高内部分析研究数据的准确性和结构化程度。",
               "构建并维护轻量级内部工具（标签系统、跟踪模板）以简化数据处理。",
-              "确保交易信息的严格保密，独立管理中英双语的高容量研究任务。"
-            ]
+              "确保交易信息的严格保密，独立管理中英双语的高容量研究任务。",
+            ],
           },
           {
             company: "Crossing (AI 媒体初创公司)",
@@ -169,8 +166,8 @@
             points: [
               "研究全球 AI 初创生态系统和新兴技术以支持内容开发。",
               "为微信公众号撰写播客配套文章、时事通讯和行业专题。",
-              "通过标准化审核模板，使内容输出效率提升约 40%。"
-            ]
+              "通过标准化审核模板，使内容输出效率提升约 40%。",
+            ],
           },
           {
             company: "线性资本 (Linear Capital)",
@@ -179,8 +176,8 @@
             period: "2024.11 - 2024.04",
             points: [
               "支持专注于全球 AI 趋势的内容创作，收集并综合行业见解与原创文章。",
-              "协助市场运营及“Demo Day”活动策划，参与制定品牌推广策略。"
-            ]
+              "协助市场运营及“Demo Day”活动策划，参与制定品牌推广策略。",
+            ],
           },
           {
             company: "36氪 - Waves (投资报道部)",
@@ -189,9 +186,9 @@
             period: "2024.06 - 2024.10",
             points: [
               "主导小红书内容规划与发布，单篇最高 40w+ 浏览量。",
-              "建立内容工作流和数据管理的 SOP，实现规模化运营。"
-            ]
-          }
+              "建立内容工作流和数据管理的 SOP，实现规模化运营。",
+            ],
+          },
         ],
         projects: [
           {
@@ -199,238 +196,309 @@
             role: "项目第二负责人",
             period: "2024.10 - 2024.12",
             link: "https://mp.weixin.qq.com/s/0VYOR1ZFb41HbA2wt7oznQ",
-            desc: "共同领导一项公益 AI 教育倡议。协调合作伙伴包括火山引擎、真格基金、智谱 AI 和 Devv.ai。"
+            desc: "共同领导一项公益 AI 教育倡议。协调合作伙伴包括火山引擎、真格基金、智谱 AI 和 Devv.ai。",
           },
           {
             name: "Waves Odyssey",
             role: "Project Assistant",
             period: "2024.07 - 2024.08",
             link: "https://mp.weixin.qq.com/s/zEojryWXUlqI9le5rpOWgA",
-            desc: "开展市场研究以支持企业出海扩张。收集并综合项目相关文章资料。负责行程设计、参与者筛选及宣传材料视觉设计。"
-          }
+            desc: "开展市场研究以支持企业出海扩张。收集并综合项目相关文章资料。负责行程设计、参与者筛选及宣传材料视觉设计。",
+          },
         ],
         education: [
           {
             school: "纽约大学 (NYU)",
             degree: "项目管理硕士 (M.S.)",
-            period: "2025 - 至今"
+            period: "2025 - 至今",
           },
           {
             school: "北京师范大学-香港浸会大学联合国际学院",
             degree: "公共关系与广告学士 (B.A.)",
             period: "2021 - 2025",
-            awards: "二等奖学金"
-          }
+            awards: "二等奖学金",
+          },
         ],
         skills: {
-          title: "技能专长",
           categories: [
-            { name: "AI 工具", items: ["ChatGPT", "Claude", "Gemini", "Cursor", "Midjourney"] },
-            { name: "管理与运营", items: ["SOP 制定", "数据分析", "投资运营", "活动策划"] },
-            { name: "语言能力", items: ["英语 (专业)", "普通话 (母语)", "粤语"] }
-          ]
-        }
-      }
+            {
+              name: "AI 工具",
+              items: ["ChatGPT", "Claude", "Gemini", "Cursor", "Midjourney"],
+            },
+            {
+              name: "管理与运营",
+              items: [
+                "SOP 制定",
+                "数据分析",
+                "投资运营",
+                "活动策划",
+              ],
+            },
+            {
+              name: "语言能力",
+              items: ["英语 (专业)", "普通话 (母语)", "粤语"],
+            },
+          ],
+        },
+      },
     };
 
-    function App() {
-      const [lang, setLang] = useState('en');
-      const t = content[lang];
+    let lang = "en";
 
-      return (
-        React.createElement('div', {className: "min-h-screen bg-slate-50 text-slate-800 font-sans selection:bg-blue-100"},
-          React.createElement('nav', {className: "fixed top-0 w-full z-50 bg-white/70 backdrop-blur-md border-b border-slate-200"},
-            React.createElement('div', {className: "max-w-5xl mx-auto px-6 h-16 flex items-center justify-between"},
-              React.createElement('span', {className: "font-bold text-xl tracking-tight text-slate-900"}, t.name),
-              React.createElement('div', {className: "hidden lg:flex gap-8 text-sm font-semibold"},
-                React.createElement('a', {href: "#experience", className: "text-slate-600 hover:text-blue-600 transition-colors"}, t.nav.experience),
-                React.createElement('a', {href: "#projects", className: "text-slate-600 hover:text-blue-600 transition-colors"}, t.nav.projects),
-                React.createElement('a', {href: "#education", className: "text-slate-600 hover:text-blue-600 transition-colors"}, t.nav.education),
-                React.createElement('a', {href: "#skills", className: "text-slate-600 hover:text-blue-600 transition-colors"}, t.nav.skills),
-              ),
-              React.createElement('div', {className: "flex items-center gap-4"},
-                React.createElement('a', {href: "#", className: "hidden sm:flex items-center gap-1.5 text-xs font-bold text-blue-600 border border-blue-100 px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 transition-all"},
-                  React.createElement(FileText, {size: 14}), t.nav.resume
-                ),
-                React.createElement('button', {
-                  onClick: () => setLang(lang === 'en' ? 'zh' : 'en'),
-                  className: "flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200 bg-white hover:bg-slate-50 shadow-sm transition-all text-xs font-bold uppercase text-slate-700"
-                },
-                  React.createElement(Globe, {size: 14, className: "text-blue-500"}),
-                  lang === 'en' ? '中文' : 'English'
-                )
-              )
-            )
-          ),
-          React.createElement('header', {className: "pt-32 pb-24 px-6 bg-white"},
-            React.createElement('div', {className: "max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-12"},
-              React.createElement('div', {className: "flex-1 text-center md:text-left"},
-                React.createElement('h1', {className: "text-5xl md:text-7xl font-black text-slate-900 mb-4 tracking-tight"}, t.name),
-                React.createElement('p', {className: "text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-6 leading-tight"}, t.title),
-                React.createElement('p', {className: "text-slate-600 max-w-2xl text-lg leading-relaxed mb-8 font-medium"}, t.about),
-                React.createElement('div', {className: "flex flex-wrap gap-4 justify-center md:justify-start items-center"},
-                  React.createElement('a', {href: `mailto:${t.contactInfo.email}`, className: "flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-slate-200"},
-                    React.createElement(Mail, {size: 18}), t.nav.contact
-                  ),
-                  React.createElement('a', {href: t.contactInfo.linkedin, target: "_blank", rel: "noopener noreferrer", className: "flex items-center gap-2 bg-white border-2 border-slate-200 hover:border-blue-500 hover:text-blue-600 text-slate-700 px-6 py-3.5 rounded-xl font-bold transition-all"},
-                    React.createElement(Linkedin, {size: 20, className: "text-[#0A66C2]"}), 'LinkedIn'
-                  ),
-                  React.createElement('div', {className: "flex flex-col items-start gap-1 px-4 border-l border-slate-200"},
-                    React.createElement('div', {className: "flex items-center gap-2 text-slate-700 font-bold"},
-                      React.createElement(Phone, {size: 16, className: "text-blue-500"}), t.contactInfo.phone
-                    ),
-                    React.createElement('div', {className: "flex items-center gap-2 text-slate-500 text-sm font-medium"},
-                      React.createElement(MapPin, {size: 16, className: "text-emerald-500"}), t.location
-                    )
+    function htmllify(t) {
+      const exp = t.experience
+        .map(
+          (exp) => `
+          <div class="relative pl-10 border-l-2 border-slate-100 group pb-4">
+            <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-white border-4 border-blue-500 group-hover:bg-blue-500 transition-all shadow-sm"></div>
+            <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex flex-wrap justify-between items-start gap-4 mb-6">
+                <div>
+                  <h3 class="text-2xl font-bold text-slate-900 mb-1">${exp.role}</h3>
+                  <p class="text-blue-600 font-bold text-lg">${exp.company}</p>
+                </div>
+                <div class="md:text-right">
+                  <p class="text-slate-900 font-bold">${exp.period}</p>
+                  <p class="text-slate-400 font-medium text-sm uppercase tracking-wider">${exp.location}</p>
+                </div>
+              </div>
+              <ul class="space-y-3">
+                ${exp.points
+                  .map(
+                    (p) => `
+                    <li class="flex gap-3 text-slate-600 leading-relaxed">
+                      <span class="mt-2 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0"></span>
+                      ${p}
+                    </li>`
                   )
-                ),
-                lang === 'zh' && React.createElement('div', {className: "mt-4 flex items-center gap-2 text-slate-500 text-sm font-medium justify-center md:justify-start"},
-                  React.createElement(MessageCircle, {size: 16, className: "text-emerald-500"}),
-                  '微信: ', React.createElement('span', {className: "text-slate-700 font-bold"}, t.contactInfo.wechat)
-                )
-              ),
-              React.createElement('div', {className: "relative shrink-0"},
-                React.createElement('div', {className: "w-56 h-56 md:w-72 md:h-72 rounded-3xl overflow-hidden shadow-2xl shadow-blue-100 border-8 border-white group"},
-                  React.createElement('img', {
-                    src: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=640&auto=format&fit=crop",
-                    alt: t.name,
-                    className: "w-full h-full object-cover",
-                    onError: (e) => { e.currentTarget.src='https://ui-avatars.com/api/?name=Nan+Yao&background=0D8ABC&color=fff&size=512'; }
-                  }),
-                  React.createElement('div', {className: "absolute inset-0 bg-blue-600/10 mix-blend-multiply group-hover:opacity-0 transition-opacity"})
-                ),
-                React.createElement('div', {className: "absolute -z-10 -bottom-6 -right-6 w-32 h-32 bg-emerald-100 rounded-full blur-3xl opacity-60"}),
-                React.createElement('div', {className: "absolute -z-10 -top-6 -left-6 w-32 h-32 bg-blue-100 rounded-full blur-3xl opacity-60"})
-              )
-            )
-          ),
-          React.createElement('main', {className: "max-w-5xl mx-auto px-6 py-24 space-y-32"},
-            React.createElement('section', {id: "experience"},
-              React.createElement('div', {className: "flex items-center gap-4 mb-12"},
-                React.createElement('div', {className: "p-2 bg-blue-100 rounded-lg"}, React.createElement(Briefcase, {className: "text-blue-600"})),
-                React.createElement('h2', {className: "text-4xl font-black text-slate-900"}, t.nav.experience)
-              ),
-              React.createElement('div', {className: "space-y-10"},
-                t.experience.map((exp, idx) => (
-                  React.createElement('div', {key: idx, className: "relative pl-10 border-l-2 border-slate-100 group pb-4"},
-                    React.createElement('div', {className: "absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-white border-4 border-blue-500 group-hover:bg-blue-500 transition-all shadow-sm"}),
-                    React.createElement('div', {className: "bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow"},
-                      React.createElement('div', {className: "flex flex-wrap justify-between items-start gap-4 mb-6"},
-                        React.createElement('div', null,
-                          React.createElement('h3', {className: "text-2xl font-bold text-slate-900 mb-1"}, exp.role),
-                          React.createElement('p', {className: "text-blue-600 font-bold text-lg"}, exp.company)
-                        ),
-                        React.createElement('div', {className: "md:text-right"},
-                          React.createElement('p', {className: "text-slate-900 font-bold"}, exp.period),
-                          React.createElement('p', {className: "text-slate-400 font-medium text-sm uppercase tracking-wider"}, exp.location)
-                        )
-                      ),
-                      React.createElement('ul', {className: "space-y-3"},
-                        exp.points.map((p, i) => (
-                          React.createElement('li', {key: i, className: "flex gap-3 text-slate-600 leading-relaxed"},
-                            React.createElement('span', {className: "mt-2 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0"}), p
-                          )
-                        ))
-                      )
-                    )
-                  )
-                ))
-              )
-            ),
-            React.createElement('section', {id: "projects"},
-              React.createElement('div', {className: "flex items-center gap-4 mb-12"},
-                React.createElement('div', {className: "p-2 bg-emerald-100 rounded-lg"}, React.createElement(Cpu, {className: "text-emerald-600"})),
-                React.createElement('h2', {className: "text-4xl font-black text-slate-900"}, t.nav.projects)
-              ),
-              React.createElement('div', {className: "grid md:grid-cols-2 gap-8"},
-                t.projects.map((proj, idx) => (
-                  React.createElement('a', {key: idx, href: proj.link, target: "_blank", rel: "noopener noreferrer", className: "bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:border-blue-400 hover:shadow-xl hover:shadow-blue-500/5 transition-all flex flex-col group cursor-pointer"},
-                    React.createElement('div', {className: "flex justify-between items-start mb-2"},
-                      React.createElement('h3', {className: "text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors"}, proj.name),
-                      React.createElement(ExternalLink, {size: 20, className: "text-slate-300 group-hover:text-blue-500 transition-colors"})
-                    ),
-                    React.createElement('div', {className: "flex items-center gap-2 mb-6"},
-                      React.createElement('span', {className: "px-3 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-full uppercase tracking-tighter"}, proj.role),
-                      React.createElement('span', {className: "text-slate-300 text-xs"}, '|'),
-                      React.createElement('span', {className: "text-slate-400 text-xs font-medium"}, proj.period)
-                    ),
-                    React.createElement('p', {className: "text-slate-600 leading-relaxed mb-6 flex-grow"}, proj.desc),
-                    React.createElement('div', {className: "pt-4 border-t border-slate-50 text-xs font-bold text-blue-500 uppercase flex items-center gap-2"},
-                      lang === 'zh' ? '查看详情' : 'View Project Detail'
-                    )
-                  )
-                ))
-              )
-            ),
-            React.createElement('div', {className: "grid lg:grid-cols-5 gap-16"},
-              React.createElement('section', {id: "education", className: "lg:col-span-3"},
-                React.createElement('div', {className: "flex items-center gap-4 mb-12"},
-                  React.createElement('div', {className: "p-2 bg-purple-100 rounded-lg"}, React.createElement(BookOpen, {className: "text-purple-600"})),
-                  React.createElement('h2', {className: "text-4xl font-black text-slate-900"}, t.nav.education)
-                ),
-                React.createElement('div', {className: "space-y-10"},
-                  t.education.map((edu, idx) => (
-                    React.createElement('div', {key: idx, className: "bg-white p-8 rounded-2xl border border-slate-100 shadow-sm"},
-                      React.createElement('h3', {className: "text-xl font-bold text-slate-900 mb-2"}, edu.school),
-                      React.createElement('div', {className: "flex justify-between items-center mb-4"},
-                        React.createElement('p', {className: "text-slate-600 font-medium"}, edu.degree),
-                        React.createElement('p', {className: "text-slate-400 text-sm font-bold"}, edu.period)
-                      ),
-                      edu.awards && React.createElement('div', {className: "flex items-center gap-2 text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg w-fit"},
-                        React.createElement(Award, {size: 16}), React.createElement('span', {className: "text-sm font-bold tracking-tight uppercase"}, edu.awards)
-                      )
-                    )
-                  )),
-                  React.createElement('div', {className: "mt-8"},
-                    React.createElement('a', {href: '#', className: "flex items-center justify-center gap-3 w-full py-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-500 hover:text-blue-600 hover:border-blue-400 hover:bg-blue-50/30 transition-all font-bold group"},
-                      React.createElement(FileText, {size: 20, className: "group-hover:scale-110 transition-transform"}), t.nav.resume
-                    )
-                  )
-                )
-              ),
-              React.createElement('section', {id: "skills", className: "lg:col-span-2"},
-                React.createElement('div', {className: "flex items-center gap-4 mb-12"},
-                  React.createElement('div', {className: "p-2 bg-orange-100 rounded-lg"}, React.createElement(Cpu, {className: "text-orange-600"})),
-                  React.createElement('h2', {className: "text-4xl font-black text-slate-900"}, t.nav.skills)
-                ),
-                React.createElement('div', {className: "space-y-10"},
-                  t.skills.categories.map((cat, idx) => (
-                    React.createElement('div', {key: idx, className: "bg-white p-8 rounded-2xl border border-slate-100 shadow-sm"},
-                      React.createElement('h4', {className: "text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-6"}, cat.name),
-                      React.createElement('div', {className: "flex flex-wrap gap-2"},
-                        cat.items.map((item, i) => (
-                          React.createElement('span', {key: i, className: "px-4 py-2 rounded-xl bg-slate-50 border border-slate-100 text-slate-700 text-sm font-bold hover:bg-white hover:border-blue-200 transition-colors"}, item)
-                        ))
-                      )
-                    )
-                  ))
-                )
-              )
-            )
-          ),
-          React.createElement('footer', {className: "bg-white border-t border-slate-200 py-16 px-6 mt-32 text-center md:text-left"},
-            React.createElement('div', {className: "max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8"},
-              React.createElement('div', null,
-                React.createElement('p', {className: "text-2xl font-black text-slate-900 mb-2"}, t.name),
-                React.createElement('p', {className: "text-slate-500 font-medium"}, 'Seeking New Opportunities in New York & Beyond.'),
-                React.createElement('p', {className: "text-slate-400 text-sm mt-2"}, `${t.contactInfo.phone} • ${t.contactInfo.email}`)
-              ),
-              React.createElement('div', {className: "flex items-center gap-4"},
-                React.createElement('a', {href: `mailto:${t.contactInfo.email}`, className: "w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 border border-slate-100 text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-all"}, React.createElement(Mail, {size: 22})),
-                React.createElement('a', {href: t.contactInfo.linkedin, target: "_blank", rel: "noopener noreferrer", className: "w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 border border-slate-100 text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-all"}, React.createElement(Linkedin, {size: 22})),
-                React.createElement('button', {onClick: () => window.scrollTo({top: 0, behavior: 'smooth'}), className: "px-6 py-3 bg-slate-100 text-slate-900 font-bold rounded-2xl hover:bg-slate-200 transition-all ml-4"}, 'Back to Top')
-              )
-            ),
-            React.createElement('div', {className: "max-w-5xl mx-auto mt-16 pt-8 border-t border-slate-50"},
-              React.createElement('p', {className: "text-slate-400 text-xs font-bold uppercase tracking-widest text-center"}, '© 2026 Nan Yao • Portfolio Website')
-            )
-          )
+                  .join("")}
+              </ul>
+            </div>
+          </div>`
         )
-      );
+        .join("");
+
+      const projects = t.projects
+        .map(
+          (proj) => `
+        <a href="${proj.link}" target="_blank" rel="noopener noreferrer" class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:border-blue-400 hover:shadow-xl hover:shadow-blue-500/5 transition-all flex flex-col group cursor-pointer">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">${proj.name}</h3>
+            <i data-lucide="external-link" class="w-5 h-5 text-slate-300 group-hover:text-blue-500 transition-colors"></i>
+          </div>
+          <div class="flex items-center gap-2 mb-6">
+            <span class="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-full uppercase tracking-tighter">${proj.role}</span>
+            <span class="text-slate-300 text-xs">|</span>
+            <span class="text-slate-400 text-xs font-medium">${proj.period}</span>
+          </div>
+          <p class="text-slate-600 leading-relaxed mb-6 flex-grow">${proj.desc}</p>
+          <div class="pt-4 border-t border-slate-50 text-xs font-bold text-blue-500 uppercase flex items-center gap-2">
+            ${lang === "zh" ? "查看详情" : "View Project Detail"}
+          </div>
+        </a>`
+        )
+        .join("");
+
+      const education = t.education
+        .map(
+          (edu) => `
+        <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
+          <h3 class="text-xl font-bold text-slate-900 mb-2">${edu.school}</h3>
+          <div class="flex justify-between items-center mb-4">
+            <p class="text-slate-600 font-medium">${edu.degree}</p>
+            <p class="text-slate-400 text-sm font-bold">${edu.period}</p>
+          </div>
+          ${
+            edu.awards
+              ? `<div class="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg w-fit">
+                  <i data-lucide="award" class="w-4 h-4"></i>
+                  <span class="text-sm font-bold tracking-tight uppercase">${edu.awards}</span>
+                </div>`
+              : ""
+          }
+        </div>`
+        )
+        .join("");
+
+      const skills = t.skills.categories
+        .map(
+          (cat) => `
+        <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
+          <h4 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-6">${cat.name}</h4>
+          <div class="flex flex-wrap gap-2">
+            ${cat.items
+              .map(
+                (item) => `
+              <span class="px-4 py-2 rounded-xl bg-slate-50 border border-slate-100 text-slate-700 text-sm font-bold hover:bg-white hover:border-blue-200 transition-colors">
+                ${item}
+              </span>`
+              )
+              .join("")}
+          </div>
+        </div>`
+        )
+        .join("");
+
+      const wechat = lang === "zh" ? `<div class="mt-4 flex items-center gap-2 text-slate-500 text-sm font-medium justify-center md:justify-start">
+        <i data-lucide="message-circle" class="w-4 h-4 text-emerald-500"></i>
+        微信: <span class="text-slate-700 font-bold">${t.contactInfo.wechat}</span>
+      </div>` : "";
+
+      return `
+      <nav class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+          <span class="font-bold text-xl tracking-tight text-slate-900">
+            ${t.name}
+          </span>
+          <div class="hidden lg:flex gap-8 text-sm font-semibold">
+            <a href="#experience" class="text-slate-600 hover:text-blue-600 transition-colors">${t.nav.experience}</a>
+            <a href="#projects" class="text-slate-600 hover:text-blue-600 transition-colors">${t.nav.projects}</a>
+            <a href="#education" class="text-slate-600 hover:text-blue-600 transition-colors">${t.nav.education}</a>
+            <a href="#skills" class="text-slate-600 hover:text-blue-600 transition-colors">${t.nav.skills}</a>
+          </div>
+          <div class="flex items-center gap-4">
+            <a href="#" class="hidden sm:flex items-center gap-1.5 text-xs font-bold text-blue-600 border border-blue-100 px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 transition-all">
+              <i data-lucide="file-text" class="w-4 h-4"></i> ${t.nav.resume}
+            </a>
+            <button 
+              onclick="window.toggleLang()"
+              class="flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200 bg-white hover:bg-slate-50 shadow-sm transition-all text-xs font-bold uppercase text-slate-700"
+            >
+              <i data-lucide="globe" class="w-4 h-4 text-blue-500"></i>
+              ${lang === 'en' ? '中文' : 'English'}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <header class="pt-32 pb-24 px-6 bg-white">
+        <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-12">
+          <div class="flex-1 text-center md:text-left">
+            <h1 class="text-5xl md:text-7xl font-black text-slate-900 mb-4 tracking-tight">
+              ${t.name}
+            </h1>
+            <p class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-6 leading-tight">
+              ${t.title}
+            </p>
+            <p class="text-slate-600 max-w-2xl text-lg leading-relaxed mb-8 font-medium">
+              ${t.about}
+            </p>
+            <div class="flex flex-wrap gap-4 justify-center md:justify-start items-center">
+              <a href="mailto:${t.contactInfo.email}" class="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-slate-200">
+                <i data-lucide="mail" class="w-4 h-4"></i> ${t.nav.contact}
+              </a>
+              <a 
+                href="${t.contactInfo.linkedin}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center gap-2 bg-white border-2 border-slate-200 hover:border-blue-500 hover:text-blue-600 text-slate-700 px-6 py-3.5 rounded-xl font-bold transition-all"
+              >
+                <i data-lucide="linkedin" class="w-5 h-5 text-[#0A66C2]"></i> LinkedIn
+              </a>
+              <div class="flex flex-col items-start gap-1 px-4 border-l border-slate-200">
+                <div class="flex items-center gap-2 text-slate-700 font-bold">
+                  <i data-lucide="phone" class="w-4 h-4 text-blue-500"></i>
+                  ${t.contactInfo.phone}
+                </div>
+                <div class="flex items-center gap-2 text-slate-500 text-sm font-medium">
+                  <i data-lucide="map-pin" class="w-4 h-4 text-emerald-500"></i>
+                  ${t.location}
+                </div>
+              </div>
+            </div>
+            ${wechat}
+          </div>
+          <div class="relative shrink-0">
+            <div class="w-56 h-56 md:w-72 md:h-72 rounded-3xl overflow-hidden shadow-2xl shadow-blue-100 border-8 border-white">
+              <img 
+                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=640&auto=format&fit=crop" 
+                alt="${t.name}" 
+                class="w-full h-full object-cover" 
+              />
+              <div class="absolute inset-0 bg-blue-600/10 mix-blend-multiply"></div>
+            </div>
+            <div class="absolute -z-10 -bottom-6 -right-6 w-32 h-32 bg-emerald-100 rounded-full blur-3xl opacity-60"></div>
+            <div class="absolute -z-10 -top-6 -left-6 w-32 h-32 bg-blue-100 rounded-full blur-3xl opacity-60"></div>
+          </div>
+        </div>
+      </header>
+
+      <main class="max-w-5xl mx-auto px-6 py-24 space-y-32">
+        <section id="experience">
+          <div class="flex items-center gap-4 mb-12">
+            <div class="p-2 bg-blue-100 rounded-lg"><i data-lucide="briefcase" class="w-5 h-5 text-blue-600"></i></div>
+            <h2 class="text-4xl font-black text-slate-900">${t.nav.experience}</h2>
+          </div>
+          <div class="space-y-10">${exp}</div>
+        </section>
+
+        <section id="projects">
+          <div class="flex items-center gap-4 mb-12">
+            <div class="p-2 bg-emerald-100 rounded-lg"><i data-lucide="cpu" class="w-5 h-5 text-emerald-600"></i></div>
+            <h2 class="text-4xl font-black text-slate-900">${t.nav.projects}</h2>
+          </div>
+          <div class="grid md:grid-cols-2 gap-8">${projects}</div>
+        </section>
+
+        <div class="grid lg:grid-cols-5 gap-16">
+          <section id="education" class="lg:col-span-3">
+            <div class="flex items-center gap-4 mb-12">
+              <div class="p-2 bg-purple-100 rounded-lg"><i data-lucide="book-open" class="w-5 h-5 text-purple-600"></i></div>
+              <h2 class="text-4xl font-black text-slate-900">${t.nav.education}</h2>
+            </div>
+            <div class="space-y-10">${education}
+              <div class="mt-8">
+                <a href="#" class="flex items-center justify-center gap-3 w-full py-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-500 hover:text-blue-600 hover:border-blue-400 hover:bg-blue-50/30 transition-all font-bold">
+                  <i data-lucide="file-text" class="w-5 h-5"></i>
+                  ${t.nav.resume}
+                </a>
+              </div>
+            </div>
+          </section>
+
+          <section id="skills" class="lg:col-span-2">
+            <div class="flex items-center gap-4 mb-12">
+              <div class="p-2 bg-orange-100 rounded-lg"><i data-lucide="cpu" class="w-5 h-5 text-orange-600"></i></div>
+              <h2 class="text-4xl font-black text-slate-900">${t.nav.skills}</h2>
+            </div>
+            <div class="space-y-10">${skills}</div>
+          </section>
+        </div>
+      </main>
+
+      <footer class="bg-white border-t border-slate-200 py-16 px-6 mt-32 text-center md:text-left">
+        <div class="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+          <div>
+            <p class="text-2xl font-black text-slate-900 mb-2">${t.name}</p>
+            <p class="text-slate-500 font-medium">Seeking New Opportunities in New York & Beyond.</p>
+            <p class="text-slate-400 text-sm mt-2">${t.contactInfo.phone} • ${t.contactInfo.email}</p>
+          </div>
+          <div class="flex items-center gap-4">
+            <a href="mailto:${t.contactInfo.email}" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 border border-slate-100 text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-all"><i data-lucide="mail" class="w-5 h-5"></i></a>
+            <a href="${t.contactInfo.linkedin}" target="_blank" rel="noopener noreferrer" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 border border-slate-100 text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-all"><i data-lucide="linkedin" class="w-6 h-6"></i></a>
+            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="px-6 py-3 bg-slate-100 text-slate-900 font-bold rounded-2xl hover:bg-slate-200 transition-all ml-4">Back to Top</button>
+          </div>
+        </div>
+        <div class="max-w-5xl mx-auto mt-16 pt-8 border-t border-slate-50">
+          <p class="text-slate-400 text-xs font-bold uppercase tracking-widest text-center">© 2026 Nan Yao • Portfolio Website</p>
+        </div>
+      </footer>`;
     }
 
-    const root = createRoot(document.getElementById('root'));
-    root.render(React.createElement(App));
+    function render() {
+      const t = content[lang];
+      document.getElementById("app").innerHTML = htmllify(t);
+      if (window.lucide && typeof window.lucide.createIcons === "function") {
+        window.lucide.createIcons();
+      }
+    }
+
+    window.toggleLang = function () {
+      lang = lang === "en" ? "zh" : "en";
+      render();
+    };
+
+    render();
   </script>
 </body>
 </html>
