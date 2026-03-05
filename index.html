@@ -23,10 +23,10 @@
           projects: "Projects",
           education: "Education",
           skills: "Skills",
-          contact: "Contact",
+          Email: "Email",
           resume: "Download CV",
         },
-        contactInfo: {
+        EmailInfo: {
           phone: "+1 (626) 230-7307",
           email: "yaonan1127@gmail.com",
           linkedin: "https://www.linkedin.com/in/yaonanstarry",
@@ -137,10 +137,10 @@
           projects: "核心项目",
           education: "教育背景",
           skills: "技能专长",
-          contact: "联系方式",
+          Email: "邮箱",
           resume: "查看/下载简历",
         },
-        contactInfo: {
+        EmailInfo: {
           phone: "18926078654",
           wechat: "18926078654",
           email: "yaonan1127@gmail.com",
@@ -341,7 +341,7 @@
 
       const wechat = lang === "zh" ? `<div class="mt-4 flex items-center gap-2 text-slate-500 text-sm font-medium justify-center md:justify-start">
         <i data-lucide="message-circle" class="w-4 h-4 text-emerald-500"></i>
-        微信: <span class="text-slate-700 font-bold">${t.contactInfo.wechat}</span>
+        微信: <span class="text-slate-700 font-bold">${t.EmailInfo.wechat}</span>
       </div>` : "";
 
       return `
@@ -384,11 +384,11 @@
               ${t.about}
             </p>
             <div class="flex flex-wrap gap-4 justify-center md:justify-start items-center">
-              <a href="mailto:${t.contactInfo.email}" class="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-slate-200">
-                <i data-lucide="mail" class="w-4 h-4"></i> ${t.nav.contact}
+              <a href="mailto:${t.EmailInfo.email}" class="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-slate-200">
+                <i data-lucide="mail" class="w-4 h-4"></i> ${t.nav.Email}
               </a>
               <a 
-                href="${t.contactInfo.linkedin}"
+                href="${t.EmailInfo.linkedin}"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="flex items-center gap-2 bg-white border-2 border-slate-200 hover:border-blue-500 hover:text-blue-600 text-slate-700 px-6 py-3.5 rounded-xl font-bold transition-all"
@@ -398,7 +398,7 @@
               <div class="flex flex-col items-start gap-1 px-4 border-l border-slate-200">
                 <div class="flex items-center gap-2 text-slate-700 font-bold">
                   <i data-lucide="phone" class="w-4 h-4 text-blue-500"></i>
-                  ${t.contactInfo.phone}
+                  ${t.EmailInfo.phone}
                 </div>
                 <div class="flex items-center gap-2 text-slate-500 text-sm font-medium">
                   <i data-lucide="map-pin" class="w-4 h-4 text-emerald-500"></i>
@@ -471,11 +471,11 @@
           <div>
             <p class="text-2xl font-black text-slate-900 mb-2">${t.name}</p>
             <p class="text-slate-500 font-medium">Seeking New Opportunities in New York & Beyond.</p>
-            <p class="text-slate-400 text-sm mt-2">${t.contactInfo.phone} • ${t.contactInfo.email}</p>
+            <p class="text-slate-400 text-sm mt-2">${t.EmailInfo.phone} • ${t.EmailInfo.email}</p>
           </div>
           <div class="flex items-center gap-4">
-            <a href="mailto:${t.contactInfo.email}" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 border border-slate-100 text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-all"><i data-lucide="mail" class="w-5 h-5"></i></a>
-            <a href="${t.contactInfo.linkedin}" target="_blank" rel="noopener noreferrer" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 border border-slate-100 text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-all"><i data-lucide="linkedin" class="w-6 h-6"></i></a>
+            <a href="mailto:${t.EmailInfo.email}" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 border border-slate-100 text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-all"><i data-lucide="mail" class="w-5 h-5"></i></a>
+            <a href="${t.EmailInfo.linkedin}" target="_blank" rel="noopener noreferrer" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 border border-slate-100 text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-all"><i data-lucide="linkedin" class="w-6 h-6"></i></a>
             <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="px-6 py-3 bg-slate-100 text-slate-900 font-bold rounded-2xl hover:bg-slate-200 transition-all ml-4">Back to Top</button>
           </div>
         </div>
