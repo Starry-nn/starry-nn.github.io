@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Asana AI – Slack × Asana Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; min-height: 100dvh; font-family: 'Lato', sans-serif; background: #1a1d21; overflow: hidden; }
+
+#app { width: 100vw; height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
+
+button, input { font: inherit; }
+button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid #36c5f0; outline-offset: 2px;
+}
+
+/* ── TOP BAR ── */
+.top-bar {
+  height: 38px; background: #19171d;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 14px; flex-shrink: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.tb-left { display: flex; align-items: center; gap: 8px; }
+.tb-nav-btn {
+  width: 24px; height: 24px; border-radius: 50%;
+  border: none; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.45);
+  cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 10px;
+}
+.tb-search {
+  height: 24px; width: 280px;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px; display: flex; align-items: center; gap: 6px;
+  padding: 0 10px; color: rgba(255,255,255,0.4); font-size: 12px; cursor: pointer;
+}
+.tb-right { display: flex; align-items: center; gap: 6px; }
+.tb-icon { width: 28px; height: 28px; border-radius: 6px; border: none;
+  background: transparent; color: rgba(255,255,255,0.45); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 15px; }
+
+/* ── MAIN LAYOUT ── */
+.main-layout { display: flex; flex: 1; overflow: hidden; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 252px; background: #19171d;
+  display: flex; flex-direction: column;
+  border-right: 1px solid rgba(255,255,255,0.05);
+  flex-shrink: 0; overflow-y: auto;
+}
+.sidebar::-webkit-scrollbar { width: 0; }
+
+.sidebar-header {
+  padding: 10px 14px 6px;
+  display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+}
+.workspace-name {
+  font-weight: 900; font-size: 15px; color: white; cursor: pointer;
+  display: flex; align-items: center; gap: 5px;
+}
+.workspace-name::after { content: '▾'; font-size: 9px; color: rgba(255,255,255,0.45); }
+.online-dot { width: 8px; height: 8px; border-radius: 50%; background: #2bac76; flex-shrink: 0; }
+
+.sidebar-section { padding: 2px 0 6px; }
+.sidebar-section-header {
+  padding: 6px 8px 3px 14px;
+  display: flex; align-items: center; justify-content: space-between; cursor: pointer;
+}
+.ssh-label { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.45); }
+.ssh-add { width: 20px; height: 20px; border-radius: 4px; border: none; background: transparent;
+  color: rgba(255,255,255,0.35); cursor: pointer; font-size: 16px; line-height: 1;
+  display: flex; align-items: center; justify-content: center; }
+.ssh-add:hover { background: rgba(255,255,255,0.08); color: white; }
+
+.ch-item {
+  padding: 3px 8px 3px 14px; display: flex; align-items: center; gap: 7px;
+  cursor: pointer; border-radius: 5px; margin: 0 6px;
+  transition: background 0.1s;
+}
+.ch-item:hover { background: rgba(255,255,255,0.06); }
+.ch-item.active { background: #1264a3; }
+.ch-item.active .ch-name { color: white; font-weight: 700; }
+.ch-hash { font-size: 14px; color: rgba(255,255,255,0.4); flex-shrink: 0; }
+.ch-name { font-size: 14px; color: rgba(255,255,255,0.68); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ch-badge { background: #e01e5a; color: white; font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 9px; flex-shrink: 0; }
+
+.dm-item {
+  padding: 3px 8px 3px 14px; display: flex; align-items: center; gap: 8px;
+  cursor: pointer; border-radius: 5px; margin: 0 6px; transition: background 0.1s;
+}
+.dm-item:hover { background: rgba(255,255,255,0.06); }
+.dm-av { width: 20px; height: 20px; border-radius: 4px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: white; }
+.dm-name { font-size: 14px; color: rgba(255,255,255,0.62); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dm-st { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── CHAT AREA ── */
+.chat-area { flex: 1; display: flex; flex-direction: column; background: #1a1d21; overflow: hidden; min-width: 0; }
+
+.chat-header {
+  height: 49px; border-bottom: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px; flex-shrink: 0;
+}
+.ch-head-left { display: flex; align-items: center; gap: 8px; }
+.ch-head-name { font-size: 15px; font-weight: 900; color: white; }
+.ch-head-hash { font-size: 17px; color: rgba(255,255,255,0.55); }
+.ch-head-divider { width: 1px; height: 18px; background: rgba(255,255,255,0.12); }
+.ch-head-topic { font-size: 13px; color: rgba(255,255,255,0.4); }
+.ch-head-right { display: flex; align-items: center; gap: 4px; }
+.ch-hdr-btn {
+  height: 28px; padding: 0 10px; border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.15); background: transparent;
+  color: rgba(255,255,255,0.65); font-size: 12px; font-family: 'Lato', sans-serif;
+  cursor: pointer; display: flex; align-items: center; gap: 5px; transition: background 0.15s;
+}
+.ch-hdr-btn:hover { background: rgba(255,255,255,0.07); }
+.ch-hdr-btn.asana-btn { border-color: rgba(255,88,74,0.4); color: #ff8a7f; }
+.ch-hdr-btn.asana-btn:hover { background: rgba(255,88,74,0.1); }
+
+/* ── MESSAGES ── */
+.messages-container {
+  flex: 1; overflow-y: auto; padding: 16px 20px 6px;
+  display: flex; flex-direction: column; scroll-behavior: smooth;
+}
+.messages-container::-webkit-scrollbar { width: 5px; }
+.messages-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+.msg-group { display: flex; gap: 11px; padding: 3px 0 2px; position: relative; border-radius: 4px; }
+.msg-group:hover { background: rgba(255,255,255,0.02); }
+.msg-group:hover .msg-acts { opacity: 1; }
+
+.msg-av {
+  width: 36px; height: 36px; border-radius: 6px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: white; margin-top: 1px;
+}
+.msg-body { flex: 1; min-width: 0; }
+.msg-hdr { display: flex; align-items: baseline; gap: 7px; margin-bottom: 1px; }
+.msg-name { font-size: 14px; font-weight: 700; color: white; }
+.bot-badge { background: #1264a3; color: white; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.04em; }
+.msg-ts { font-size: 11px; color: rgba(255,255,255,0.28); }
+.msg-txt { font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.46; }
+
+.mention { color: #4fd1c5; background: rgba(79,209,197,0.1); border-radius: 3px; padding: 0 2px; }
+.bl { font-weight: 700; color: white; }
+
+.msg-acts {
+  position: absolute; right: 6px; top: -13px;
+  display: flex; gap: 1px; opacity: 0; transition: opacity 0.12s;
+  background: #222529; border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 6px; padding: 2px;
+}
+.msg-act { width: 26px; height: 26px; border-radius: 4px; border: none;
+  background: transparent; color: rgba(255,255,255,0.45); cursor: pointer;
+  font-size: 13px; display: flex; align-items: center; justify-content: center; }
+.msg-act:hover { background: rgba(255,255,255,0.09); color: white; }
+
+.date-div {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 0 6px; color: rgba(255,255,255,0.28); font-size: 12px; font-weight: 700;
+}
+.date-div::before, .date-div::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
+
+/* ── TYPING ── */
+.typing-wrap { display: flex; align-items: center; gap: 10px; padding: 6px 0; opacity: 0; transition: opacity 0.25s; }
+.typing-wrap.show { opacity: 1; }
+.typing-dots { display: flex; gap: 4px; }
+.t-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.28); animation: tBounce 1.2s ease-in-out infinite; }
+.t-dot:nth-child(2) { animation-delay: 0.2s; }
+.t-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes tBounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+.typing-txt { font-size: 12px; color: rgba(255,255,255,0.35); }
+
+/* ── AI INIT CARD ── */
+.ai-card {
+  background: #1c2a3a; border: 1px solid rgba(18,100,163,0.35);
+  border-left: 3px solid #1264a3; border-radius: 0 8px 8px 0;
+  padding: 12px 15px; margin-top: 7px;
+  opacity: 0; transform: translateY(6px);
+  transition: opacity 0.4s, transform 0.4s;
+}
+.ai-card.show { opacity: 1; transform: none; }
+.ai-card-hdr { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
+.ai-pill { background: #ff584a; color: white; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 9px; letter-spacing: 0.04em; flex-shrink: 0; }
+.ai-card-title { font-size: 13px; font-weight: 700; color: white; }
+.ai-rows { display: flex; flex-direction: column; gap: 5px; margin-bottom: 11px; }
+.ai-row { display: flex; align-items: flex-start; gap: 7px; font-size: 13px; color: rgba(255,255,255,0.72); line-height: 1.4; }
+.ai-row-ic { flex-shrink: 0; margin-top: 1px; }
+.ai-actions { display: flex; gap: 7px; flex-wrap: wrap; }
+.btn-primary {
+  background: #ff584a; color: white; border: none;
+  padding: 7px 14px; border-radius: 6px; font-size: 13px; font-weight: 700;
+  cursor: pointer; font-family: 'Lato', sans-serif; transition: background 0.15s;
+  display: flex; align-items: center; gap: 5px;
+}
+.btn-primary:hover { background: #e04035; }
+.btn-secondary {
+  background: transparent; color: rgba(255,255,255,0.65);
+  border: 1px solid rgba(255,255,255,0.18);
+  padding: 7px 14px; border-radius: 6px; font-size: 13px;
+  cursor: pointer; font-family: 'Lato', sans-serif; transition: background 0.15s;
+}
+.btn-secondary:hover { background: rgba(255,255,255,0.05); }
+
+/* ── TASK DETECTION PROMPT CARD ── */
+.task-detect-card {
+  background: #1a2535;
+  border: 1px solid rgba(255,88,74,0.25);
+  border-left: 3px solid #ff584a;
+  border-radius: 0 8px 8px 0;
+  padding: 11px 14px; margin-top: 6px;
+  opacity: 0; transform: translateY(6px);
+  transition: opacity 0.4s, transform 0.4s;
+}
+.task-detect-card.show { opacity: 1; transform: none; }
+.tdc-header { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.tdc-pill { background: rgba(255,88,74,0.15); border: 1px solid rgba(255,88,74,0.3); color: #ff8a7f; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 9px; letter-spacing: 0.04em; flex-shrink: 0; }
+.tdc-label { font-size: 13px; font-weight: 700; color: white; }
+.tdc-task-preview {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 7px; padding: 9px 12px; margin-bottom: 10px;
+}
+.tdc-task-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 5px; }
+.tdc-task-row:last-child { margin-bottom: 0; }
+.tdc-task-icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+.tdc-task-info { flex: 1; }
+.tdc-task-name { font-size: 13px; color: white; font-weight: 600; margin-bottom: 2px; }
+.tdc-task-meta { display: flex; gap: 10px; }
+.tdc-meta-item { font-size: 11px; color: rgba(255,255,255,0.4); display: flex; align-items: center; gap: 4px; }
+.tdc-project-ref {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 12px; color: rgba(255,255,255,0.5); margin-bottom: 10px;
+}
+.tdc-project-badge {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(255,88,74,0.1); border: 1px solid rgba(255,88,74,0.2);
+  padding: 3px 9px; border-radius: 5px; color: #ff8a7f; font-size: 12px; font-weight: 600;
+}
+.tdc-actions { display: flex; gap: 7px; align-items: center; }
+.btn-add-task {
+  background: #ff584a; color: white; border: none;
+  padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 700;
+  cursor: pointer; font-family: 'Lato', sans-serif; transition: background 0.15s;
+  display: flex; align-items: center; gap: 5px;
+}
+.btn-add-task:hover { background: #e04035; }
+.btn-edit-task {
+  background: transparent; color: rgba(255,255,255,0.6);
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 6px 12px; border-radius: 6px; font-size: 12px;
+  cursor: pointer; font-family: 'Lato', sans-serif; transition: background 0.15s;
+}
+.btn-edit-task:hover { background: rgba(255,255,255,0.05); }
+.btn-dismiss-task {
+  background: transparent; border: none; color: rgba(255,255,255,0.3);
+  font-size: 12px; cursor: pointer; font-family: 'Lato', sans-serif; padding: 4px;
+}
+.btn-dismiss-task:hover { color: rgba(255,255,255,0.6); }
+
+/* Task added confirmation */
+.task-added-confirm {
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(43,172,118,0.1); border: 1px solid rgba(43,172,118,0.25);
+  border-radius: 6px; padding: 6px 10px;
+  font-size: 12px; color: #5dd5a0;
+  opacity: 0; transform: scale(0.96);
+  transition: opacity 0.3s, transform 0.3s;
+}
+.task-added-confirm.show { opacity: 1; transform: scale(1); }
+
+/* ── INPUT ── */
+.msg-input-area { padding: 10px 20px 14px; flex-shrink: 0; }
+.input-box { border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; background: rgba(255,255,255,0.03); overflow: hidden; }
+.input-toolbar {
+  padding: 3px 7px; display: flex; align-items: center; gap: 1px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.i-tool { width: 27px; height: 27px; border-radius: 5px; border: none;
+  background: transparent; color: rgba(255,255,255,0.35); cursor: pointer;
+  font-size: 13px; display: flex; align-items: center; justify-content: center; }
+.i-tool:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.7); }
+.i-divider { width: 1px; height: 16px; background: rgba(255,255,255,0.08); margin: 0 2px; }
+.input-row { display: flex; align-items: center; padding: 5px 12px; gap: 7px; }
+.input-field {
+  flex: 1; background: transparent; border: none; outline: none;
+  color: rgba(255,255,255,0.82); font-size: 14px; font-family: 'Lato', sans-serif;
+}
+.input-field::placeholder { color: rgba(255,255,255,0.28); }
+.send-btn {
+  width: 30px; height: 30px; border-radius: 6px; border: none;
+  background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.35);
+  cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: background 0.15s;
+}
+.send-btn.active { background: #007a5a; color: white; }
+
+/* ── TRANSITION ── */
+#transition-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: #0d0e10; opacity: 0; pointer-events: none;
+  transition: opacity 0.3s;
+  display: flex; align-items: center; justify-content: center;
+}
+#transition-overlay.show { opacity: 1; pointer-events: all; }
+.trans-content {
+  display: flex; flex-direction: column; align-items: center; gap: 18px;
+  opacity: 0; transform: scale(0.92); transition: all 0.35s 0.15s;
+}
+#transition-overlay.show .trans-content { opacity: 1; transform: scale(1); }
+.trans-logos { display: flex; align-items: center; gap: 16px; }
+.trans-logo { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; }
+.trans-arrow { font-size: 22px; color: rgba(255,255,255,0.25); }
+.trans-subtitle { color: rgba(255,255,255,0.4); font-size: 13px; letter-spacing: 0.02em; }
+.trans-dots { display: flex; gap: 6px; }
+.trans-dot { width: 8px; height: 8px; border-radius: 50%; animation: transDot 1.2s ease-in-out infinite; }
+.trans-dot:nth-child(1) { background: #e01e5a; }
+.trans-dot:nth-child(2) { background: #ff584a; animation-delay: 0.2s; }
+.trans-dot:nth-child(3) { background: #2bac76; animation-delay: 0.4s; }
+@keyframes transDot { 0%,100%{transform:scale(0.5);opacity:0.3} 50%{transform:scale(1);opacity:1} }
+
+@keyframes msgIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:none} }
+.msg-group.anim { animation: msgIn 0.35s ease forwards; }
+
+/* ════════════════════
+   ASANA VIEW
+════════════════════ */
+#asana-view {
+  position: fixed; inset: 0; z-index: 400;
+  display: none; flex-direction: column;
+  background: #f5f5f5; font-family: 'Inter', sans-serif;
+  opacity: 0; transition: opacity 0.35s;
+}
+#asana-view.show { display: flex; }
+#asana-view.visible { opacity: 1; }
+
+.asana-topbar {
+  height: 46px; background: #1e1e2e;
+  display: flex; align-items: center; padding: 0 14px; gap: 10px;
+  flex-shrink: 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.asana-topbar-left { display: flex; align-items: center; gap: 10px; flex: 1; }
+.asana-wordmark { display: flex; align-items: center; gap: 7px; }
+.asana-wordmark-text { font-size: 15px; font-weight: 700; color: white; letter-spacing: -0.01em; }
+.asana-search {
+  flex: 1; max-width: 340px; height: 28px;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 6px; display: flex; align-items: center; gap: 7px;
+  padding: 0 10px; color: rgba(255,255,255,0.35); font-size: 12px; cursor: pointer;
+}
+.asana-topbar-right { display: flex; align-items: center; gap: 7px; }
+.a-tb-btn {
+  height: 27px; padding: 0 11px; border-radius: 6px;
+  font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; border: none;
+}
+.a-tb-btn.pri { background: #f06a99; color: white; }
+.a-tb-btn.pri:hover { background: #e05a89; }
+.a-av { width: 27px; height: 27px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; }
+
+.asana-body { display: flex; flex: 1; overflow: hidden; position: relative; }
+
+/* Asana sidebar */
+.asana-sb {
+  width: 232px; background: #1e1e2e; flex-shrink: 0;
+  display: flex; flex-direction: column; overflow-y: auto;
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+.asana-sb::-webkit-scrollbar { width: 3px; }
+.asana-sb::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); }
+.asb-sect { padding: 6px 0; }
+.asb-sect-hdr {
+  padding: 5px 14px; font-size: 10px; font-weight: 600;
+  color: rgba(255,255,255,0.3); letter-spacing: 0.07em; text-transform: uppercase;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.asb-item {
+  padding: 5px 14px; display: flex; align-items: center; gap: 9px;
+  cursor: pointer; transition: background 0.1s;
+}
+.asb-item:hover { background: rgba(255,255,255,0.04); }
+.asb-item.active { background: rgba(255,255,255,0.07); }
+.asb-ic { font-size: 14px; width: 16px; text-align: center; }
+.asb-lbl { font-size: 13px; color: rgba(255,255,255,0.65); }
+.asb-item.active .asb-lbl { color: white; font-weight: 600; }
+.asb-badge { margin-left: auto; background: #f06a99; color: white; font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 9px; }
+.asb-proj {
+  padding: 4px 14px 4px 30px; display: flex; align-items: center; gap: 7px;
+  cursor: pointer; transition: background 0.1s;
+}
+.asb-proj:hover { background: rgba(255,255,255,0.04); }
+.asb-proj.active { background: rgba(240,106,153,0.12); }
+.asb-proj-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.asb-proj-name { font-size: 13px; color: rgba(255,255,255,0.6); }
+.asb-proj.active .asb-proj-name { color: white; font-weight: 600; }
+
+/* Asana main */
+.asana-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: white; }
+
+.aph {
+  padding: 18px 28px 0; flex-shrink: 0;
+  border-bottom: 1px solid #e8e8e8;
+}
+.aph-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.aph-title-row { display: flex; align-items: center; gap: 10px; }
+.aph-title { font-size: 19px; font-weight: 700; color: #1e1e2e; }
+.aph-badge {
+  font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 11px;
+  background: #fff3cd; color: #856404; border: 1px solid #ffc107;
+}
+.aph-badge.good { background: #d1f0e0; color: #0d6b35; border-color: #2bac76; }
+.aph-acts { display: flex; gap: 7px; }
+.aph-btn {
+  height: 29px; padding: 0 11px; border-radius: 6px; font-size: 12px; font-weight: 600;
+  font-family: 'Inter', sans-serif; cursor: pointer; display: flex; align-items: center; gap: 4px;
+}
+.aph-btn.out { background: white; border: 1px solid #ddd; color: #3d3d3d; }
+.aph-btn.out:hover { background: #f5f5f5; }
+.aph-btn.fill { background: #f06a99; border: none; color: white; }
+.aph-btn.fill:hover { background: #e05a89; }
+
+.aph-tabs { display: flex; }
+.aph-tab {
+  padding: 7px 14px; font-size: 13px; color: #6b6b6b; cursor: pointer;
+  border-bottom: 2px solid transparent; transition: all 0.12s;
+  font-family: 'Inter', sans-serif; font-weight: 500;
+  display: flex; align-items: center; gap: 4px;
+}
+.aph-tab:hover { color: #1e1e2e; }
+.aph-tab.active { color: #1e1e2e; font-weight: 600; border-bottom-color: #f06a99; }
+
+/* Risk banner */
+.risk-banner {
+  margin: 10px 28px 0; padding: 9px 14px;
+  background: #fff7e6; border: 1px solid #ffd666; border-left: 3px solid #ffa940;
+  border-radius: 6px; display: flex; align-items: center; gap: 9px;
+  font-family: 'Inter', sans-serif; font-size: 12px; color: #7c4a00;
+  opacity: 0; transform: translateY(-4px); transition: all 0.4s 0.8s;
+  position: relative; z-index: 10;
+}
+.risk-banner.show { opacity: 1; transform: none; }
+.rb-close { margin-left: auto; background: transparent; border: none; color: #aaa; cursor: pointer; font-size: 14px; }
+
+/* Table */
+.task-table-hdr {
+  display: grid;
+  grid-template-columns: 30px 1fr 150px 130px 100px 95px;
+  padding: 5px 28px;
+  border-bottom: 1px solid #ebebeb;
+  background: white; position: sticky; top: 0; z-index: 2;
+}
+.tth-c { font-size: 10px; font-weight: 600; color: #9b9b9b; letter-spacing: 0.04em; text-transform: uppercase; font-family: 'Inter', sans-serif; display: flex; align-items: center; }
+
+.task-list-scroll { flex: 1; overflow-y: auto; }
+.task-list-scroll::-webkit-scrollbar { width: 5px; }
+.task-list-scroll::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 3px; }
+
+.task-sect-hdr {
+  padding: 7px 28px; display: flex; align-items: center; gap: 7px;
+  background: #fafafa; border-bottom: 1px solid #ebebeb; border-top: 1px solid #ebebeb;
+  position: sticky; top: 31px; z-index: 1;
+}
+.tsh-arr { font-size: 10px; color: #6b6b6b; cursor: pointer; }
+.tsh-name { font-size: 12px; font-weight: 700; color: #1e1e2e; flex: 1; font-family: 'Inter', sans-serif; }
+.tsh-cnt { font-size: 11px; color: #9b9b9b; }
+
+.task-row {
+  display: grid;
+  grid-template-columns: 30px 1fr 150px 130px 100px 95px;
+  padding: 0 28px;
+  border-bottom: 1px solid #f2f2f2;
+  align-items: center; min-height: 38px;
+  cursor: pointer; transition: background 0.08s;
+  opacity: 0; transform: translateX(-8px);
+  transition: background 0.08s, opacity 0.35s, transform 0.35s;
+}
+.task-row.vis { opacity: 1; transform: none; }
+.task-row:hover { background: #fafafa; }
+
+.tr-chk { display: flex; align-items: center; justify-content: center; }
+.t-checkbox {
+  width: 15px; height: 15px; border-radius: 50%;
+  border: 2px solid #d0d0d0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.15s; flex-shrink: 0;
+}
+.t-checkbox:hover { border-color: #2bac76; }
+.t-checkbox.blocked { border-color: #ff4d4f; border-style: dashed; }
+.t-checkbox.done { background: #2bac76; border-color: #2bac76; color: white; font-size: 8px; }
+
+.tr-name-cell { display: flex; align-items: center; gap: 6px; padding: 7px 0; min-width: 0; }
+.tr-tname { font-size: 13px; color: #1e1e2e; font-family: 'Inter', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.blocker-tag { background: #fff1f0; border: 1px solid #ffccc7; color: #cf1322; font-size: 10px; font-weight: 600; padding: 1px 5px; border-radius: 3px; flex-shrink: 0; font-family: 'Inter', sans-serif; }
+.new-tag { background: #f6ffed; border: 1px solid #b7eb8f; color: #389e0d; font-size: 10px; font-weight: 600; padding: 1px 5px; border-radius: 3px; flex-shrink: 0; font-family: 'Inter', sans-serif; }
+.ai-tag { background: #fff0f6; border: 1px solid #ffadd2; color: #c41d7f; font-size: 10px; font-weight: 600; padding: 1px 5px; border-radius: 3px; flex-shrink: 0; font-family: 'Inter', sans-serif; }
+
+.tr-assign { display: flex; align-items: center; gap: 5px; }
+.tr-av { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: white; flex-shrink: 0; }
+.tr-aname { font-size: 12px; color: #4a4a4a; font-family: 'Inter', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tr-due { font-size: 12px; font-family: 'Inter', sans-serif; }
+.tr-due.ov { color: #cf1322; font-weight: 600; }
+.tr-due.soon { color: #d46b08; font-weight: 600; }
+.tr-due.ok { color: #4a4a4a; }
+.pri-badge { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 10px; font-family: 'Inter', sans-serif; }
+.pri-h { background: #fff1f0; color: #cf1322; }
+.pri-m { background: #fff7e6; color: #d46b08; }
+.pri-l { background: #f6ffed; color: #389e0d; }
+.stat-badge { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 10px; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 3px; }
+.s-ns { background: #f5f5f5; color: #8c8c8c; }
+.s-ip { background: #e6f4ff; color: #0958d9; }
+.s-bl { background: #fff1f0; color: #cf1322; }
+
+.add-task-row { padding: 7px 28px; display: flex; align-items: center; gap: 7px;
+  cursor: pointer; color: #9b9b9b; font-size: 13px; font-family: 'Inter', sans-serif;
+  transition: all 0.1s; border-bottom: 1px solid #f2f2f2; }
+.add-task-row:hover { color: #1e1e2e; background: #fafafa; }
+
+/* Right detail panel */
+.detail-panel {
+  width: 360px; border-left: 1px solid #e8e8e8;
+  background: white; display: flex; flex-direction: column;
+  overflow-y: auto; position: absolute; right: 0; top: 0; bottom: 0; z-index: 8;
+  box-shadow: -12px 0 30px rgba(30,30,46,0.08);
+  transform: translateX(360px); transition: transform 0.32s cubic-bezier(0.16,1,0.3,1);
+}
+.detail-panel.open { transform: none; }
+.detail-panel::-webkit-scrollbar { width: 4px; }
+.detail-panel::-webkit-scrollbar-thumb { background: #e8e8e8; }
+.dp-header {
+  padding: 14px 18px; border-bottom: 1px solid #ebebeb;
+  display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+}
+.dp-title { font-size: 14px; font-weight: 700; color: #1e1e2e; font-family: 'Inter', sans-serif; line-height: 1.3; }
+.dp-close { width: 26px; height: 26px; border: none; background: transparent; cursor: pointer; font-size: 16px; color: #6b6b6b; border-radius: 5px; display: flex; align-items: center; justify-content: center; }
+.dp-close:hover { background: #f0f0f0; }
+.dp-body { padding: 14px 18px; flex: 1; }
+.dp-field { margin-bottom: 14px; }
+.dp-lbl { font-size: 10px; font-weight: 600; color: #9b9b9b; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 5px; font-family: 'Inter', sans-serif; }
+.dp-val { font-size: 13px; color: #1e1e2e; font-family: 'Inter', sans-serif; }
+.dp-desc { font-size: 13px; color: #4a4a4a; line-height: 1.6; font-family: 'Inter', sans-serif; }
+.dp-tag { display: inline-flex; align-items: center; gap: 4px; background: #f5f5f5; color: #4a4a4a; font-size: 11px; padding: 3px 8px; border-radius: 10px; font-family: 'Inter', sans-serif; }
+
+/* Back to slack btn */
+.back-btn {
+  position: fixed; top: 54px; right: 16px; z-index: 600;
+  background: #4a154b; border: none; color: white;
+  padding: 7px 14px; border-radius: 18px; font-size: 12px; font-weight: 700;
+  cursor: pointer; font-family: 'Lato', sans-serif;
+  display: flex; align-items: center; gap: 5px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+  opacity: 0; transition: opacity 0.25s; pointer-events: none;
+}
+.back-btn.show { opacity: 1; pointer-events: all; }
+
+/* Demo nav */
+.demo-nav {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(20,22,26,0.94); backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 36px;
+  padding: 8px 16px; z-index: 1000;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.5);
+}
+.ds-btn { padding: 6px 14px; border-radius: 18px; border: none; cursor: pointer; font-size: 12px; font-weight: 700; font-family: 'Lato', sans-serif; transition: all 0.18s; white-space: nowrap; }
+.ds-btn.off { background: transparent; color: rgba(255,255,255,0.38); }
+.ds-btn.on { background: #ff584a; color: white; }
+.ds-btn.done { background: rgba(43,172,118,0.18); color: #4dd4a0; }
+.demo-div { width: 1px; height: 18px; background: rgba(255,255,255,0.08); }
+.demo-next {
+  background: #1264a3; color: white; border: none;
+  padding: 6px 16px; border-radius: 18px; font-size: 12px; font-weight: 700;
+  font-family: 'Lato', sans-serif; cursor: pointer; transition: background 0.15s;
+  display: flex; align-items: center; gap: 5px;
+}
+.demo-next:hover { background: #0f53a0; }
+
+@media (max-width: 960px) {
+  .sidebar, .asana-sb { width: 190px; }
+  .tb-search { width: min(260px, 36vw); }
+  .ch-head-topic, .tth-c:nth-child(n+5), .task-row > :nth-child(n+5) { display: none; }
+  .task-table-hdr, .task-row { grid-template-columns: 30px minmax(180px, 1fr) 130px 100px; }
+  .detail-panel { width: min(360px, 78vw); transform: translateX(100%); }
+}
+
+@media (max-width: 680px) {
+  .top-bar { padding: 0 10px; }
+  .tb-nav-btn, .tb-right, .sidebar, .asana-sb, .ch-head-topic, .ch-head-divider,
+  .ch-hdr-btn:not(.asana-btn), .input-toolbar, .asana-search, .aph-tabs { display: none; }
+  .tb-left { flex: 1; }
+  .tb-search { width: auto; flex: 1; }
+  .chat-header { padding: 0 12px; }
+  .messages-container { padding: 12px 12px 92px; }
+  .msg-input-area { padding: 8px 10px 76px; }
+  .ai-actions, .tdc-actions { align-items: stretch; }
+  .btn-primary, .btn-secondary, .btn-add-task, .btn-edit-task { flex: 1; justify-content: center; }
+  .tdc-task-meta { flex-wrap: wrap; }
+  .asana-topbar { padding: 0 10px; }
+  .aph { padding: 14px 14px 0; }
+  .aph-actions .out { display: none; }
+  .risk-banner { margin: 8px 14px 0; align-items: flex-start; }
+  .task-table-hdr, .task-row { grid-template-columns: 28px minmax(150px, 1fr) 88px; padding-left: 14px; padding-right: 14px; }
+  .tth-c:nth-child(n+4), .task-row > :nth-child(n+4) { display: none; }
+  .task-sect-hdr, .add-task-row { padding-left: 14px; padding-right: 14px; }
+  .detail-panel { width: 100%; }
+  .back-btn { top: 50px; right: 10px; }
+  .demo-nav { bottom: 8px; width: calc(100% - 16px); justify-content: center; gap: 4px; padding: 7px; }
+  .ds-btn { min-width: 34px; padding: 7px 9px; font-size: 0; }
+  .ds-btn::after { content: attr(data-short); font-size: 11px; }
+  .demo-next { margin-left: auto; padding: 7px 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ══ SLACK VIEW ══ -->
+  <div id="slack-view" style="display:flex;flex-direction:column;height:100%">
+
+    <!-- Top bar with Slack logo -->
+    <div class="top-bar">
+      <div class="tb-left">
+        <!-- Slack logo SVG -->
+        <svg width="18" height="18" viewBox="0 0 270 270" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M99.4 151.2c0 7.1-5.8 12.9-12.9 12.9-7.1 0-12.9-5.8-12.9-12.9 0-7.1 5.8-12.9 12.9-12.9h12.9v12.9z" fill="#E01E5A"/>
+          <path d="M105.9 151.2c0-7.1 5.8-12.9 12.9-12.9 7.1 0 12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9-7.1 0-12.9-5.8-12.9-12.9v-32.3z" fill="#E01E5A"/>
+          <path d="M118.8 99.4c-7.1 0-12.9-5.8-12.9-12.9 0-7.1 5.8-12.9 12.9-12.9 7.1 0 12.9 5.8 12.9 12.9v12.9h-12.9z" fill="#36C5F0"/>
+          <path d="M118.8 105.9c7.1 0 12.9 5.8 12.9 12.9 0 7.1-5.8 12.9-12.9 12.9H86.5c-7.1 0-12.9-5.8-12.9-12.9 0-7.1 5.8-12.9 12.9-12.9h32.3z" fill="#36C5F0"/>
+          <path d="M170.6 118.8c0-7.1 5.8-12.9 12.9-12.9 7.1 0 12.9 5.8 12.9 12.9 0 7.1-5.8 12.9-12.9 12.9h-12.9v-12.9z" fill="#2EB67D"/>
+          <path d="M164.1 118.8c0 7.1-5.8 12.9-12.9 12.9-7.1 0-12.9-5.8-12.9-12.9V86.5c0-7.1 5.8-12.9 12.9-12.9 7.1 0 12.9 5.8 12.9 12.9v32.3z" fill="#2EB67D"/>
+          <path d="M151.2 170.6c7.1 0 12.9 5.8 12.9 12.9 0 7.1-5.8 12.9-12.9 12.9-7.1 0-12.9-5.8-12.9-12.9v-12.9h12.9z" fill="#ECB22E"/>
+          <path d="M151.2 164.1c-7.1 0-12.9-5.8-12.9-12.9 0-7.1 5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9 0 7.1-5.8 12.9-12.9 12.9h-32.3z" fill="#ECB22E"/>
+        </svg>
+        <button class="tb-nav-btn">‹</button>
+        <button class="tb-nav-btn">›</button>
+      </div>
+      <div class="tb-search">
+        <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Search Acme Corp
+      </div>
+      <div class="tb-right">
+        <button class="tb-icon">🔔</button>
+        <div style="width:27px;height:27px;border-radius:6px;background:#c97b1e;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;cursor:pointer">SS</div>
+      </div>
+    </div>
+
+    <!-- Main layout -->
+    <div class="main-layout">
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <div class="workspace-name">Acme Corp</div>
+          <div class="online-dot"></div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="ch-item"><span class="ch-hash" style="font-size:15px">🏠</span><span class="ch-name">Home</span></div>
+          <div class="ch-item"><span class="ch-hash" style="font-size:15px">💬</span><span class="ch-name">DMs</span></div>
+          <div class="ch-item"><span class="ch-hash" style="font-size:15px">🔖</span><span class="ch-name">Activity</span></div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-header">
+            <span class="ssh-label">Channels</span>
+            <button class="ssh-add">+</button>
+          </div>
+          <div class="ch-item"><span class="ch-hash">#</span><span class="ch-name">general</span></div>
+          <div class="ch-item"><span class="ch-hash">#</span><span class="ch-name">announcements</span></div>
+          <div class="ch-item active"><span class="ch-hash">#</span><span class="ch-name">product-launch</span></div>
+          <div class="ch-item"><span class="ch-hash">#</span><span class="ch-name">engineering</span><span class="ch-badge">3</span></div>
+          <div class="ch-item"><span class="ch-hash">#</span><span class="ch-name">design</span></div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-header">
+            <span class="ssh-label">Direct Messages</span>
+            <button class="ssh-add">+</button>
+          </div>
+          <div class="dm-item">
+            <div class="dm-av" style="background:#c97b1e">SS</div>
+            <span class="dm-name">Simiao Song</span>
+            <div class="dm-st" style="background:#2bac76"></div>
+          </div>
+          <div class="dm-item">
+            <div class="dm-av" style="background:#5b8fd9">SY</div>
+            <span class="dm-name">Starry Yao</span>
+            <div class="dm-st" style="background:#2bac76"></div>
+          </div>
+          <div class="dm-item">
+            <div class="dm-av" style="background:#6f5fc4">SC</div>
+            <span class="dm-name">Sapphire Chen</span>
+            <div class="dm-st" style="background:#f5a623"></div>
+          </div>
+          <div class="dm-item">
+            <div class="dm-av" style="background:#3da882">SF</div>
+            <span class="dm-name">Serena Feng</span>
+            <div class="dm-st" style="background:#2bac76"></div>
+          </div>
+          <div class="dm-item">
+            <div class="dm-av" style="background:#ff584a">AI</div>
+            <span class="dm-name" style="display:flex;align-items:center;gap:5px">Asana AI <span class="bot-badge">APP</span></span>
+            <div class="dm-st" style="background:#2bac76"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat area -->
+      <div class="chat-area">
+        <div class="chat-header">
+          <div class="ch-head-left">
+            <span class="ch-head-hash">#</span>
+            <span class="ch-head-name">product-launch</span>
+            <div class="ch-head-divider"></div>
+            <span class="ch-head-topic">Q3 Feature Release · 12 members</span>
+          </div>
+          <div class="ch-head-right">
+            <button class="ch-hdr-btn">👥 12</button>
+            <button class="ch-hdr-btn">🔍 Search</button>
+            <button class="ch-hdr-btn asana-btn" onclick="triggerTransition()">
+              <svg width="12" height="11" viewBox="0 0 213 198" fill="none"><circle cx="167" cy="151" r="46.5" fill="#ff584a"/><circle cx="46.5" cy="151" r="46.5" fill="#ff584a"/><circle cx="106.8" cy="46.5" r="46.5" fill="#ff584a"/></svg>
+              Asana
+            </button>
+          </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="messages-container" id="messages">
+          <div class="date-div">Today</div>
+
+          <!-- Message 1 – Simiao Song -->
+          <div class="msg-group" id="msg1">
+            <div class="msg-av" style="background:#c97b1e">SS</div>
+            <div class="msg-body">
+              <div class="msg-hdr">
+                <span class="msg-name">Simiao Song</span>
+                <span class="msg-ts">10:02 AM</span>
+              </div>
+              <div class="msg-txt">
+                We need to ship the API integration by <span class="bl">Sep 15</span>.
+                <span class="mention">@Starry</span> can you own the backend?
+                <span class="mention">@Sapphire</span> you take frontend. Let's sync this afternoon 🚀
+              </div>
+            </div>
+            <div class="msg-acts"><button class="msg-act">😊</button><button class="msg-act">↩</button><button class="msg-act">⋮</button></div>
+          </div>
+
+          <!-- Message 2 – Starry Yao -->
+          <div class="msg-group" id="msg2">
+            <div class="msg-av" style="background:#5b8fd9">SY</div>
+            <div class="msg-body">
+              <div class="msg-hdr">
+                <span class="msg-name">Starry Yao</span>
+                <span class="msg-ts">10:05 AM</span>
+              </div>
+              <div class="msg-txt">
+                On it! But I need DevOps to give me production access first — that's a <span class="bl">blocker</span> right now.
+                Can someone loop in <span class="mention">@Serena</span>?
+              </div>
+            </div>
+            <div class="msg-acts"><button class="msg-act">😊</button><button class="msg-act">↩</button><button class="msg-act">⋮</button></div>
+          </div>
+
+          <!-- Message 3 – Sapphire Chen -->
+          <div class="msg-group" id="msg3">
+            <div class="msg-av" style="background:#6f5fc4">SC</div>
+            <div class="msg-body">
+              <div class="msg-hdr">
+                <span class="msg-name">Sapphire Chen</span>
+                <span class="msg-ts">10:07 AM</span>
+              </div>
+              <div class="msg-txt">
+                Frontend needs the API spec first, so I'm also blocked until Starry is done.
+                Let's say my deadline is <span class="bl">Sep 18</span> then.
+                <span class="mention">@Asana AI</span> can you summarize and create a project from this?
+              </div>
+            </div>
+            <div class="msg-acts"><button class="msg-act">😊</button><button class="msg-act">↩</button><button class="msg-act">⋮</button></div>
+          </div>
+
+          <!-- Typing -->
+          <div class="typing-wrap" id="typing">
+            <div class="msg-av" style="background:#ff584a;width:28px;height:28px;font-size:10px;border-radius:4px">
+              <svg width="14" height="12" viewBox="0 0 213 198" fill="none"><circle cx="167" cy="151" r="46.5" fill="white"/><circle cx="46.5" cy="151" r="46.5" fill="white"/><circle cx="106.8" cy="46.5" r="46.5" fill="white"/></svg>
+            </div>
+            <div class="typing-dots"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div>
+            <span class="typing-txt">Asana AI is analyzing conversation…</span>
+          </div>
+
+          <!-- AI Response (hidden initially) -->
+          <div class="msg-group" id="msg-ai" style="display:none">
+            <div class="msg-av" style="background:#ff584a">
+              <svg width="16" height="14" viewBox="0 0 213 198" fill="none"><circle cx="167" cy="151" r="46.5" fill="white"/><circle cx="46.5" cy="151" r="46.5" fill="white"/><circle cx="106.8" cy="46.5" r="46.5" fill="white"/></svg>
+            </div>
+            <div class="msg-body">
+              <div class="msg-hdr">
+                <span class="msg-name">Asana AI <span class="bot-badge">APP</span></span>
+                <span class="msg-ts">10:08 AM</span>
+              </div>
+              <div class="msg-txt">
+                Got it! Analyzed the last 6 messages in <span class="bl">#product-launch</span> and extracted these signals:
+              </div>
+              <div class="ai-card" id="ai-card">
+                <div class="ai-card-hdr">
+                  <span class="ai-pill">AI EXTRACTED</span>
+                  <span class="ai-card-title">4 signals · Ready to create Asana project</span>
+                </div>
+                <div class="ai-rows">
+                  <div class="ai-row"><span class="ai-row-ic">📋</span><span><span class="bl">Tasks:</span> Backend API (Starry) · Frontend UI (Sapphire) · DevOps access request</span></div>
+                  <div class="ai-row"><span class="ai-row-ic">🚨</span><span><span class="bl">Blocker:</span> Production access — Sapphire also blocked until Starry completes API spec</span></div>
+                  <div class="ai-row"><span class="ai-row-ic">📅</span><span><span class="bl">Deadlines:</span> API integration → Sep 15 · Frontend → Sep 18</span></div>
+                  <div class="ai-row"><span class="ai-row-ic">👤</span><span><span class="bl">Assignees:</span> Starry Yao, Sapphire Chen, Serena Feng (DevOps)</span></div>
+                </div>
+                <div class="ai-actions">
+                  <button class="btn-primary" onclick="triggerTransition()">
+                    <svg width="12" height="11" viewBox="0 0 213 198" fill="none"><circle cx="167" cy="151" r="46.5" fill="white"/><circle cx="46.5" cy="151" r="46.5" fill="white"/><circle cx="106.8" cy="46.5" r="46.5" fill="white"/></svg>
+                    Create Project in Asana
+                  </button>
+                  <button class="btn-secondary" onclick="toggleCardEditing(this)">Edit before creating</button>
+                  <button class="btn-secondary" onclick="dismissAiCard()">Dismiss</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /messages -->
+
+        <!-- Input -->
+        <div class="msg-input-area">
+          <div class="input-box">
+            <div class="input-toolbar">
+              <button class="i-tool"><b style="font-size:12px">B</b></button>
+              <button class="i-tool"><i style="font-size:12px">I</i></button>
+              <button class="i-tool"><s style="font-size:11px">S</s></button>
+              <div class="i-divider"></div>
+              <button class="i-tool">🔗</button>
+              <button class="i-tool" title="List">≡</button>
+              <div class="i-divider"></div>
+              <button class="i-tool">@</button>
+              <button class="i-tool">😊</button>
+            </div>
+            <div class="input-row">
+              <input class="input-field" id="msg-input" placeholder="Message #product-launch" oninput="updateSendBtn()" onkeydown="handleEnter(event)">
+              <button class="i-tool">📎</button>
+              <button class="send-btn" id="send-btn" onclick="sendMessage()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M3 12L21 3L12 21L10.5 13.5L3 12Z" fill="currentColor"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div><!-- /chat-area -->
+
+    </div><!-- /main-layout -->
+  </div><!-- /slack-view -->
+
+  <!-- ── TRANSITION ── -->
+  <div id="transition-overlay">
+    <div class="trans-content">
+      <div class="trans-logos">
+        <div class="trans-logo" style="background:#3f0e40">
+          <svg width="28" height="28" viewBox="0 0 270 270" fill="none">
+            <path d="M99.4 151.2c0 7.1-5.8 12.9-12.9 12.9-7.1 0-12.9-5.8-12.9-12.9 0-7.1 5.8-12.9 12.9-12.9h12.9v12.9z" fill="#E01E5A"/>
+            <path d="M105.9 151.2c0-7.1 5.8-12.9 12.9-12.9 7.1 0 12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9-7.1 0-12.9-5.8-12.9-12.9v-32.3z" fill="#E01E5A"/>
+            <path d="M118.8 99.4c-7.1 0-12.9-5.8-12.9-12.9 0-7.1 5.8-12.9 12.9-12.9 7.1 0 12.9 5.8 12.9 12.9v12.9h-12.9z" fill="#36C5F0"/>
+            <path d="M118.8 105.9c7.1 0 12.9 5.8 12.9 12.9 0 7.1-5.8 12.9-12.9 12.9H86.5c-7.1 0-12.9-5.8-12.9-12.9 0-7.1 5.8-12.9 12.9-12.9h32.3z" fill="#36C5F0"/>
+            <path d="M170.6 118.8c0-7.1 5.8-12.9 12.9-12.9 7.1 0 12.9 5.8 12.9 12.9 0 7.1-5.8 12.9-12.9 12.9h-12.9v-12.9z" fill="#2EB67D"/>
+            <path d="M164.1 118.8c0 7.1-5.8 12.9-12.9 12.9-7.1 0-12.9-5.8-12.9-12.9V86.5c0-7.1 5.8-12.9 12.9-12.9 7.1 0 12.9 5.8 12.9 12.9v32.3z" fill="#2EB67D"/>
+            <path d="M151.2 170.6c7.1 0 12.9 5.8 12.9 12.9 0 7.1-5.8 12.9-12.9 12.9-7.1 0-12.9-5.8-12.9-12.9v-12.9h12.9z" fill="#ECB22E"/>
+            <path d="M151.2 164.1c-7.1 0-12.9-5.8-12.9-12.9 0-7.1 5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9 0 7.1-5.8 12.9-12.9 12.9h-32.3z" fill="#ECB22E"/>
+          </svg>
+        </div>
+        <div class="trans-arrow">→</div>
+        <div class="trans-logo" style="background:#1e1e2e">
+          <svg width="24" height="22" viewBox="0 0 213 198" fill="none"><circle cx="167" cy="151" r="46.5" fill="#FF584A"/><circle cx="46.5" cy="151" r="46.5" fill="#FF584A"/><circle cx="106.8" cy="46.5" r="46.5" fill="#FF584A"/></svg>
+        </div>
+      </div>
+      <div class="trans-dots"><div class="trans-dot"></div><div class="trans-dot"></div><div class="trans-dot"></div></div>
+      <div class="trans-subtitle">Creating project in Asana…</div>
+    </div>
+  </div>
+
+  <!-- ══ ASANA VIEW ══ -->
+  <div id="asana-view">
+
+    <div class="asana-topbar">
+      <div class="asana-topbar-left">
+        <div class="asana-wordmark">
+          <svg width="20" height="18" viewBox="0 0 213 198" fill="none"><circle cx="167" cy="151" r="46.5" fill="#FF584A"/><circle cx="46.5" cy="151" r="46.5" fill="#FF584A"/><circle cx="106.8" cy="46.5" r="46.5" fill="#FF584A"/></svg>
+          <span class="asana-wordmark-text">asana</span>
+        </div>
+        <div style="width:1px;height:18px;background:rgba(255,255,255,0.08)"></div>
+        <div class="asana-search">
+          <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Search tasks, projects…
+        </div>
+      </div>
+      <div class="asana-topbar-right">
+        <button class="a-tb-btn pri">+ Create</button>
+        <div class="a-av" style="background:#c97b1e">SS</div>
+      </div>
+    </div>
+
+    <div class="asana-body">
+      <!-- Sidebar -->
+      <div class="asana-sb">
+        <div class="asb-sect">
+          <div class="asb-item"><span class="asb-ic">🏠</span><span class="asb-lbl">Home</span></div>
+          <div class="asb-item"><span class="asb-ic">✓</span><span class="asb-lbl">My Tasks</span></div>
+          <div class="asb-item"><span class="asb-ic">📥</span><span class="asb-lbl">Inbox</span><span class="asb-badge">2</span></div>
+          <div class="asb-item"><span class="asb-ic">📊</span><span class="asb-lbl">Reporting</span></div>
+        </div>
+        <div class="asb-sect">
+          <div class="asb-sect-hdr">
+            <span>Projects</span>
+            <button style="background:transparent;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:14px">+</button>
+          </div>
+          <div class="asb-proj active">
+            <div class="asb-proj-dot" style="background:#ff584a"></div>
+            <span class="asb-proj-name">Q3 API Integration Launch</span>
+          </div>
+          <div class="asb-proj">
+            <div class="asb-proj-dot" style="background:#6f5fc4"></div>
+            <span class="asb-proj-name">Design System Redesign</span>
+          </div>
+          <div class="asb-proj">
+            <div class="asb-proj-dot" style="background:#5b8fd9"></div>
+            <span class="asb-proj-name">Q3 Marketing Campaign</span>
+          </div>
+          <div class="asb-proj">
+            <div class="asb-proj-dot" style="background:#2bac76"></div>
+            <span class="asb-proj-name">Onboarding Revamp</span>
+          </div>
+        </div>
+        <div class="asb-sect">
+          <div class="asb-sect-hdr">Teams</div>
+          <div class="asb-item"><span class="asb-ic">⚙️</span><span class="asb-lbl">Engineering</span></div>
+          <div class="asb-item"><span class="asb-ic">🎨</span><span class="asb-lbl">Design</span></div>
+          <div class="asb-item active"><span class="asb-ic">🚀</span><span class="asb-lbl">Product</span></div>
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <div class="asana-main" id="asana-main">
+        <div class="aph">
+          <div class="aph-top">
+            <div class="aph-title-row">
+              <div class="aph-title">🚀 Q3 API Integration Launch</div>
+              <div class="aph-badge" id="aph-badge">At risk</div>
+            </div>
+            <div class="aph-acts">
+              <button class="aph-btn out">⋮ More</button>
+              <button class="aph-btn out">👥 Share</button>
+              <button class="aph-btn fill" onclick="openDetail('blocker')">+ Add task</button>
+            </div>
+          </div>
+          <div class="aph-tabs">
+            <div class="aph-tab active">≡ List</div>
+            <div class="aph-tab">⊞ Board</div>
+            <div class="aph-tab">📅 Timeline</div>
+            <div class="aph-tab">📊 Dashboard</div>
+          </div>
+        </div>
+
+        <div id="risk-banner" class="risk-banner">
+          <span>⚠️</span>
+          <span><strong>AI Risk Alert:</strong> Production access for Starry Yao pending 3+ days. 2 downstream tasks at risk of missing deadline.</span>
+          <button class="rb-close" aria-label="Dismiss risk alert" onclick="dismissRisk()">✕</button>
+        </div>
+
+        <div class="task-table-hdr">
+          <div class="tth-c"></div>
+          <div class="tth-c">Task name</div>
+          <div class="tth-c">Assignee</div>
+          <div class="tth-c">Due date</div>
+          <div class="tth-c">Priority</div>
+          <div class="tth-c">Status</div>
+        </div>
+
+        <div class="task-list-scroll">
+          <!-- Blockers section -->
+          <div class="task-sect-hdr"><span class="tsh-arr">▾</span><span class="tsh-name">🚨 Blockers</span><span class="tsh-cnt">1 task</span></div>
+          <div class="task-row" id="tr1" style="transition-delay:.04s" onclick="openDetail('blocker')">
+            <div class="tr-chk"><div class="t-checkbox blocked"></div></div>
+            <div class="tr-name-cell"><span class="tr-tname">Request production environment access from DevOps</span><span class="blocker-tag">BLOCKER</span></div>
+            <div class="tr-assign"><div class="tr-av" style="background:#3da882">SF</div><span class="tr-aname">Serena Feng</span></div>
+            <div class="tr-due ov">Sep 10 · 3d late</div>
+            <div><span class="pri-badge pri-h">High</span></div>
+            <div><span class="stat-badge s-bl">⚠ Blocked</span></div>
+          </div>
+
+          <!-- Backend section -->
+          <div class="task-sect-hdr"><span class="tsh-arr">▾</span><span class="tsh-name">Backend</span><span class="tsh-cnt">2 tasks</span></div>
+          <div class="task-row" id="tr2" style="transition-delay:.09s" onclick="openDetail('backend')">
+            <div class="tr-chk"><div class="t-checkbox"></div></div>
+            <div class="tr-name-cell"><span class="tr-tname">Backend API integration development</span></div>
+            <div class="tr-assign"><div class="tr-av" style="background:#5b8fd9">SY</div><span class="tr-aname">Starry Yao</span></div>
+            <div class="tr-due soon">Sep 15</div>
+            <div><span class="pri-badge pri-h">High</span></div>
+            <div><span class="stat-badge s-ip">● In progress</span></div>
+          </div>
+          <div class="task-row" id="tr3" style="transition-delay:.14s" onclick="openDetail('apispec')">
+            <div class="tr-chk"><div class="t-checkbox"></div></div>
+            <div class="tr-name-cell"><span class="tr-tname">Write & publish API spec documentation</span></div>
+            <div class="tr-assign"><div class="tr-av" style="background:#5b8fd9">SY</div><span class="tr-aname">Starry Yao</span></div>
+            <div class="tr-due soon">Sep 13</div>
+            <div><span class="pri-badge pri-h">High</span></div>
+            <div><span class="stat-badge s-ns">○ Not started</span></div>
+          </div>
+
+          <!-- Frontend section -->
+          <div class="task-sect-hdr"><span class="tsh-arr">▾</span><span class="tsh-name">Frontend</span><span class="tsh-cnt">2 tasks</span></div>
+          <div class="task-row" id="tr4" style="transition-delay:.19s" onclick="openDetail('frontend')">
+            <div class="tr-chk"><div class="t-checkbox blocked"></div></div>
+            <div class="tr-name-cell"><span class="tr-tname">Frontend UI integration with API</span><span class="blocker-tag">BLOCKED</span></div>
+            <div class="tr-assign"><div class="tr-av" style="background:#6f5fc4">SC</div><span class="tr-aname">Sapphire Chen</span></div>
+            <div class="tr-due ok">Sep 18</div>
+            <div><span class="pri-badge pri-h">High</span></div>
+            <div><span class="stat-badge s-bl">⚠ Blocked</span></div>
+          </div>
+          <div class="task-row" id="tr5" style="transition-delay:.24s" onclick="openDetail('ux')">
+            <div class="tr-chk"><div class="t-checkbox"></div></div>
+            <div class="tr-name-cell"><span class="tr-tname">UX review & final QA pass</span><span class="new-tag">NEW</span></div>
+            <div class="tr-assign"><div class="tr-av" style="background:#6f5fc4">SC</div><span class="tr-aname">Sapphire Chen</span></div>
+            <div class="tr-due ok">Sep 19</div>
+            <div><span class="pri-badge pri-m">Medium</span></div>
+            <div><span class="stat-badge s-ns">○ Not started</span></div>
+          </div>
+
+          <!-- Launch section -->
+          <div class="task-sect-hdr"><span class="tsh-arr">▾</span><span class="tsh-name">Launch</span><span class="tsh-cnt">2 tasks</span></div>
+          <div class="task-row" id="tr6" style="transition-delay:.29s" onclick="openDetail('deploy')">
+            <div class="tr-chk"><div class="t-checkbox"></div></div>
+            <div class="tr-name-cell"><span class="tr-tname">Integration testing & production deployment</span></div>
+            <div class="tr-assign"><div class="tr-av" style="background:#c97b1e">SS</div><span class="tr-aname">Simiao Song</span></div>
+            <div class="tr-due ok">Sep 20</div>
+            <div><span class="pri-badge pri-h">High</span></div>
+            <div><span class="stat-badge s-ns">○ Not started</span></div>
+          </div>
+          <!-- AI-detected task row (hidden initially, shown in step 2) -->
+          <div class="task-row" id="tr7" style="transition-delay:.34s;display:none" onclick="openDetail('demo')">
+            <div class="tr-chk"><div class="t-checkbox"></div></div>
+            <div class="tr-name-cell"><span class="tr-tname">Prepare product demo script & slides</span><span class="ai-tag">AI ADDED</span></div>
+            <div class="tr-assign"><div class="tr-av" style="background:#c97b1e">SS</div><span class="tr-aname">Simiao Song</span></div>
+            <div class="tr-due ok">Sep 14</div>
+            <div><span class="pri-badge pri-m">Medium</span></div>
+            <div><span class="stat-badge s-ns">○ Not started</span></div>
+          </div>
+
+          <div class="add-task-row"><span>+</span> Add task</div>
+        </div><!-- /task-list-scroll -->
+      </div><!-- /asana-main -->
+
+      <!-- Detail panel -->
+      <div class="detail-panel" id="detail-panel">
+        <div class="dp-header">
+          <div class="dp-title" id="dp-title">Task Details</div>
+          <button class="dp-close" onclick="closeDetail()">✕</button>
+        </div>
+        <div class="dp-body" id="dp-body"></div>
+      </div>
+
+    </div><!-- /asana-body -->
+  </div><!-- /asana-view -->
+
+  <!-- Back btn -->
+  <button class="back-btn" id="back-btn" onclick="backToSlack()">
+    <svg width="12" height="12" viewBox="0 0 270 270" fill="none">
+      <path d="M99.4 151.2c0 7.1-5.8 12.9-12.9 12.9-7.1 0-12.9-5.8-12.9-12.9 0-7.1 5.8-12.9 12.9-12.9h12.9v12.9z" fill="#E01E5A"/>
+      <path d="M105.9 151.2c0-7.1 5.8-12.9 12.9-12.9 7.1 0 12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9-7.1 0-12.9-5.8-12.9-12.9v-32.3z" fill="#E01E5A"/>
+      <path d="M118.8 99.4c-7.1 0-12.9-5.8-12.9-12.9 0-7.1 5.8-12.9 12.9-12.9 7.1 0 12.9 5.8 12.9 12.9v12.9h-12.9z" fill="#36C5F0"/>
+      <path d="M118.8 105.9c7.1 0 12.9 5.8 12.9 12.9 0 7.1-5.8 12.9-12.9 12.9H86.5c-7.1 0-12.9-5.8-12.9-12.9 0-7.1 5.8-12.9 12.9-12.9h32.3z" fill="#36C5F0"/>
+      <path d="M170.6 118.8c0-7.1 5.8-12.9 12.9-12.9 7.1 0 12.9 5.8 12.9 12.9 0 7.1-5.8 12.9-12.9 12.9h-12.9v-12.9z" fill="#2EB67D"/>
+      <path d="M164.1 118.8c0 7.1-5.8 12.9-12.9 12.9-7.1 0-12.9-5.8-12.9-12.9V86.5c0-7.1 5.8-12.9 12.9-12.9 7.1 0 12.9 5.8 12.9 12.9v32.3z" fill="#2EB67D"/>
+    </svg>
+    ← Back to Slack
+  </button>
+
+  <!-- Demo nav -->
+  <div class="demo-nav">
+    <button class="ds-btn on" id="dsb1" data-short="1" aria-label="Step 1: Project initialization" onclick="goStep(1)">1 · Project Init</button>
+    <div class="demo-div"></div>
+    <button class="ds-btn off" id="dsb2" data-short="2" aria-label="Step 2: Task detection" onclick="goStep(2)">2 · Task Detection</button>
+    <div class="demo-div"></div>
+    <button class="ds-btn off" id="dsb3" data-short="3" aria-label="Step 3: Risk alerts" onclick="goStep(3)">3 · Risk Alerts</button>
+    <div class="demo-div"></div>
+    <button class="demo-next" id="next-btn" onclick="nextStep()">Next →</button>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+// ── STATE ──
+let step = 1;
+let aiShown = false;
+let inAsana = false;
+let taskDetectShown = false;
+
+// ── STEP MACHINE ──
+function goStep(n) {
+  step = n;
+  updateNav();
+  if (n === 1) { if (inAsana) backToSlack(); showAI(); }
+  else if (n === 2) { showTaskDetection(); }
+  else if (n === 3) { showRiskAlerts(); }
+}
+
+function nextStep() {
+  if (step < 3) { step++; goStep(step); }
+  else { step = 1; restart(); }
+}
+
+function updateNav() {
+  for (let i = 1; i <= 3; i++) {
+    const b = document.getElementById('dsb' + i);
+    b.className = 'ds-btn ' + (i < step ? 'done' : i === step ? 'on' : 'off');
+  }
+  document.getElementById('next-btn').textContent = step < 3 ? 'Next →' : 'Restart ↺';
+}
+
+// ── STEP 1: AI project init in Slack ──
+function showAI() {
+  if (aiShown) return;
+  aiShown = true;
+  const typing = document.getElementById('typing');
+  const msgAi  = document.getElementById('msg-ai');
+  const aiCard = document.getElementById('ai-card');
+  typing.classList.add('show');
+  setTimeout(() => {
+    typing.classList.remove('show');
+    msgAi.style.display = 'flex';
+    msgAi.classList.add('anim');
+    setTimeout(() => { aiCard.classList.add('show'); scrollBottom(); }, 150);
+  }, 2000);
+}
+
+// ── STEP 2: Task detection in Slack ──
+function showTaskDetection() {
+  if (taskDetectShown) {
+    if (inAsana) backToSlack();
+    return;
+  }
+  taskDetectShown = true;
+  if (inAsana) backToSlack(addTaskDetectConvo);
+  else addTaskDetectConvo();
+}
+
+function addTaskDetectConvo() {
+  const container = document.getElementById('messages');
+  const anchor = document.getElementById('typing');
+
+  // New message from Simiao
+  const m1 = mkMsg('SS', '#c97b1e', 'Simiao Song', '10:22 AM',
+    `Team, we also need someone to <span class="bl">prepare the product demo script and slides</span> before the Sep 15 release. <span class="mention">@Starry</span> or <span class="mention">@Sapphire</span> who can take this?`);
+  container.insertBefore(m1, anchor);
+  scrollBottom();
+
+  // Starry replies
+  setTimeout(() => {
+    const m2 = mkMsg('SY', '#5b8fd9', 'Starry Yao', '10:23 AM',
+      `I'm heads-down on API work — <span class="mention">@Simiao</span> maybe you can lead this? Deadline would be <span class="bl">Sep 14</span> to have a day buffer.`);
+    container.insertBefore(m2, anchor);
+    scrollBottom();
+
+    // Show AI typing
+    setTimeout(() => {
+      const typing2 = document.createElement('div');
+      typing2.id = 'typing2';
+      typing2.className = 'typing-wrap';
+      typing2.dataset.demoDynamic = 'true';
+      typing2.innerHTML = `
+        <div class="msg-av" style="background:#ff584a;width:28px;height:28px;font-size:10px;border-radius:4px">
+          <svg width="14" height="12" viewBox="0 0 213 198" fill="none"><circle cx="167" cy="151" r="46.5" fill="white"/><circle cx="46.5" cy="151" r="46.5" fill="white"/><circle cx="106.8" cy="46.5" r="46.5" fill="white"/></svg>
+        </div>
+        <div class="typing-dots"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div>
+        <span class="typing-txt">Asana AI detected an actionable task…</span>`;
+      container.insertBefore(typing2, anchor);
+      typing2.classList.add('show');
+      scrollBottom();
+
+      setTimeout(() => {
+        typing2.remove();
+        const aiMsg = mkMsgNode();
+        container.insertBefore(aiMsg, anchor);
+        scrollBottom();
+        setTimeout(() => {
+          document.getElementById('tdc-card').classList.add('show');
+          scrollBottom();
+        }, 150);
+      }, 1800);
+    }, 900);
+  }, 900);
+}
+
+function mkMsg(initials, bg, name, time, html) {
+  const d = document.createElement('div');
+  d.className = 'msg-group anim';
+  d.dataset.demoDynamic = 'true';
+  d.innerHTML = `
+    <div class="msg-av" style="background:${bg}">${initials}</div>
+    <div class="msg-body">
+      <div class="msg-hdr"><span class="msg-name">${name}</span><span class="msg-ts">${time}</span></div>
+      <div class="msg-txt">${html}</div>
+    </div>
+    <div class="msg-acts"><button class="msg-act">😊</button><button class="msg-act">↩</button><button class="msg-act">⋮</button></div>`;
+  return d;
+}
+
+function mkMsgNode() {
+  const d = document.createElement('div');
+  d.className = 'msg-group anim';
+  d.dataset.demoDynamic = 'true';
+  d.innerHTML = `
+    <div class="msg-av" style="background:#ff584a">
+      <svg width="16" height="14" viewBox="0 0 213 198" fill="none"><circle cx="167" cy="151" r="46.5" fill="white"/><circle cx="46.5" cy="151" r="46.5" fill="white"/><circle cx="106.8" cy="46.5" r="46.5" fill="white"/></svg>
+    </div>
+    <div class="msg-body">
+      <div class="msg-hdr">
+        <span class="msg-name">Asana AI <span class="bot-badge">APP</span></span>
+        <span class="msg-ts">10:24 AM</span>
+      </div>
+      <div class="msg-txt">I detected a new task in this conversation. Want me to add it to the linked Asana project?</div>
+      <div class="task-detect-card" id="tdc-card">
+        <div class="tdc-header">
+          <span class="tdc-pill">TASK DETECTED</span>
+          <span class="tdc-label">New action item found in #product-launch</span>
+        </div>
+        <div class="tdc-task-preview">
+          <div class="tdc-task-row">
+            <span class="tdc-task-icon">📋</span>
+            <div class="tdc-task-info">
+              <div class="tdc-task-name">Prepare product demo script & slides</div>
+              <div class="tdc-task-meta">
+                <span class="tdc-meta-item">👤 Simiao Song</span>
+                <span class="tdc-meta-item">📅 Sep 14</span>
+                <span class="tdc-meta-item" style="color:#d46b08">⚡ Medium priority</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tdc-project-ref">
+          Add to:
+          <span class="tdc-project-badge">
+            <svg width="10" height="9" viewBox="0 0 213 198" fill="none"><circle cx="167" cy="151" r="46.5" fill="#ff584a"/><circle cx="46.5" cy="151" r="46.5" fill="#ff584a"/><circle cx="106.8" cy="46.5" r="46.5" fill="#ff584a"/></svg>
+            Q3 API Integration Launch
+          </span>
+        </div>
+        <div class="tdc-actions" id="tdc-actions">
+          <button class="btn-add-task" onclick="confirmTaskAdded()">
+            <svg width="10" height="9" viewBox="0 0 213 198" fill="none"><circle cx="167" cy="151" r="46.5" fill="white"/><circle cx="46.5" cy="151" r="46.5" fill="white"/><circle cx="106.8" cy="46.5" r="46.5" fill="white"/></svg>
+            Add to Asana
+          </button>
+          <button class="btn-edit-task" onclick="toggleTaskEditing(this)">Edit details</button>
+          <button class="btn-dismiss-task" onclick="this.closest('.task-detect-card').style.display='none'">Dismiss</button>
+        </div>
+        <div class="task-added-confirm" id="task-confirm">
+          ✅ Task added to <strong>Q3 API Integration Launch</strong> — <a href="#" style="color:#4dd4a0;text-decoration:none" onclick="triggerTransition(true);return false">View in Asana →</a>
+        </div>
+      </div>
+    </div>`;
+  return d;
+}
+
+function confirmTaskAdded() {
+  const actions = document.getElementById('tdc-actions');
+  const confirm = document.getElementById('task-confirm');
+  actions.style.display = 'none';
+  confirm.classList.add('show');
+  // Reveal tr7 in Asana when user goes there
+  scrollBottom();
+}
+
+// ── STEP 3: Risk alerts in Asana ──
+function showRiskAlerts() {
+  const banner = document.getElementById('risk-banner');
+  banner.style.display = 'flex';
+  if (!inAsana) {
+    triggerTransition(false, () => {
+      setTimeout(() => {
+        banner.classList.add('show');
+        openDetail('blocker');
+      }, 500);
+    });
+  } else {
+    banner.classList.add('show');
+    openDetail('blocker');
+  }
+}
+
+function dismissRisk() {
+  const banner = document.getElementById('risk-banner');
+  banner.classList.remove('show');
+  setTimeout(() => { banner.style.display = 'none'; }, 250);
+}
+
+// ── TRANSITION ──
+function triggerTransition(showTr7, callback) {
+  const ov = document.getElementById('transition-overlay');
+  ov.classList.add('show');
+  setTimeout(() => {
+    showAsana(showTr7);
+    setTimeout(() => {
+      ov.classList.remove('show');
+      if (callback) callback();
+    }, 600);
+  }, 850);
+}
+
+function showAsana(showTr7) {
+  inAsana = true;
+  const v = document.getElementById('asana-view');
+  v.style.display = 'flex';
+  requestAnimationFrame(() => requestAnimationFrame(() => v.classList.add('visible')));
+  document.getElementById('back-btn').classList.add('show');
+
+  // Show AI-added task row if task was confirmed
+  if (showTr7 || document.getElementById('task-confirm')?.classList.contains('show')) {
+    const tr7 = document.getElementById('tr7');
+    tr7.style.display = 'grid';
+  }
+
+  setTimeout(() => {
+    document.querySelectorAll('.task-row').forEach((r, i) => {
+      setTimeout(() => r.classList.add('vis'), i * 70);
+    });
+  }, 180);
+}
+
+function backToSlack(callback) {
+  inAsana = false;
+  const v = document.getElementById('asana-view');
+  v.classList.remove('visible');
+  setTimeout(() => { v.style.display = 'none'; if (callback) callback(); }, 350);
+  document.getElementById('back-btn').classList.remove('show');
+  closeDetail();
+}
+
+// ── DETAIL PANEL ──
+const details = {
+  blocker: {
+    t: 'Request production environment access',
+    b: `<div class="dp-field"><div class="dp-lbl">Status</div><span class="stat-badge s-bl" style="display:inline-flex">⚠ Blocked</span></div>
+        <div class="dp-field"><div class="dp-lbl">Assignee</div><div class="tr-assign"><div class="tr-av" style="background:#3da882;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;margin-right:6px">SF</div><span class="dp-val">Serena Feng (DevOps)</span></div></div>
+        <div class="dp-field"><div class="dp-lbl">Due Date</div><div class="dp-val" style="color:#cf1322">Sep 10 · 3 days overdue</div></div>
+        <div class="dp-field"><div class="dp-lbl">Priority</div><span class="pri-badge pri-h">High</span></div>
+        <div class="dp-field"><div class="dp-lbl">Description</div><div class="dp-desc">Starry Yao needs production environment access to proceed with API integration. This is blocking 2 downstream tasks. Escalation recommended.</div></div>
+        <div class="dp-field"><div class="dp-lbl">AI Risk Signal</div><div style="background:#fff7e6;border:1px solid #ffd666;border-radius:6px;padding:9px;font-size:12px;color:#7c4a00;font-family:'Inter',sans-serif;line-height:1.6">⚠️ Blocked for <strong>3 days</strong>. 2 dependent tasks at risk of missing Sep 15 deadline.<br><br><strong>Suggestion:</strong> Escalate to DevOps team lead, or shift backend deadline to Sep 18.</div></div>
+        <div class="dp-field"><div class="dp-lbl">Source</div><span class="dp-tag">💬 #product-launch · Slack</span></div>`
+  },
+  backend: {
+    t: 'Backend API integration development',
+    b: `<div class="dp-field"><div class="dp-lbl">Status</div><span class="stat-badge s-ip" style="display:inline-flex">● In progress</span></div>
+        <div class="dp-field"><div class="dp-lbl">Assignee</div><div class="tr-assign"><div class="tr-av" style="background:#5b8fd9;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;margin-right:6px">SY</div><span class="dp-val">Starry Yao</span></div></div>
+        <div class="dp-field"><div class="dp-lbl">Due Date</div><div class="dp-val" style="color:#d46b08">Sep 15</div></div>
+        <div class="dp-field"><div class="dp-lbl">Description</div><div class="dp-desc">Implement and test the full backend API. Blocked until production environment access is granted.</div></div>
+        <div class="dp-field"><div class="dp-lbl">Dependencies</div><div style="background:#fff1f0;border-radius:6px;padding:7px 10px;font-size:12px;color:#cf1322;font-family:'Inter',sans-serif">⛔ Waiting: Request production environment access</div></div>
+        <div class="dp-field"><div class="dp-lbl">Source</div><span class="dp-tag">💬 #product-launch · Slack</span></div>`
+  },
+  apispec: {
+    t: 'Write & publish API spec documentation',
+    b: `<div class="dp-field"><div class="dp-lbl">Status</div><span class="stat-badge s-ns" style="display:inline-flex">○ Not started</span></div>
+        <div class="dp-field"><div class="dp-lbl">Assignee</div><div class="tr-assign"><div class="tr-av" style="background:#5b8fd9;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;margin-right:6px">SY</div><span class="dp-val">Starry Yao</span></div></div>
+        <div class="dp-field"><div class="dp-lbl">Due Date</div><div class="dp-val" style="color:#d46b08">Sep 13</div></div>
+        <div class="dp-field"><div class="dp-lbl">Description</div><div class="dp-desc">Publish the API spec so Sapphire Chen can begin frontend integration. Critical path dependency.</div></div>
+        <div class="dp-field"><div class="dp-lbl">Source</div><span class="dp-tag">💬 #product-launch · Slack</span></div>`
+  },
+  frontend: {
+    t: 'Frontend UI integration with API',
+    b: `<div class="dp-field"><div class="dp-lbl">Status</div><span class="stat-badge s-bl" style="display:inline-flex">⚠ Blocked</span></div>
+        <div class="dp-field"><div class="dp-lbl">Assignee</div><div class="tr-assign"><div class="tr-av" style="background:#6f5fc4;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;margin-right:6px">SC</div><span class="dp-val">Sapphire Chen</span></div></div>
+        <div class="dp-field"><div class="dp-lbl">Due Date</div><div class="dp-val">Sep 18</div></div>
+        <div class="dp-field"><div class="dp-lbl">Description</div><div class="dp-desc">Integrate frontend UI with the new backend API. Blocked until Starry publishes the API spec documentation.</div></div>
+        <div class="dp-field"><div class="dp-lbl">Source</div><span class="dp-tag">💬 #product-launch · Slack</span></div>`
+  },
+  demo: {
+    t: 'Prepare product demo script & slides',
+    b: `<div class="dp-field"><div class="dp-lbl">Status</div><span class="stat-badge s-ns" style="display:inline-flex">○ Not started</span></div>
+        <div class="dp-field"><div class="dp-lbl">Assignee</div><div class="tr-assign"><div class="tr-av" style="background:#c97b1e;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;margin-right:6px">SS</div><span class="dp-val">Simiao Song</span></div></div>
+        <div class="dp-field"><div class="dp-lbl">Due Date</div><div class="dp-val">Sep 14</div></div>
+        <div class="dp-field"><div class="dp-lbl">Priority</div><span class="pri-badge pri-m">Medium</span></div>
+        <div class="dp-field"><div class="dp-lbl">How it was added</div><div style="background:#fff0f6;border:1px solid #ffadd2;border-radius:6px;padding:9px;font-size:12px;color:#7b2d5a;font-family:'Inter',sans-serif;line-height:1.5">🤖 <strong>AI-detected</strong> from <strong>#product-launch</strong> conversation and added after user confirmed. Original message by Simiao Song at 10:22 AM.</div></div>
+        <div class="dp-field"><div class="dp-lbl">Source</div><span class="dp-tag">💬 #product-launch · Slack · AI detected</span></div>`
+  },
+  deploy: {
+    t: 'Integration testing & production deployment',
+    b: `<div class="dp-field"><div class="dp-lbl">Status</div><span class="stat-badge s-ns" style="display:inline-flex">○ Not started</span></div>
+        <div class="dp-field"><div class="dp-lbl">Assignee</div><div class="tr-assign"><div class="tr-av" style="background:#c97b1e;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;margin-right:6px">SS</div><span class="dp-val">Simiao Song</span></div></div>
+        <div class="dp-field"><div class="dp-lbl">Due Date</div><div class="dp-val">Sep 20</div></div>
+        <div class="dp-field"><div class="dp-lbl">Source</div><span class="dp-tag">💬 #product-launch · Slack</span></div>`
+  },
+  ux: {
+    t: 'UX review & final QA pass',
+    b: `<div class="dp-field"><div class="dp-lbl">Status</div><span class="stat-badge s-ns" style="display:inline-flex">○ Not started</span></div>
+        <div class="dp-field"><div class="dp-lbl">Assignee</div><div class="tr-assign"><div class="tr-av" style="background:#6f5fc4;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;margin-right:6px">SC</div><span class="dp-val">Sapphire Chen</span></div></div>
+        <div class="dp-field"><div class="dp-lbl">Due Date</div><div class="dp-val">Sep 19</div></div>
+        <div class="dp-field"><div class="dp-lbl">Source</div><span class="dp-tag">💬 #product-launch · Slack</span></div>`
+  }
+};
+
+function openDetail(key) {
+  const d = details[key] || { t: 'Task Details', b: '' };
+  document.getElementById('dp-title').textContent = d.t;
+  document.getElementById('dp-body').innerHTML = d.b;
+  document.getElementById('detail-panel').classList.add('open');
+}
+function closeDetail() { document.getElementById('detail-panel').classList.remove('open'); }
+
+// ── INPUT ──
+function updateSendBtn() {
+  const v = document.getElementById('msg-input').value.trim().length > 0;
+  document.getElementById('send-btn').classList.toggle('active', v);
+}
+function handleEnter(e) { if (e.key === 'Enter') sendMessage(); }
+function escapeHtml(value) {
+  return value.replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+}
+function sendMessage() {
+  const inp = document.getElementById('msg-input');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  const container = document.getElementById('messages');
+  const anchor = document.getElementById('typing');
+  const msg = mkMsg('SS', '#c97b1e', 'Simiao Song', 'Just now', escapeHtml(txt));
+  container.insertBefore(msg, anchor);
+  inp.value = ''; updateSendBtn(); scrollBottom();
+
+  // Simulate AI detection if message looks task-like
+  const taskWords = ['need', 'should', 'must', 'please', 'can you', 'by ', 'deadline', 'task', 'todo', 'review', 'finish', 'complete', 'prepare', 'write', 'create', 'build', 'fix', 'update'];
+  const hasTask = taskWords.some(w => txt.toLowerCase().includes(w));
+  if (hasTask) {
+    setTimeout(() => {
+      const t2 = document.createElement('div');
+      t2.className = 'typing-wrap';
+      t2.innerHTML = `<div class="msg-av" style="background:#ff584a;width:28px;height:28px;font-size:10px;border-radius:4px"><svg width="14" height="12" viewBox="0 0 213 198" fill="none"><circle cx="167" cy="151" r="46.5" fill="white"/><circle cx="46.5" cy="151" r="46.5" fill="white"/><circle cx="106.8" cy="46.5" r="46.5" fill="white"/></svg></div><div class="typing-dots"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div><span class="typing-txt">Asana AI detected a potential task…</span>`;
+      container.insertBefore(t2, anchor);
+      t2.classList.add('show');
+      scrollBottom();
+      setTimeout(() => {
+        t2.remove();
+        showInlineDetect(txt, container, anchor);
+      }, 1600);
+    }, 800);
+  }
+}
+
+function showInlineDetect(text, container, anchor) {
+  const d = document.createElement('div');
+  d.className = 'msg-group anim';
+  d.dataset.demoDynamic = 'true';
+  const safeText = escapeHtml(text.length > 60 ? text.slice(0,60) + '…' : text);
+  d.innerHTML = `
+    <div class="msg-av" style="background:#ff584a">
+      <svg width="16" height="14" viewBox="0 0 213 198" fill="none"><circle cx="167" cy="151" r="46.5" fill="white"/><circle cx="46.5" cy="151" r="46.5" fill="white"/><circle cx="106.8" cy="46.5" r="46.5" fill="white"/></svg>
+    </div>
+    <div class="msg-body">
+      <div class="msg-hdr"><span class="msg-name">Asana AI <span class="bot-badge">APP</span></span><span class="msg-ts">Just now</span></div>
+      <div class="msg-txt">I spotted a potential action item. Add it to your linked Asana project?</div>
+      <div class="task-detect-card show" style="margin-top:7px">
+        <div class="tdc-header"><span class="tdc-pill">TASK DETECTED</span><span class="tdc-label">From your message in #product-launch</span></div>
+        <div class="tdc-task-preview">
+          <div class="tdc-task-row">
+            <span class="tdc-task-icon">📋</span>
+            <div class="tdc-task-info">
+              <div class="tdc-task-name">${safeText}</div>
+              <div class="tdc-task-meta">
+                <span class="tdc-meta-item">👤 Simiao Song</span>
+                <span class="tdc-meta-item">⚡ Medium priority</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tdc-project-ref">Add to: <span class="tdc-project-badge"><svg width="10" height="9" viewBox="0 0 213 198" fill="none"><circle cx="167" cy="151" r="46.5" fill="#ff584a"/><circle cx="46.5" cy="151" r="46.5" fill="#ff584a"/><circle cx="106.8" cy="46.5" r="46.5" fill="#ff584a"/></svg> Q3 API Integration Launch</span></div>
+        <div class="tdc-actions" id="live-tdc-actions">
+          <button class="btn-add-task" onclick="liveConfirm(this)">
+            <svg width="10" height="9" viewBox="0 0 213 198" fill="none"><circle cx="167" cy="151" r="46.5" fill="white"/><circle cx="46.5" cy="151" r="46.5" fill="white"/><circle cx="106.8" cy="46.5" r="46.5" fill="white"/></svg>
+            Add to Asana
+          </button>
+          <button class="btn-edit-task" onclick="toggleTaskEditing(this)">Edit details</button>
+          <button class="btn-dismiss-task" onclick="this.closest('.task-detect-card').style.display='none'">Dismiss</button>
+        </div>
+        <div class="task-added-confirm" id="live-confirm">✅ Added to <strong>Q3 API Integration Launch</strong></div>
+      </div>
+    </div>`;
+  container.insertBefore(d, anchor);
+  scrollBottom();
+}
+
+function liveConfirm(btn) {
+  const actions = btn.closest('.tdc-actions');
+  const conf = btn.closest('.task-detect-card').querySelector('.task-added-confirm');
+  actions.style.display = 'none';
+  conf.classList.add('show');
+  scrollBottom();
+}
+
+function toggleTaskEditing(button) {
+  const card = button.closest('.task-detect-card');
+  const name = card.querySelector('.tdc-task-name');
+  const editing = name.contentEditable === 'true';
+  name.contentEditable = editing ? 'false' : 'true';
+  name.setAttribute('role', editing ? 'text' : 'textbox');
+  button.textContent = editing ? 'Edit details' : 'Save details';
+  if (!editing) { name.focus(); document.execCommand?.('selectAll', false, null); }
+}
+
+function toggleCardEditing(button) {
+  const rows = button.closest('.ai-card').querySelectorAll('.ai-row > span:last-child');
+  const editing = button.dataset.editing === 'true';
+  rows.forEach(row => { row.contentEditable = editing ? 'false' : 'true'; });
+  button.dataset.editing = editing ? 'false' : 'true';
+  button.textContent = editing ? 'Edit before creating' : 'Save changes';
+  if (!editing) rows[0]?.focus();
+}
+
+function dismissAiCard() {
+  const card = document.getElementById('ai-card');
+  card.classList.remove('show');
+  setTimeout(() => { card.style.display = 'none'; }, 250);
+}
+
+function scrollBottom() {
+  const c = document.getElementById('messages');
+  c.scrollTop = c.scrollHeight;
+}
+
+function restart() {
+  aiShown = false; taskDetectShown = false;
+  if (inAsana) backToSlack();
+  document.querySelectorAll('[data-demo-dynamic="true"]').forEach(node => node.remove());
+  document.getElementById('msg-ai').style.display = 'none';
+  const aiCard = document.getElementById('ai-card');
+  aiCard.style.display = '';
+  aiCard.classList.remove('show');
+  document.getElementById('typing').classList.remove('show');
+  const banner = document.getElementById('risk-banner');
+  banner.style.display = 'flex';
+  banner.classList.remove('show');
+  const tr7 = document.getElementById('tr7');
+  tr7.style.display = 'none';
+  document.querySelectorAll('.task-row').forEach(row => row.classList.remove('vis'));
+  updateNav();
+  setTimeout(() => showAI(), 300);
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => showAI(), 700);
+});
+</script>
+</body>
+</html>
