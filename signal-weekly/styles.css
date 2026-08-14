@@ -192,6 +192,24 @@ h2 { margin: 0; font-size: clamp(38px, 5vw, 66px); line-height: 1; letter-spacin
 .github-item > a { align-self: end; color: var(--muted); font-size: 12px; text-align: right; text-underline-offset: 4px; }
 .github-item > a:hover { color: var(--ink); }
 
+.x-feed { margin-top: 78px; scroll-margin-top: 86px; }
+.x-head { display: grid; grid-template-columns: 1fr minmax(260px,430px); gap: 40px; align-items: end; padding-bottom: 24px; border-bottom: 1px solid var(--ink); }
+.x-head span { color: var(--accent); font: 650 10px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing: .12em; }
+.x-head h3 { margin: 10px 0 0; font-size: clamp(32px,4vw,52px); letter-spacing: -.045em; }
+.x-head p { margin: 0; color: var(--muted); line-height: 1.65; }
+.x-list { border-bottom: 1px solid var(--ink); }
+.x-item { min-height: 210px; display: grid; grid-template-columns: 170px 1fr 160px; gap: 30px; padding: 28px 0; border-bottom: 1px solid var(--line); }
+.x-item:last-child { border-bottom: 0; }
+.x-meta { display: flex; flex-direction: column; align-items: flex-start; }
+.x-meta strong { font-size: 17px; }
+.x-meta span { margin-top: 7px; color: var(--accent); font: 11px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace; }
+.x-meta time { margin-top: auto; color: var(--muted); font: 11px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace; }
+.x-copy h4 { margin: 16px 0 11px; max-width: 720px; font-size: clamp(22px,2.4vw,34px); line-height: 1.1; letter-spacing: -.038em; }
+.x-copy p { margin: 0; max-width: 720px; color: var(--muted); line-height: 1.65; }
+.x-copy small { display: block; margin-top: 16px; padding-left: 12px; border-left: 2px solid var(--accent); line-height: 1.55; }
+.x-item > a { align-self: end; color: var(--muted); font-size: 12px; text-align: right; text-underline-offset: 4px; }
+.x-item > a:hover { color: var(--ink); }
+
 .insight-feed { margin-top: 72px; }
 .insight-head { display: grid; grid-template-columns: 1fr minmax(260px, 430px); gap: 40px; align-items: end; padding-bottom: 24px; border-bottom: 1px solid var(--ink); }
 .insight-head span { color: var(--accent); font: 650 10px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .12em; }
@@ -360,11 +378,16 @@ dialog::backdrop { background: rgba(10,11,9,.64); backdrop-filter: blur(5px); }
   .intel-proof { display: grid; grid-template-columns: auto auto 1fr; gap: 14px; align-items: center; }
   .intel-proof > strong { margin: 0; }
   .intel-proof > small { margin: 0; text-align: right; }
-  .github-head, .insight-head, .insight-grid { grid-template-columns: 1fr; }
+  .github-head, .x-head, .insight-head, .insight-grid { grid-template-columns: 1fr; }
   .github-item { grid-template-columns: 1fr; min-height: 0; gap: 20px; }
   .github-meta { min-height: 0; display: grid; grid-template-columns: 1fr auto auto; gap: 14px; align-items: center; }
   .github-meta time, .github-meta b { margin: 0; }
   .github-item > a { text-align: left; }
+  .x-item { grid-template-columns: 1fr; min-height: 0; gap: 20px; }
+  .x-meta { min-height: 0; display: grid; grid-template-columns: 1fr auto; gap: 6px 14px; align-items: center; }
+  .x-meta span { margin: 0; }
+  .x-meta time { margin: 0; grid-column: 1 / -1; }
+  .x-item > a { text-align: left; }
   .insight-head { align-items: start; }
   .insight-item { grid-template-columns: 1fr; min-height: 0; }
   .insight-author { display: grid; grid-template-columns: auto auto; justify-content: start; gap: 5px 12px; }
