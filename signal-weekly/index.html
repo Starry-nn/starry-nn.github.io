@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="每日更新的全球及中国 AI、具身智能、脑机接口与芯片情报，按周、区域与公司组织。">
+  <title>SIGNAL / 科技情报</title>
+  <link rel="preload" as="image" href="assets/signal-network.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="SIGNAL 首页"><span class="brand-mark" aria-hidden="true"></span><span>SIGNAL</span></a>
+    <nav aria-label="主导航">
+      <a href="#briefing">情报归档</a>
+      <a href="#companies">公司地图</a>
+      <a href="#pulse">本周判断</a>
+      <a href="#sources">信源</a>
+      <a href="#method">方法</a>
+    </nav>
+    <button class="theme-button" id="themeToggle" type="button" aria-label="切换明暗模式">明暗</button>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <img class="hero-image" src="assets/signal-network.png" alt="东亚科技网络、芯片和神经信号组成的抽象情报地图" width="1792" height="1024">
+      <div class="hero-scrim"></div>
+      <div class="hero-copy">
+        <p class="eyebrow">UPDATED DAILY / 14:00 CST</p>
+        <h1 id="hero-title">每一周，谁在<br>真正推进技术。</h1>
+        <p>周一开始，周日结束。国内与国际分区，再按公司聚合，最新且最有用的信息始终在前。</p>
+        <a class="primary-link" href="#briefing">进入本周情报 <span aria-hidden="true">↘</span></a>
+      </div>
+      <div class="hero-stats" aria-label="本期数据">
+        <div><strong id="statEvents">15</strong><span>事件与高价值观察</span></div>
+        <div><strong id="statCompanies">12</strong><span>重点公司与机构</span></div>
+        <div><strong id="statChina">06</strong><span>国内及华人科技</span></div>
+        <div><strong>14:00</strong><span>每天下午增量更新</span></div>
+      </div>
+    </section>
+
+    <section class="briefing shell" id="briefing">
+      <header class="section-heading split-heading">
+        <div><p class="section-index">WEEKLY INTELLIGENCE</p><h2>按周阅读</h2></div>
+        <p>重大事件按公司聚合，人物观点、技术实践、Newsletter 与播客解读单独成流。两层信息都按日期倒序。</p>
+      </header>
+
+      <div class="week-switch" id="weekFilters" aria-label="周次筛选"></div>
+
+      <div class="region-switch" id="regionFilters" aria-label="区域筛选">
+        <button class="region-button active" type="button" data-region="all"><span>全部</span><strong>ALL</strong></button>
+        <button class="region-button" type="button" data-region="cn"><span>国内及华人科技</span><strong>CN+</strong></button>
+        <button class="region-button" type="button" data-region="global"><span>国际科技</span><strong>GLOBAL</strong></button>
+      </div>
+
+      <div class="controls" aria-label="情报筛选">
+        <div class="filter-row" id="topicFilters">
+          <button class="filter active" type="button" data-topic="all">全部赛道</button>
+          <button class="filter" type="button" data-topic="ai">AI / Agent</button>
+          <button class="filter" type="button" data-topic="robotics">具身智能</button>
+          <button class="filter" type="button" data-topic="bci">脑机</button>
+          <button class="filter" type="button" data-topic="chips">芯片</button>
+          <button class="filter" type="button" data-topic="people">关键人物</button>
+        </div>
+        <label class="search-wrap"><span>搜索公司、人物或技术</span><input id="searchInput" type="search" placeholder="例如：宇树、OpenAI、Agent" autocomplete="off"></label>
+      </div>
+
+      <div class="pipeline-status" id="pipelineStatus" aria-live="polite">
+        <div><span>自动候选</span><strong id="pipelineCandidates">0</strong></div>
+        <div><span>登记来源</span><strong id="pipelineSources">31</strong></div>
+        <div><span>上次采集</span><strong id="pipelineUpdated">尚未运行</strong></div>
+        <p id="pipelineMessage">候选雷达等待首次采集，不影响已经验证的历史内容。</p>
+      </div>
+
+      <div class="active-summary"><span id="resultLabel">全部区域</span><strong id="resultCount">15 条信号</strong></div>
+      <div class="company-feed" id="companyFeed"></div>
+      <div class="insight-feed" id="insightFeed"></div>
+      <div class="radar-feed" id="radarFeed"></div>
+      <div class="empty-state" id="emptyState" hidden><strong>没有匹配的情报</strong><span>换一个区域、赛道或搜索词试试。</span></div>
+    </section>
+
+    <section class="company-atlas shell" id="companies">
+      <header class="section-heading split-heading">
+        <div><p class="section-index">COMPANY ATLAS</p><h2>公司地图</h2></div>
+        <p>用公司代替孤立新闻作为主索引。点击公司即可回到上方，只看它本月发生了什么。</p>
+      </header>
+      <div class="atlas-grid" id="companyAtlas"></div>
+    </section>
+
+    <section class="sector-pulse shell" id="pulse">
+      <p class="section-index">EDITOR'S READ</p>
+      <h2>本周三条主线</h2>
+      <div class="pulse-layout">
+        <div class="pulse-big"><span>最强信号</span><strong>模型竞争开始由<br>能力扩展到行动边界</strong><p>数学研究、网络安全、浏览器与长期记忆都在把模型接入真实环境。下一阶段的差异不只来自 benchmark，也来自权限、可靠性与可控性。</p></div>
+        <div class="pulse-list">
+          <div><span>中国模型</span><strong>贴近前沿</strong><small>阿里、月之暗面、DeepSeek 继续用开放权重与成本效率施压</small></div>
+          <div><span>具身智能</span><strong>进入定价</strong><small>宇树 IPO 把中国头部机器人公司的收入、研发和估值带入公开检验</small></div>
+          <div><span>Agent 基建</span><strong>快速成形</strong><small>记忆、浏览器、网络安全成为新的基础组件</small></div>
+          <div><span>脑机接口</span><strong>谨慎观察</strong><small>本月信号更多来自临床转化与研究议程，暂未追逐单点热搜</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="source-policy shell" id="sources">
+      <p class="section-index">SOURCE POLICY</p>
+      <h2>中文信源，不只看转载</h2>
+        <p class="source-lead">公众号能定位原文就抓原文，不能稳定访问时转向公开网站。专家账号、Newsletter、播客和社区共同扩展雷达，但硬事实必须回到一手材料。完整名单与分级规则见 SOURCES.md。</p>
+      <div class="source-roster">
+        <div><strong>36氪</strong><span>融资、创业公司、产业进展</span><small>网站优先，公众号补充</small></div>
+        <div><strong>虎嗅</strong><span>商业影响、行业争议、公司策略</span><small>深度判断，不单独确认事实</small></div>
+        <div><strong>硅星人</strong><span>硅谷华人、全球 AI 公司与人才网络</span><small>公众号优先，公开转载只作线索</small></div>
+        <div><strong>雷峰网 / 量子位 / 晚点</strong><span>硬科技、模型、人物与组织变化</span><small>按原创度和证据完整性入选</small></div>
+      </div>
+    </section>
+
+    <section class="method shell" id="method">
+      <p class="section-index">METHOD</p>
+      <h2>一条信息如何进入首页</h2>
+      <div class="method-flow" aria-label="编辑流程">
+        <div><strong>采集</strong><span>官网、论文、监管文件、权威媒体和高质量一手账号</span></div>
+        <div><strong>聚类</strong><span>同一公司同一事件合并，避免重复制造热度</span></div>
+        <div><strong>验证</strong><span>官方与多源交叉为 A，单一权威媒体为 B，待确认线索为 C</span></div>
+        <div><strong>判断</strong><span>补充为什么重要、华人关联，以及下一个验证点</span></div>
+      </div>
+      <p class="method-note">A 级为官方、监管或多源确认；B 级为单一权威媒体或公司自述；C 级只进入观察池，不写成已确认事实。消费电子发布、泛产品更新和缺乏产业影响的融资默认不入选。</p>
+    </section>
+  </main>
+
+  <footer class="site-footer shell"><div><span class="brand-mark" aria-hidden="true"></span><strong>SIGNAL</strong></div><p>技术情报的价值，不是更快转发，而是更早看懂。</p><a href="#top">回到顶部 ↑</a></footer>
+
+  <dialog id="detailDialog" aria-labelledby="dialogTitle"><button class="dialog-close" type="button" aria-label="关闭详情">×</button><div id="dialogContent"></div></dialog>
+  <script src="data/feed.js?v=20260813-decart"></script>
+  <script src="app.js?v=20260813-grouped"></script>
+</body>
+</html>
