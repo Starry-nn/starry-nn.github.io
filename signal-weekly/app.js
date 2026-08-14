@@ -97,7 +97,7 @@ const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character =>
 const safeUrl = value => /^https?:\/\//i.test(String(value || "")) ? String(value) : "#";
 const feed = document.querySelector("#companyFeed");
 const insightFeed = document.querySelector("#insightFeed");
-const radarFeed = document.querySelector("#radarFeed");
+const githubFeed = document.querySelector("#githubFeed");
 const atlas = document.querySelector("#companyAtlas");
 const weekFilters = document.querySelector("#weekFilters");
 const regionFilters = document.querySelector("#regionFilters");
@@ -109,6 +109,13 @@ const resultCount = document.querySelector("#resultCount");
 const dialog = document.querySelector("#detailDialog");
 const dialogContent = document.querySelector("#dialogContent");
 const eventDate = item => item.published_at ? new Date(item.published_at) : new Date(`2026-${item.date.replace(".", "-")}T12:00:00+08:00`);
+const sortNewest = (a,b) => eventDate(b) - eventDate(a) || Number(b.importance || b.taste_score || b.score || 0) - Number(a.importance || a.taste_score || a.score || 0);
+const isGithubSignal = item => /github/i.test(`${item.source_id || ""} ${item.source_type || ""} ${item.source || ""}`) || /^https?:\/\/(?:www\.)?github\.com\//i.test(String(item.url || ""));
+const signalProject = item => item.project || item.label || item.kind || "公司与技术动态";
+const signalKind = item => item.label || item.kind || "实质进展";
+const signalScore = item => item.importance ?? item.taste_score ?? item.score ?? "—";
+const normalizedEvent = item => ({...item, signal_type:"verified", project:signalProject(item), kind:signalKind(item)});
+const normalizedRadar = item => ({...item, signal_type:"radar", project:signalProject(item), kind:signalKind(item)});
 const mondayKey = item => {
   const date = eventDate(item);
   const parts = Object.fromEntries(new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Shanghai",year:"numeric",month:"numeric",day:"numeric"}).formatToParts(date).filter(part=>part.type!=="literal").map(part=>[part.type,Number(part.value)]));
@@ -173,48 +180,64 @@ function weekLabel(key, compact = false) {
 
 function renderWeekFilters() {
   weekFilters.innerHTML = ["all", ...weekKeys].map((key,index) => {
-    const weekEvents = key === "all" ? events.length : events.filter(item=>mondayKey(item)===key).length;
+    const inWeek = item => key === "all" || mondayKey(item) === key;
+    const weekCompany = [...events.map(normalizedEvent), ...radarItems.map(normalizedRadar)].filter(item=>inWeek(item) && !isGithubSignal(item)).length;
+    const weekGithub = [...events.map(normalizedEvent), ...radarItems.map(normalizedRadar)].filter(item=>inWeek(item) && isGithubSignal(item)).length;
     const weekInsights = key === "all" ? insights.length : insights.filter(item=>mondayKey(item)===key).length;
-    const weekRadar = key === "all" ? radarItems.length : radarItems.filter(item=>mondayKey(item)===key).length;
-    return `<button class="week-button ${key === activeWeek ? "active" : ""}" type="button" data-week="${key}"><span>${key === "all" ? "ARCHIVE" : index === 1 ? "LATEST" : "WEEK"}</span><strong>${weekLabel(key, true)}</strong><small>${weekEvents} 事件 + ${weekInsights} 观察 + ${weekRadar} 候选</small></button>`;
+    return `<button class="week-button ${key === activeWeek ? "active" : ""}" type="button" data-week="${key}"><span>${key === "all" ? "ARCHIVE" : index === 1 ? "LATEST" : "WEEK"}</span><strong>${weekLabel(key, true)}</strong><small>${weekCompany} 公司动态 + ${weekGithub} GitHub + ${weekInsights} 观察</small></button>`;
   }).join("");
 }
 
+function renderSignalRow(item) {
+  const verified = item.signal_type === "verified";
+  const interaction = verified ? `data-id="${escapeHtml(item.id)}" tabindex="0" role="button" aria-label="查看 ${escapeHtml(item.title)} 详情"` : "";
+  const level = verified ? `${escapeHtml(item.evidence)} 级证据` : "新增雷达";
+  const levelClass = verified ? `evidence evidence-${String(item.evidence || "c").toLowerCase()}` : "evidence evidence-radar";
+  return `<article class="intel-row ${verified ? "verified-row" : "radar-row"}" ${interaction}>
+    <div class="intel-meta"><span class="category">${escapeHtml(item.kind)}</span><time>${escapeHtml(item.date)}</time><small>${verified ? "已验证" : "高价值新增"}</small></div>
+    <div class="intel-main"><h4>${escapeHtml(item.title)}</h4>${item.summary ? `<p>${escapeHtml(item.summary)}</p>` : ""}${verified ? "" : `<a href="${escapeHtml(safeUrl(item.url))}" target="_blank" rel="noopener">查看原始来源 ↗</a>`}</div>
+    <div class="intel-proof"><strong>${escapeHtml(signalScore(item))}</strong><span class="${levelClass}">${level}</span><small>${escapeHtml(item.source)}</small></div>
+  </article>`;
+}
+
+function renderCompanyProjects(items) {
+  const projects = [...items.reduce((map,item) => {
+    const project = signalProject(item);
+    if (!map.has(project)) map.set(project, []);
+    map.get(project).push(item);
+    return map;
+  },new Map()).entries()].sort((a,b)=>sortNewest(a[1].slice().sort(sortNewest)[0], b[1].slice().sort(sortNewest)[0]));
+  return projects.map(([project,projectItems])=>`<section class="company-project"><header class="company-project-head"><div><span>PROJECT</span><strong>${escapeHtml(project)}</strong></div><small>${projectItems.length} 条</small></header>${projectItems.sort(sortNewest).map(renderSignalRow).join("")}</section>`).join("");
+}
+
+function renderGithub(items) {
+  githubFeed.innerHTML = items.length ? `<header class="github-head"><div><span>GITHUB OPEN SOURCE</span><h3>GitHub 开源专栏</h3></div><p>仓库发布、代码更新与华人团队当日 Top 项目统一归档；按真实更新时间倒序，不与普通公司新闻混排。</p></header><div class="github-list">${items.sort(sortNewest).map(item=>`<article class="github-item"><div class="github-meta"><span>${escapeHtml(item.company || item.source || "GitHub")}</span><time>${escapeHtml(item.date)}</time><b>${escapeHtml(signalScore(item))}</b></div><div><span class="category">${escapeHtml(item.kind)}</span><h4>${escapeHtml(item.title)}</h4>${item.summary ? `<p>${escapeHtml(item.summary)}</p>` : ""}<small>${escapeHtml(signalProject(item))}</small></div><a href="${escapeHtml(safeUrl(item.url))}" target="_blank" rel="noopener">打开仓库 / 来源 ↗</a></article>`).join("")}</div>` : "";
+}
+
 function render() {
-  const visible = filteredEvents();
-  const visibleInsights = filteredInsights().sort((a,b)=>eventDate(b)-eventDate(a));
-  const visibleRadar = filteredRadar().sort((a,b)=>eventDate(b)-eventDate(a) || b.score-a.score);
-  const radarCompanies = [...visibleRadar.reduce((map,item) => {
+  const visibleInsights = filteredInsights().sort(sortNewest);
+  const allVisibleSignals = [...filteredEvents().map(normalizedEvent), ...filteredRadar().map(normalizedRadar)].sort(sortNewest);
+  const githubSignals = allVisibleSignals.filter(isGithubSignal);
+  const companySignals = allVisibleSignals.filter(item=>!isGithubSignal(item));
+  const groups = [...companySignals.reduce((map, item) => {
     if (!map.has(item.company)) map.set(item.company, []);
     map.get(item.company).push(item);
     return map;
-  },new Map()).entries()].sort((a,b)=>Math.max(...b[1].map(x=>eventDate(x))) - Math.max(...a[1].map(x=>eventDate(x))));
-  const groups = [...visible.reduce((map, item) => {
-    if (!map.has(item.company)) map.set(item.company, []);
-    map.get(item.company).push(item);
-    return map;
-  }, new Map()).entries()].sort((a,b) => Math.max(...b[1].map(x=>eventDate(x).getTime())) - Math.max(...a[1].map(x=>eventDate(x).getTime())) || Math.max(...b[1].map(x=>x.importance)) - Math.max(...a[1].map(x=>x.importance)));
+  }, new Map()).entries()].sort((a,b)=>sortNewest(a[1].slice().sort(sortNewest)[0], b[1].slice().sort(sortNewest)[0]));
 
   resultLabel.textContent = `${weekLabel(activeWeek, true)} / ${activeCompany === "all" ? regionNames[activeRegion] : activeCompany}`;
-  resultCount.textContent = `${visible.length} 条重大事件 + ${visibleInsights.length} 条观察 + ${visibleRadar.length} 条自动候选`;
+  resultCount.textContent = `${companySignals.length} 条公司/项目动态 + ${githubSignals.length} 条 GitHub + ${visibleInsights.length} 条观察`;
   feed.innerHTML = groups.map(([company, items], groupIndex) => `
     <section class="company-group">
       <header class="company-group-head">
-        <div><span>${String(groupIndex + 1).padStart(2,"0")}</span><h3>${company}</h3><small>${items[0].companyEn}</small></div>
+        <div><span>${String(groupIndex + 1).padStart(2,"0")}</span><h3>${escapeHtml(company)}</h3><small>${escapeHtml(items.find(item=>item.companyEn)?.companyEn || company)}</small></div>
         <p>${items[0].region === "cn" ? "国内及华人科技" : "国际科技"} / ${items.length} 条</p>
       </header>
-      <div class="company-events">${items.sort((a,b)=>eventDate(b)-eventDate(a) || b.importance-a.importance).map(item => `
-        <article class="intel-row" data-id="${item.id}" tabindex="0" role="button" aria-label="查看 ${item.title} 详情">
-          <div class="intel-meta"><span class="category">${item.label}</span><span>${item.date}</span></div>
-          <div class="intel-main"><h4>${item.title}</h4><p>${item.summary}</p></div>
-          <div class="intel-proof"><strong>${item.importance}</strong><span class="evidence evidence-${item.evidence.toLowerCase()}">${item.evidence} 级证据</span><small>${item.source}</small></div>
-        </article>`).join("")}</div>
+      <div class="company-events">${renderCompanyProjects(items)}</div>
     </section>`).join("");
+  renderGithub(githubSignals);
   insightFeed.innerHTML = visibleInsights.length ? `<header class="insight-head"><div><span>PEOPLE & SOURCE WATCH</span><h3>人物与来源动态</h3></div><p>观点、实践与技术解读单独标注，不与已确认公司事件混写。</p></header><div class="insight-grid">${visibleInsights.map(item=>`<article class="insight-item"><div class="insight-author"><strong>${item.person}</strong><span>${item.handle}</span><small>${item.org}</small></div><div class="insight-copy"><div><span class="category">${item.kind}</span><time>${item.date}</time></div><h4>${item.title}</h4><p>${item.summary}</p><small>${item.signal}</small></div><a href="${item.url}" target="_blank" rel="noopener" aria-label="打开 ${item.person} 的原始来源">${item.source} ↗</a></article>`).join("")}</div>` : "";
-  radarFeed.innerHTML = visibleRadar.length ? `<header class="radar-head"><div><span>HIGH-SIGNAL CANDIDATE RADAR</span><h3>高价值新增雷达</h3></div><p>按公司与项目聚合；只保留有明确新增动作、日期可追溯且中文已就绪的候选。同一事件只展示一次，继续沿用你选定的事件标注。</p></header><div class="radar-companies">${radarCompanies.map(([company,companyItems],companyIndex)=>{
-    const projects=[...companyItems.reduce((map,item)=>{if(!map.has(item.project))map.set(item.project,[]);map.get(item.project).push(item);return map;},new Map()).entries()];
-    return `<section class="radar-company"><header class="radar-company-head"><span>${String(companyIndex+1).padStart(2,"0")}</span><h4>${escapeHtml(company)}</h4><small>${companyItems.length} 条新增 / ${projects.length} 个项目</small></header><div class="radar-projects">${projects.map(([project,projectItems])=>`<section class="radar-project"><header class="radar-project-head"><div><span>PROJECT</span><h5>${escapeHtml(project)}</h5></div><b>${projectItems.length}</b></header><div class="radar-grid">${projectItems.sort((a,b)=>eventDate(b)-eventDate(a)).map(item=>`<article class="radar-item"><div class="radar-meta"><span>${escapeHtml(item.kind)}</span><time>${escapeHtml(item.date)}</time><strong>${escapeHtml(item.taste_score ?? item.score)}</strong></div><div><h4>${escapeHtml(item.title)}</h4>${item.summary ? `<p>${escapeHtml(item.summary)}</p>` : ""}<small>${escapeHtml((item.taste_reasons || item.score_reasons || []).join(" / "))}</small></div><div class="radar-source"><span>${escapeHtml(item.source)}</span><a href="${escapeHtml(safeUrl(item.url))}" target="_blank" rel="noopener">查看原始来源 ↗</a></div></article>`).join("")}</div></section>`).join("")}</div></section>`}).join("")}</div>` : "";
-  empty.hidden = visible.length + visibleInsights.length + visibleRadar.length > 0;
+  empty.hidden = companySignals.length + githubSignals.length + visibleInsights.length > 0;
 }
 
 function renderPipelineStatus() {
@@ -227,16 +250,17 @@ function renderPipelineStatus() {
 }
 
 function renderAtlas() {
-  const companies = [...events.reduce((map,item) => {
-    const current = map.get(item.company) || {name:item.company,en:item.companyEn,region:item.region,count:0,max:0};
-    current.count += 1; current.max = Math.max(current.max,item.importance); map.set(item.company,current); return map;
-  },new Map()).values()].sort((a,b) => a.region.localeCompare(b.region) || b.max-a.max);
+  const atlasSignals = [...events.map(normalizedEvent), ...radarItems.map(normalizedRadar)].filter(item=>!isGithubSignal(item));
+  const companies = [...atlasSignals.reduce((map,item) => {
+    const current = map.get(item.company) || {name:item.company,en:item.companyEn || item.company,region:item.region,count:0,max:0,latest:eventDate(item)};
+    current.count += 1; current.max = Math.max(current.max,Number(signalScore(item)) || 0); if(eventDate(item)>current.latest)current.latest=eventDate(item); map.set(item.company,current); return map;
+  },new Map()).values()].sort((a,b)=>b.latest-a.latest || b.max-a.max);
   atlas.innerHTML = companies.map((item,index)=>`<button type="button" class="atlas-item" data-company="${item.name}"><span>${String(index+1).padStart(2,"0")}</span><div><strong>${item.name}</strong><small>${item.en}</small></div><em>${item.region === "cn" ? "CN+" : "GLOBAL"}</em><b>${item.count}</b></button>`).join("");
 }
 
 function selectCompany(company) {
   activeCompany = company;
-  const item = events.find(event => event.company === company);
+  const item = [...events, ...radarItems].find(event => event.company === company);
   if (item) activeRegion = item.region;
   regionFilters.querySelectorAll("[data-region]").forEach(button => button.classList.toggle("active", button.dataset.region === activeRegion));
   render();
@@ -261,9 +285,9 @@ document.querySelector(".dialog-close").addEventListener("click",()=>dialog.clos
 dialog.addEventListener("click",event=>{if(event.target===dialog)dialog.close();});
 document.querySelector("#themeToggle").addEventListener("click",()=>{const current=document.documentElement.dataset.theme;const prefersDark=window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.dataset.theme=current==="dark"||(!current&&prefersDark)?"light":"dark";});
 
-document.querySelector("#statEvents").textContent=String(events.length + insights.length).padStart(2,"0");
-document.querySelector("#statCompanies").textContent=String(new Set(events.map(x=>x.company)).size).padStart(2,"0");
-document.querySelector("#statChina").textContent=String([...events,...insights].filter(x=>x.region==="cn").length).padStart(2,"0");
+document.querySelector("#statEvents").textContent=String(events.length + radarItems.length + insights.length).padStart(2,"0");
+document.querySelector("#statCompanies").textContent=String(new Set([...events,...radarItems].map(x=>x.company)).size).padStart(2,"0");
+document.querySelector("#statChina").textContent=String([...events,...radarItems,...insights].filter(x=>x.region==="cn").length).padStart(2,"0");
 renderAtlas();
 renderWeekFilters();
 renderPipelineStatus();

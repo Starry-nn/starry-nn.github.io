@@ -42,7 +42,7 @@
     <section class="briefing shell" id="briefing">
       <header class="section-heading split-heading">
         <div><p class="section-index">WEEKLY INTELLIGENCE</p><h2>按周阅读</h2></div>
-        <p>重大事件按公司聚合，人物观点、技术实践、Newsletter 与播客解读单独成流。两层信息都按日期倒序。</p>
+        <p>已验证事件与高价值新增按公司、项目合并进对应周；GitHub 开源和人物观察独立成栏。所有层级都按真实时间倒序。</p>
       </header>
 
       <div class="week-switch" id="weekFilters" aria-label="周次筛选"></div>
@@ -66,7 +66,7 @@
       </div>
 
       <div class="pipeline-status" id="pipelineStatus" aria-live="polite">
-        <div><span>自动候选</span><strong id="pipelineCandidates">0</strong></div>
+        <div><span>高价值新增</span><strong id="pipelineCandidates">0</strong></div>
         <div><span>登记来源</span><strong id="pipelineSources">31</strong></div>
         <div><span>上次采集</span><strong id="pipelineUpdated">尚未运行</strong></div>
         <p id="pipelineMessage">候选雷达等待首次采集，不影响已经验证的历史内容。</p>
@@ -74,8 +74,8 @@
 
       <div class="active-summary"><span id="resultLabel">全部区域</span><strong id="resultCount">15 条信号</strong></div>
       <div class="company-feed" id="companyFeed"></div>
+      <div class="github-feed" id="githubFeed"></div>
       <div class="insight-feed" id="insightFeed"></div>
-      <div class="radar-feed" id="radarFeed"></div>
       <div class="empty-state" id="emptyState" hidden><strong>没有匹配的情报</strong><span>换一个区域、赛道或搜索词试试。</span></div>
     </section>
 
@@ -130,6 +130,6 @@
 
   <dialog id="detailDialog" aria-labelledby="dialogTitle"><button class="dialog-close" type="button" aria-label="关闭详情">×</button><div id="dialogContent"></div></dialog>
   <script src="data/feed.js?v=20260813-decart"></script>
-  <script src="app.js?v=20260813-grouped"></script>
+  <script src="app.js?v=20260814-unified-weekly"></script>
 </body>
 </html>
