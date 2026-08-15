@@ -146,7 +146,7 @@ const EVENT_TYPE_LABELS = {
 };
 const signalKind = item => {
   const kind = item.label || item.kind;
-  return kind && !/^实质技术进展$/i.test(kind) ? kind : EVENT_TYPE_LABELS[eventType(item)] || "实质进展";
+  return kind && !/^实质技术进展$/i.test(kind) && !Object.values(EVENT_TYPE_LABELS).includes(kind) ? kind : EVENT_TYPE_LABELS[eventType(item)] || "实质进展";
 };
 const signalScore = item => item.importance ?? item.taste_score ?? item.score ?? "—";
 const normalizedEvent = item => ({...item, signal_type:"verified", project:signalProject(item), kind:signalKind(item)});
