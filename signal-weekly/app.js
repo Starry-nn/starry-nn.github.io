@@ -224,13 +224,12 @@ function renderWeekFilters() {
 
 function renderSignalRow(item) {
   const verified = item.signal_type === "verified";
-  const interaction = verified ? `data-id="${escapeHtml(item.id)}" tabindex="0" role="button" aria-label="查看 ${escapeHtml(item.title)} 详情"` : "";
-  const level = verified ? `${escapeHtml(item.evidence)} 级证据` : "新增雷达";
-  const levelClass = verified ? `evidence evidence-${String(item.evidence || "c").toLowerCase()}` : "evidence evidence-radar";
-  return `<article class="intel-row ${verified ? "verified-row" : "radar-row"}" ${interaction}>
-    <div class="intel-meta"><span class="category">${escapeHtml(item.kind)}</span><time>${escapeHtml(item.date)}</time><small>${verified ? "已验证" : "高价值新增"}</small></div>
-    <div class="intel-main"><h4>${escapeHtml(item.title)}</h4>${item.summary ? `<p>${escapeHtml(item.summary)}</p>` : ""}${verified ? "" : `<a href="${escapeHtml(safeUrl(item.url))}" target="_blank" rel="noopener">查看原始来源 ↗</a>`}</div>
-    <div class="intel-proof"><strong>${escapeHtml(signalScore(item))}</strong><span class="${levelClass}">${level}</span><small>${escapeHtml(item.source)}</small></div>
+  const interaction = item.id ? `data-id="${escapeHtml(item.id)}" tabindex="0" role="button" aria-label="查看 ${escapeHtml(item.title)} 详情"` : "";
+  const company = item.company || item.org || "未归属公司 / 研究机构";
+  const project = signalProject(item);
+  return `<article class="intel-row compact-row ${verified ? "verified-row" : "radar-row"} ${isUnattributed(company) ? "unattributed-row" : ""}" ${interaction}>
+    <div class="intel-meta"><span class="category">${escapeHtml(item.kind)}</span><strong>${escapeHtml(company)}</strong><time>${escapeHtml(item.date)}</time></div>
+    <div class="intel-main"><div class="row-context"><span>${escapeHtml(project)}</span><span>${escapeHtml(item.region === "cn" ? "国内 / 华人" : "国际")}</span></div><h4>${escapeHtml(item.title)}</h4>${item.summary ? `<p>${escapeHtml(item.summary)}</p>` : ""}</div>
   </article>`;
 }
 
@@ -252,32 +251,80 @@ function renderX(items) {
   xFeed.innerHTML = items.length ? `<header class="x-head"><div><span>X SIGNALS / ORIGINAL POSTS</span><h3>X 关键人物动态</h3></div><p>只收录你指定作者的原创技术、产品、组织、政策或市场信息；回复、情绪争论和重复观点不进入专栏。英文内容先翻译为中文，并保留原帖。</p></header><div class="x-list">${items.map(item=>`<article class="x-item"><div class="x-meta"><strong>${escapeHtml(item.person || item.author || item.handle || "X 作者")}</strong><span>${escapeHtml(item.handle || item.source || "")}</span><time>${escapeHtml(item.date)}</time></div><div class="x-copy"><span class="category">${escapeHtml(item.kind || "X 原创动态")}</span><h4>${escapeHtml(item.title_zh || item.title)}</h4>${(item.summary_zh || item.summary) ? `<p>${escapeHtml(item.summary_zh || item.summary)}</p>` : ""}${item.signal ? `<small>${escapeHtml(item.signal)}</small>` : ""}</div><a href="${escapeHtml(safeUrl(item.url))}" target="_blank" rel="noopener">打开原帖 / 来源 ↗</a></article>`).join("")}</div>` : "";
 }
 
+const EVENT_TYPE_ORDER = [
+  ["模型 / 产品", "模型、API、产品与 Agent 能力的正式变化", "model"],
+  ["开源 / 代码", "开放权重、代码仓库与可复现工程", "open-source"],
+  ["组织 / 资本", "融资、并购、IPO 与关键人物流动", "capital"],
+  ["安全 / 政策", "安全机制、监管、内容溯源与政策变化", "policy"],
+  ["研究 / 论文", "新方法、论文、评测与科学工作流", "research"],
+  ["具身 / 机器人", "人形机器人、物理交互与产业部署", "robotics"],
+  ["脑机 / 临床", "脑机接口、神经技术与临床转化", "bci"],
+  ["芯片 / 算力", "芯片、先进制程、算力与数据中心", "chips"],
+];
+
+function eventType(item) {
+  const text = `${item.kind || ""} ${item.label || ""} ${item.title || ""} ${item.summary || ""}`.toLowerCase();
+  const categories = item.categories || item.topics || [];
+  if (categories.includes("bci") || /脑机|神经接口|临床试验/.test(text)) return "bci";
+  if (categories.includes("robotics") || /具身|人形|机器人|灵巧手|物理交互/.test(text)) return "robotics";
+  if (categories.includes("chips") || /芯片|算力|晶圆|半导体|数据中心/.test(text)) return "chips";
+  if (/融资|投资|收购|并购|ipo|上市|组织|任命|离开|关键人物|人才|独立运营|拆分/.test(text)) return "capital";
+  if (/开源|开放权重|代码|github|repository|repo/.test(text)) return "open-source";
+  if (/论文|研究|评测|benchmark|科学|实验|方法|成果/.test(text)) return "research";
+  if (/安全|政策|监管|水印|c2pa|内容凭证|出口管制/.test(text)) return "policy";
+  return "model";
+}
+
+function renderTypeGroups(items) {
+  const grouped = items.reduce((map, item) => {
+    const type = eventType(item);
+    if (!map.has(type)) map.set(type, []);
+    map.get(type).push(item);
+    return map;
+  }, new Map());
+  return EVENT_TYPE_ORDER.filter(([, , key]) => grouped.has(key)).map(([title, description, key], index) => {
+    // Keep the scan newest-first, but put records without a defensible
+    // company/organisation attribution at the end of each event type. This
+    // keeps the primary reading path focused on accountable actors while
+    // retaining lower-confidence discoveries instead of silently dropping
+    // them.
+    const typeItems = grouped.get(key).sort((left, right) => {
+      const leftCompany = left.company || left.org || "未归属公司 / 研究机构";
+      const rightCompany = right.company || right.org || "未归属公司 / 研究机构";
+      return Number(isUnattributed(leftCompany)) - Number(isUnattributed(rightCompany)) || sortNewest(left, right);
+    });
+    return `<section class="type-section" id="event-type-${key}">
+      <header class="type-section-head"><div><span>${String(index + 1).padStart(2, "0")} / EVENT TYPE</span><h3>${title}</h3></div><p>${description}<strong>${typeItems.length} 条</strong></p></header>
+      <div class="type-event-grid">${typeItems.map(renderSignalRow).join("")}</div>
+    </section>`;
+  }).join("");
+}
+
+function renderWeeklyArchive() {
+  const archive = document.querySelector("#weeklyArchiveLinks");
+  if (!archive) return;
+  const all = ["all", ...weekKeys];
+  archive.innerHTML = all.map((key, index) => {
+    const inWeek = item => key === "all" || mondayKey(item) === key;
+    const count = [...events, ...radarItems, ...insights].filter(inWeek).length;
+    return `<button type="button" class="archive-week ${key === activeWeek ? "active" : ""}" data-archive-week="${key}"><span>${key === "all" ? "全量" : `第 ${all.length - index - 1} 周`}</span><strong>${weekLabel(key, true)}</strong><small>${count} 条收集</small></button>`;
+  }).join("");
+}
+
 function render() {
   const visibleInsights = filteredInsights().sort(sortNewest);
   const visibleX = filteredX();
   const allVisibleSignals = [...filteredEvents().map(normalizedEvent), ...filteredRadar().map(normalizedRadar)].sort(sortNewest);
   const githubSignals = allVisibleSignals.filter(isGithubSignal);
   const companySignals = allVisibleSignals.filter(item=>!isGithubSignal(item) && !isXSignal(item));
-  const groups = [...companySignals.reduce((map, item) => {
-    if (!map.has(item.company)) map.set(item.company, []);
-    map.get(item.company).push(item);
-    return map;
-  }, new Map()).entries()].sort((a,b)=>Number(isUnattributed(a[0])) - Number(isUnattributed(b[0])) || sortNewest(a[1].slice().sort(sortNewest)[0], b[1].slice().sort(sortNewest)[0]));
-
   resultLabel.textContent = `${weekLabel(activeWeek, true)} / ${activeCompany === "all" ? regionNames[activeRegion] : activeCompany}`;
   resultCount.textContent = `${companySignals.length} 条公司/项目动态 + ${githubSignals.length} 条 GitHub + ${visibleX.length} 条 X + ${visibleInsights.length} 条观察`;
-  feed.innerHTML = groups.map(([company, items], groupIndex) => `
-    <section class="company-group">
-      <header class="company-group-head">
-        <div><span>${String(groupIndex + 1).padStart(2,"0")}</span><h3>${escapeHtml(company)}</h3><small>${escapeHtml(items.find(item=>item.companyEn)?.companyEn || company)}</small></div>
-        <p>${items[0].region === "cn" ? "国内及华人科技" : "国际科技"} / ${items.length} 条</p>
-      </header>
-      <div class="company-events">${renderCompanyProjects(items)}</div>
-    </section>`).join("");
+  feed.innerHTML = renderTypeGroups(companySignals);
   renderGithub(githubSignals);
   renderX(visibleX);
   insightFeed.innerHTML = visibleInsights.length ? `<header class="insight-head"><div><span>PEOPLE & SOURCE WATCH</span><h3>人物与来源动态</h3></div><p>观点、实践与技术解读单独标注，不与已确认公司事件混写。</p></header><div class="insight-grid">${visibleInsights.map(item=>`<article class="insight-item"><div class="insight-author"><strong>${item.person}</strong><span>${item.handle}</span><small>${item.org}</small></div><div class="insight-copy"><div><span class="category">${item.kind}</span><time>${item.date}</time></div><h4>${item.title}</h4><p>${item.summary}</p><small>${item.signal}</small></div><a href="${item.url}" target="_blank" rel="noopener" aria-label="打开 ${item.person} 的原始来源">${item.source} ↗</a></article>`).join("")}</div>` : "";
   empty.hidden = companySignals.length + githubSignals.length + visibleX.length + visibleInsights.length > 0;
+  renderWeeklyArchive();
 }
 
 function renderPipelineStatus() {
@@ -308,14 +355,22 @@ function selectCompany(company) {
 }
 
 function openDetail(id) {
-  const item = events.find(event => event.id === id);
+  const item = [...events, ...radarItems].find(event => event.id === id);
   if (!item) return;
-  dialogContent.innerHTML = `<article class="dialog-body"><div class="dialog-company"><span>${item.companyEn}</span><strong>${item.company}</strong></div><span class="category">${item.label}</span><h2 id="dialogTitle">${item.title}</h2><p class="lead">${item.summary}</p><div class="dialog-meta"><div><span>日期</span><strong>${item.date}</strong></div><div><span>重要度</span><strong>${item.importance} / 100</strong></div><div><span>证据</span><strong>${item.evidence} 级 · ${item.confidence}</strong></div></div><section class="dialog-section"><h3>为什么重要</h3><p>${item.why}</p></section><section class="dialog-section"><h3>下一个观察点</h3><p>${item.next}</p></section><a class="source-link" href="${item.url}" target="_blank" rel="noopener">打开原始来源 ↗</a></article>`;
+  const verified = item.signal_type === "verified";
+  const company = item.company || item.org || "未归属公司 / 研究机构";
+  const category = item.label || item.kind || "实质进展";
+  const score = signalScore(item);
+  const evidence = verified ? `${item.evidence || "—"} 级 · ${item.confidence || "待核验"}` : `候选雷达 · ${item.source || "来源待核验"}`;
+  const why = item.why || item.evidence_note || (item.taste_reasons || []).join("；") || "这条信息已通过相关性筛选，仍需结合原文和交叉来源判断。";
+  const next = item.next || "回到原始来源核对事实、日期与后续确认。";
+  dialogContent.innerHTML = `<article class="dialog-body"><div class="dialog-company"><span>${escapeHtml(item.companyEn || item.org || "")}</span><strong>${escapeHtml(company)}</strong></div><span class="category">${escapeHtml(category)}</span><h2 id="dialogTitle">${escapeHtml(item.title)}</h2><p class="lead">${escapeHtml(item.summary || "")}</p><div class="dialog-meta"><div><span>日期</span><strong>${escapeHtml(item.date || "")}</strong></div><div><span>重要度 / 相关性</span><strong>${escapeHtml(score)}</strong></div><div><span>证据与来源</span><strong>${escapeHtml(evidence)}</strong></div></div><section class="dialog-section"><h3>为什么重要</h3><p>${escapeHtml(why)}</p></section><section class="dialog-section"><h3>下一个观察点</h3><p>${escapeHtml(next)}</p></section><a class="source-link" href="${escapeHtml(safeUrl(item.url))}" target="_blank" rel="noopener">打开原始来源 ↗</a></article>`;
   dialog.showModal();
 }
 
 regionFilters.addEventListener("click", event => {const button=event.target.closest("[data-region]");if(!button)return;activeRegion=button.dataset.region;activeCompany="all";regionFilters.querySelectorAll("[data-region]").forEach(x=>x.classList.toggle("active",x===button));render();});
 weekFilters.addEventListener("click", event => {const button=event.target.closest("[data-week]");if(!button)return;activeWeek=button.dataset.week;activeCompany="all";renderWeekFilters();render();});
+document.querySelector("#weeklyArchiveLinks")?.addEventListener("click", event => {const button=event.target.closest("[data-archive-week]");if(!button)return;activeWeek=button.dataset.archiveWeek;activeCompany="all";renderWeekFilters();render();document.querySelector("#briefing")?.scrollIntoView({behavior:"smooth"});});
 topicFilters.addEventListener("click", event => {const button=event.target.closest("[data-topic]");if(!button)return;activeTopic=button.dataset.topic;topicFilters.querySelectorAll("[data-topic]").forEach(x=>x.classList.toggle("active",x===button));render();});
 search.addEventListener("input",()=>{activeCompany="all";render();});
 feed.addEventListener("click",event=>{const row=event.target.closest("[data-id]");if(row)openDetail(row.dataset.id);});
