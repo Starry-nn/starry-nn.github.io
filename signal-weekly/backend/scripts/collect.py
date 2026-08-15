@@ -29,11 +29,14 @@ from pathlib import Path
 from typing import Optional
 
 ROOT = Path(__file__).resolve().parents[1]
-CONFIG_PATH = ROOT / "config" / "sources.json"
-OUTPUT_JSON = ROOT / "data" / "candidates.json"
-OUTPUT_JS = ROOT / "data" / "feed.js"
-STATUS_JSON = ROOT / "data" / "status.json"
-TRANSLATIONS_JSON = ROOT / "data" / "translations.json"
+STATE_ROOT = Path(os.environ.get("SIGNAL_STATE_DIR", str(ROOT))).expanduser()
+if not STATE_ROOT.is_absolute():
+    STATE_ROOT = ROOT / STATE_ROOT
+CONFIG_PATH = STATE_ROOT / "config" / "sources.json"
+OUTPUT_JSON = STATE_ROOT / "data" / "candidates.json"
+OUTPUT_JS = STATE_ROOT / "data" / "feed.js"
+STATUS_JSON = STATE_ROOT / "data" / "status.json"
+TRANSLATIONS_JSON = STATE_ROOT / "data" / "translations.json"
 LOCAL_ENV = ROOT / "infra" / "wechat-rss" / ".env"
 
 USER_AGENT = "SIGNAL-Intelligence/1.0 (+local editorial research)"

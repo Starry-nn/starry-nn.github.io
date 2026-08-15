@@ -18,7 +18,10 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "data"
+STATE_ROOT = Path(os.environ.get("SIGNAL_STATE_DIR", str(ROOT))).expanduser()
+if not STATE_ROOT.is_absolute():
+    STATE_ROOT = ROOT / STATE_ROOT
+DATA = STATE_ROOT / "data"
 STATUS_FILE = DATA / "publish-status.json"
 DEFAULT_REPO = "Starry-nn/starry-nn.github.io"
 DEFAULT_BRANCH = "main"

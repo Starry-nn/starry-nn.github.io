@@ -4,13 +4,17 @@
 import argparse
 import datetime as dt
 import json
+import os
 import sys
 from pathlib import Path
 
 import collect
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_INBOX = ROOT / "data" / "inbox.json"
+STATE_ROOT = Path(os.environ.get("SIGNAL_STATE_DIR", str(ROOT))).expanduser()
+if not STATE_ROOT.is_absolute():
+    STATE_ROOT = ROOT / STATE_ROOT
+DEFAULT_INBOX = STATE_ROOT / "data" / "inbox.json"
 
 
 def load_sources():

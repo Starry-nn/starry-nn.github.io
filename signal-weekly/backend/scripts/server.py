@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Local maintenance server for SIGNAL.
+"""Maintenance server for SIGNAL.
 
 Serves the static site and a small, fixed API for status inspection and the two
 approved maintenance jobs. It deliberately does not expose arbitrary commands.
@@ -26,12 +26,32 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "data"
-CONFIG = ROOT / "config" / "sources.json"
+LOCAL_ADMIN_ENV = ROOT / "infra" / "admin.env"
+
+
+def load_local_admin_env():
+    """Load ignored local credentials without overriding explicit environment values."""
+    if not LOCAL_ADMIN_ENV.exists():
+        return
+    for raw_line in LOCAL_ADMIN_ENV.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        os.environ.setdefault(key.strip(), value.strip().strip("\"'"))
+
+
+load_local_admin_env()
+
+STATE_ROOT = Path(os.environ.get("SIGNAL_STATE_DIR", str(ROOT))).expanduser()
+if not STATE_ROOT.is_absolute():
+    STATE_ROOT = ROOT / STATE_ROOT
+DATA = STATE_ROOT / "data"
+BUNDLED_CONFIG = ROOT / "config" / "sources.json"
+CONFIG = STATE_ROOT / "config" / "sources.json"
 JOB_FILE = DATA / "last-job.json"
 PUBLISH_STATUS_FILE = DATA / "publish-status.json"
 PUBLISH_SETTINGS_FILE = DATA / "publish-settings.json"
-LOCAL_ADMIN_ENV = ROOT / "infra" / "admin.env"
 SOURCE_BACKUP_DIR = DATA / "source-backups"
 SOURCE_AUDIT_FILE = DATA / "source-audit.jsonl"
 MAX_JOB_SECONDS = 300
@@ -41,6 +61,10 @@ SESSION_COOKIE = "signal_session"
 SESSION_TTL_SECONDS = 12 * 60 * 60
 PBKDF2_ITERATIONS = 240000
 PUBLIC_FILES = ("index.html", "styles.css", "app.js", "assets/signal-network.png", "data/feed.js")
+STATIC_EXACT_PATHS = {
+    "/", "/index.html", "/styles.css", "/app.js",
+    "/admin.html", "/admin.css", "/admin.js", "/data/feed.js",
+}
 
 JOBS = {
     "collect": [sys.executable, str(ROOT / "scripts" / "collect.py"), "--window-days", "10"],
@@ -74,19 +98,25 @@ SOURCE_INT_FIELDS = {
 }
 
 
-def load_local_admin_env():
-    """Load ignored local credentials without overriding explicit environment values."""
-    if not LOCAL_ADMIN_ENV.exists():
-        return
-    for raw_line in LOCAL_ADMIN_ENV.read_text(encoding="utf-8").splitlines():
-        line = raw_line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        key, value = line.split("=", 1)
-        os.environ.setdefault(key.strip(), value.strip().strip("\"'"))
+def initialize_state():
+    """Create the writable runtime tree and seed its source registry once."""
+    DATA.mkdir(parents=True, exist_ok=True)
+    CONFIG.parent.mkdir(parents=True, exist_ok=True)
+    if CONFIG != BUNDLED_CONFIG and not CONFIG.exists():
+        shutil.copy2(BUNDLED_CONFIG, CONFIG)
 
 
-load_local_admin_env()
+def static_path_allowed(path):
+    if path in STATIC_EXACT_PATHS:
+        return True
+    if not re.fullmatch(r"/assets/[A-Za-z0-9._/-]+", path):
+        return False
+    candidate = (ROOT / path.lstrip("/")).resolve()
+    try:
+        candidate.relative_to((ROOT / "assets").resolve())
+    except ValueError:
+        return False
+    return candidate.is_file()
 
 
 def now_iso():
@@ -279,7 +309,7 @@ def public_job_state():
 
 
 def save_job_state():
-    JOB_FILE.write_text(json.dumps(public_job_state(), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    write_json_atomic(JOB_FILE, public_job_state())
 
 
 def publish_settings():
@@ -289,7 +319,7 @@ def publish_settings():
 
 def save_publish_settings(payload):
     settings = {"auto_publish": payload.get("auto_publish") is True}
-    PUBLISH_SETTINGS_FILE.write_text(json.dumps(settings, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    write_json_atomic(PUBLISH_SETTINGS_FILE, settings)
     return settings
 
 
@@ -488,7 +518,30 @@ class SignalHandler(SimpleHTTPRequestHandler):
             self.send_header("Location", "/admin.html")
             self.end_headers()
             return
+        if path == "/" and not (ROOT / "index.html").is_file():
+            self.send_response(HTTPStatus.TEMPORARY_REDIRECT)
+            self.send_header("Location", "/admin.html")
+            self.end_headers()
+            return
+        if not static_path_allowed(path):
+            return self.send_error(HTTPStatus.NOT_FOUND)
         return super().do_GET()
+
+    def do_HEAD(self):
+        path = urlsplit(self.path).path
+        if path == "/admin":
+            self.send_response(HTTPStatus.TEMPORARY_REDIRECT)
+            self.send_header("Location", "/admin.html")
+            self.end_headers()
+            return
+        if path == "/" and not (ROOT / "index.html").is_file():
+            self.send_response(HTTPStatus.TEMPORARY_REDIRECT)
+            self.send_header("Location", "/admin.html")
+            self.end_headers()
+            return
+        if not static_path_allowed(path):
+            return self.send_error(HTTPStatus.NOT_FOUND)
+        return super().do_HEAD()
 
     def do_POST(self):
         path = urlsplit(self.path).path
@@ -627,11 +680,16 @@ class SignalHandler(SimpleHTTPRequestHandler):
 
 def main():
     parser = argparse.ArgumentParser(description="Serve SIGNAL and its local maintenance API")
-    parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--port", type=int, default=8765)
+    try:
+        default_port = int(os.environ.get("PORT", os.environ.get("SIGNAL_PORT", "8765")))
+    except ValueError:
+        default_port = 8765
+    parser.add_argument("--host", default=os.environ.get("SIGNAL_HOST", "127.0.0.1"))
+    parser.add_argument("--port", type=int, default=default_port)
     args = parser.parse_args()
     if args.host not in {"127.0.0.1", "::1", "localhost"} and not (os.environ.get("SIGNAL_ADMIN_TOKEN") or admin_auth_configured()):
         parser.error("Password login or SIGNAL_ADMIN_TOKEN is required when binding beyond localhost")
+    initialize_state()
     server = ThreadingHTTPServer((args.host, args.port), SignalHandler)
     print("SIGNAL maintenance server: http://%s:%s/" % (args.host, args.port), flush=True)
     try:

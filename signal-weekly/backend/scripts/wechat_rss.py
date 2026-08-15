@@ -15,7 +15,10 @@ import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-CONFIG = ROOT / "config" / "sources.json"
+STATE_ROOT = Path(os.environ.get("SIGNAL_STATE_DIR", str(ROOT))).expanduser()
+if not STATE_ROOT.is_absolute():
+    STATE_ROOT = ROOT / STATE_ROOT
+CONFIG = STATE_ROOT / "config" / "sources.json"
 LOCAL_ENV = ROOT / "infra" / "wechat-rss" / ".env"
 USER_AGENT = "SIGNAL-WeChat-RSS/1.0 (+local maintenance)"
 API_PREFIX = "/api/v1/wx"

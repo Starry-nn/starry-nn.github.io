@@ -1,0 +1,10 @@
+.git
+.DS_Store
+__pycache__/
+*.pyc
+infra/admin.env
+infra/admin-credentials.txt
+infra/wechat-rss/.env
+data/*.json
+data/*.jsonl
+data/source-backups/
