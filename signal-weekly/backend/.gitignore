@@ -1,0 +1,7 @@
+infra/admin.env
+infra/admin-credentials.txt
+data/*.json
+!data/inbox.example.json
+data/*.jsonl
+data/source-backups/
+data/.DS_Store

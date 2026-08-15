@@ -1,0 +1,1054 @@
+{
+  "version": 2,
+  "default_window_days": 45,
+  "retention_days": 75,
+  "candidate_min_score": 25,
+  "taste_min_score": 2,
+  "candidate_limit": 500,
+  "max_workers": 8,
+  "source_item_caps": {
+    "default": 40
+  },
+  "coverage_targets": {
+    "daily_candidates": 35,
+    "weekly_candidates": 120,
+    "daily_by_lane": {
+      "company": 8,
+      "people": 8,
+      "research": 5,
+      "product": 5,
+      "capital_talent_policy": 4,
+      "open_source": 5
+    },
+    "daily_by_region": {
+      "cn": 12,
+      "global": 20
+    }
+  },
+  "sources": [
+    {
+      "id": "openai-news",
+      "name": "OpenAI News",
+      "type": "rss",
+      "url": "https://openai.com/news/rss.xml",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "company"
+      ]
+    },
+    {
+      "id": "deepmind-blog",
+      "name": "Google DeepMind",
+      "type": "rss",
+      "url": "https://deepmind.google/blog/rss.xml",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "research"
+      ]
+    },
+    {
+      "id": "google-ai",
+      "name": "Google AI & Technology",
+      "type": "agent",
+      "url": "https://blog.google/innovation-and-ai/technology/",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "company",
+        "product"
+      ],
+      "note": "官方总 Feed XML 不稳定，浏览器检查 AI 与技术专题并回到产品原文"
+    },
+    {
+      "id": "anthropic-news",
+      "name": "Anthropic Newsroom",
+      "type": "html",
+      "url": "https://www.anthropic.com/news",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "company",
+        "research",
+        "product"
+      ],
+      "allow_domains": [
+        "anthropic.com"
+      ]
+    },
+    {
+      "id": "microsoft-official",
+      "name": "Microsoft Official Blog",
+      "type": "rss",
+      "url": "https://blogs.microsoft.com/feed/",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "company",
+        "chips",
+        "product"
+      ]
+    },
+    {
+      "id": "microsoft-research",
+      "name": "Microsoft Research",
+      "type": "rss",
+      "url": "https://www.microsoft.com/en-us/research/feed/",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "research"
+      ]
+    },
+    {
+      "id": "meta-ai",
+      "name": "Meta AI",
+      "type": "agent",
+      "url": "https://ai.meta.com/blog/",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "research"
+      ],
+      "note": "官方 RSS 已失效，改由浏览器检查 Meta AI 博客与官方发布"
+    },
+    {
+      "id": "nvidia-blog",
+      "name": "NVIDIA Technical Blog",
+      "type": "rss",
+      "url": "https://developer.nvidia.com/blog/feed/",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "chips",
+        "robotics"
+      ]
+    },
+    {
+      "id": "huggingface-blog",
+      "name": "Hugging Face Blog",
+      "type": "rss",
+      "url": "https://huggingface.co/blog/feed.xml",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "open-source"
+      ]
+    },
+    {
+      "id": "simon-willison",
+      "name": "Simon Willison's Weblog",
+      "type": "rss",
+      "url": "https://simonwillison.net/atom/everything/",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "developer"
+      ]
+    },
+    {
+      "id": "interconnects",
+      "name": "Interconnects",
+      "type": "rss",
+      "url": "https://www.interconnects.ai/feed",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "open-source"
+      ]
+    },
+    {
+      "id": "latent-space",
+      "name": "Latent Space",
+      "type": "rss",
+      "url": "https://www.latent.space/feed",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "developer",
+        "podcast"
+      ]
+    },
+    {
+      "id": "the-batch",
+      "name": "The Batch",
+      "type": "agent",
+      "url": "https://www.deeplearning.ai/the-batch/",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "research"
+      ],
+      "note": "旧 RSS 已失效，检查官方栏目页和 Andrew Ng 公开发布"
+    },
+    {
+      "id": "import-ai",
+      "name": "Import AI",
+      "type": "rss",
+      "url": "https://jack-clark.net/feed/",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "policy"
+      ]
+    },
+    {
+      "id": "one-useful-thing",
+      "name": "One Useful Thing",
+      "type": "rss",
+      "url": "https://www.oneusefulthing.org/feed",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "people",
+        "analysis"
+      ]
+    },
+    {
+      "id": "unsupervised-learning",
+      "name": "Unsupervised Learning",
+      "type": "rss",
+      "url": "https://danielmiessler.com/feed",
+      "tier": "B",
+      "region": "global",
+      "topics": [
+        "ai",
+        "security",
+        "analysis"
+      ]
+    },
+    {
+      "id": "stratechery",
+      "name": "Stratechery",
+      "type": "rss",
+      "url": "https://stratechery.com/feed/",
+      "tier": "B",
+      "region": "global",
+      "topics": [
+        "ai",
+        "company",
+        "analysis"
+      ]
+    },
+    {
+      "id": "a16z",
+      "name": "a16z",
+      "type": "agent",
+      "url": "https://a16z.com/ai/",
+      "tier": "B",
+      "region": "global",
+      "topics": [
+        "ai",
+        "company",
+        "podcast"
+      ],
+      "note": "旧 RSS 已失效，浏览器检查 AI 专题、播客和具名作者文章"
+    },
+    {
+      "id": "yc-blog",
+      "name": "Y Combinator",
+      "type": "rss",
+      "url": "https://www.ycombinator.com/blog/rss",
+      "tier": "B",
+      "region": "global",
+      "topics": [
+        "ai",
+        "startup"
+      ]
+    },
+    {
+      "id": "techcrunch-ai",
+      "name": "TechCrunch AI",
+      "type": "rss",
+      "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+      "tier": "B",
+      "region": "global",
+      "topics": [
+        "ai",
+        "company"
+      ]
+    },
+    {
+      "id": "bloomberg",
+      "name": "Bloomberg / Bloomberg Law",
+      "type": "agent",
+      "url": "https://www.bloomberg.com/technology",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "company",
+        "capital",
+        "chips",
+        "policy"
+      ],
+      "note": "重点检查 AI、芯片、并购、IPO 与监管；付费内容只记录公开可核实部分，关键事实回到 Bloomberg Law、公司/监管原文或第二权威来源"
+    },
+    {
+      "id": "mit-tech-review",
+      "name": "MIT Technology Review",
+      "type": "rss",
+      "url": "https://www.technologyreview.com/feed/",
+      "tier": "B",
+      "region": "global",
+      "topics": [
+        "ai",
+        "science"
+      ]
+    },
+    {
+      "id": "venturebeat-ai",
+      "name": "VentureBeat AI",
+      "type": "rss",
+      "url": "https://venturebeat.com/category/ai/feed",
+      "tier": "B",
+      "region": "global",
+      "topics": [
+        "ai",
+        "company"
+      ]
+    },
+    {
+      "id": "wired-ai",
+      "name": "Wired AI",
+      "type": "rss",
+      "url": "https://www.wired.com/feed/tag/ai/latest/rss",
+      "tier": "B",
+      "region": "global",
+      "topics": [
+        "ai",
+        "company",
+        "policy"
+      ]
+    },
+    {
+      "id": "the-verge-ai",
+      "name": "The Verge AI",
+      "type": "rss",
+      "url": "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
+      "tier": "B",
+      "region": "global",
+      "topics": [
+        "ai",
+        "company",
+        "product"
+      ]
+    },
+    {
+      "id": "semianalysis",
+      "name": "SemiAnalysis",
+      "type": "agent",
+      "url": "https://semianalysis.com/",
+      "tier": "B",
+      "region": "global",
+      "topics": [
+        "ai",
+        "chips",
+        "datacenter",
+        "analysis"
+      ],
+      "note": "浏览器检查公开文章；付费内容只记录可核实的公开部分"
+    },
+    {
+      "id": "36kr",
+      "name": "36氪",
+      "type": "agent",
+      "url": "https://36kr.com/",
+      "tier": "B",
+      "region": "cn",
+      "topics": [
+        "ai",
+        "startup",
+        "company"
+      ],
+      "note": "公开 Feed XML 不稳定，浏览器检查 AI、创投与公司频道"
+    },
+    {
+      "id": "huxiu",
+      "name": "虎嗅",
+      "type": "agent",
+      "url": "https://www.huxiu.com/",
+      "tier": "B",
+      "region": "cn",
+      "topics": [
+        "ai",
+        "company",
+        "policy"
+      ],
+      "note": "Feed 易超时，浏览器检查官网与公开文章"
+    },
+    {
+      "id": "infoq-cn",
+      "name": "InfoQ 中文",
+      "type": "rss",
+      "url": "https://www.infoq.cn/feed",
+      "tier": "B",
+      "region": "cn",
+      "topics": [
+        "ai",
+        "developer"
+      ]
+    },
+    {
+      "id": "qbitai",
+      "name": "量子位",
+      "type": "agent",
+      "url": "https://www.qbitai.com/",
+      "tier": "B",
+      "region": "cn",
+      "topics": [
+        "ai",
+        "robotics"
+      ],
+      "max_items": 25,
+      "note": "只作发现；逐条打开正文核对日期与一手链接，标题去情绪化后再入库"
+    },
+    {
+      "id": "leiphone",
+      "name": "雷峰网",
+      "type": "agent",
+      "url": "https://www.leiphone.com/category/ai",
+      "tier": "B",
+      "region": "cn",
+      "topics": [
+        "ai",
+        "robotics"
+      ],
+      "max_items": 25,
+      "note": "只作发现；核对作者、团队、论文日期和官方论文页，禁止用列表页当天日期代替事件日期"
+    },
+    {
+      "id": "latepost",
+      "name": "晚点 LatePost",
+      "type": "html",
+      "url": "https://www.latepost.com/",
+      "tier": "B",
+      "region": "cn",
+      "topics": [
+        "company",
+        "people"
+      ],
+      "allow_domains": [
+        "latepost.com"
+      ]
+    },
+    {
+      "id": "jiqizhixin",
+      "name": "机器之心",
+      "type": "agent",
+      "url": "https://www.jiqizhixin.com/",
+      "tier": "B",
+      "region": "cn",
+      "topics": [
+        "ai",
+        "research",
+        "company"
+      ],
+      "note": "用于论文、模型与国内团队发现，重要事实回到原文"
+    },
+    {
+      "id": "aiera-xinzhi",
+      "name": "新智元",
+      "type": "agent",
+      "url": "https://www.aiera.com.cn/",
+      "tier": "B",
+      "region": "cn",
+      "topics": [
+        "ai",
+        "research",
+        "people"
+      ],
+      "note": "用于模型、论文和华人研究者线索，宣传性信息降级"
+    },
+    {
+      "id": "geekpark",
+      "name": "极客公园",
+      "type": "agent",
+      "url": "https://www.geekpark.net/",
+      "tier": "B",
+      "region": "cn",
+      "topics": [
+        "ai",
+        "company",
+        "product",
+        "people"
+      ],
+      "note": "关注产品、创始人访谈和公司战略"
+    },
+    {
+      "id": "jazzyear",
+      "name": "甲子光年",
+      "type": "agent",
+      "url": "https://www.jazzyear.com/",
+      "tier": "B",
+      "region": "cn",
+      "topics": [
+        "ai",
+        "company",
+        "capital",
+        "robotics"
+      ],
+      "note": "关注产业、融资与商业化，融资数据需交叉确认"
+    },
+    {
+      "id": "tmtpost",
+      "name": "钛媒体科技",
+      "type": "agent",
+      "url": "https://www.tmtpost.com/",
+      "tier": "B",
+      "region": "cn",
+      "topics": [
+        "ai",
+        "company",
+        "policy"
+      ]
+    },
+    {
+      "id": "silicon-star",
+      "name": "硅星人",
+      "type": "agent",
+      "url": "https://mp.weixin.qq.com/",
+      "tier": "B",
+      "region": "cn",
+      "topics": [
+        "ai",
+        "people",
+        "company"
+      ],
+      "note": "公众号与公开转载需要定时任务通过浏览器检索"
+    },
+    {
+      "id": "wechat-rss",
+      "name": "自建微信公众号 RSS（63）",
+      "type": "wechat_rss",
+      "url": "http://127.0.0.1:8001",
+      "tier": "B",
+      "region": "cn",
+      "topics": [
+        "ai",
+        "company",
+        "capital",
+        "robotics",
+        "bci",
+        "chips",
+        "research",
+        "people",
+        "open-source"
+      ],
+      "page_size": 100,
+      "pages": 3,
+      "max_items": 80,
+      "accounts": [
+        "月之暗面 Kimi",
+        "赛博禅心",
+        "晚点Auto",
+        "无问芯穹",
+        "投资界",
+        "36氪",
+        "铅笔道",
+        "量子位",
+        "智氪AI",
+        "APPSO",
+        "21世纪经济报道",
+        "虎嗅APP",
+        "投中网",
+        "硬氪",
+        "智能涌现",
+        "沐曦股份MetaX",
+        "Monolith砺思资本",
+        "elsewhere别处发生",
+        "晚点LatePost",
+        "Z Potentials",
+        "高榕创投",
+        "钛媒体",
+        "极客公园",
+        "Z Finance",
+        "云启资本",
+        "中科创星",
+        "融了么",
+        "Founder Park",
+        "AING硬迹",
+        "新智元",
+        "机器人前瞻",
+        "新智核",
+        "暗涌Waves",
+        "AI智件",
+        "硅星人Pro",
+        "雷峰网",
+        "AI科技评论",
+        "蓝驰创投",
+        "智东西",
+        "脑机接口社区",
+        "Top华人科创社",
+        "DeepTech深科技",
+        "量子位智库",
+        "投资界AI",
+        "独角兽早知道",
+        "鲸犀",
+        "光源资本",
+        "高瓴创投",
+        "顺为资本",
+        "红杉汇",
+        "真格基金",
+        "硅发布",
+        "36氪Pro",
+        "机器之心",
+        "雷锋网",
+        "北京大学",
+        "清华大学",
+        "职场Bonus",
+        "申小飞",
+        "后浪new",
+        "逛逛GitHub",
+        "智猩猩AI",
+        "晚点AI"
+      ],
+      "note": "由你自托管的 WeRSS 实例直接提供 JSON/RSS，SIGNAL 每次读取最新 300 条后按账号白名单、时效、价值和重复事件筛选。访问密钥只从 SIGNAL_WECHAT_RSS_ACCESS_KEY / SIGNAL_WECHAT_RSS_SECRET_KEY 环境变量读取。雷峰网/雷锋网按同源别名去重；消费电子、八卦、旧闻和重复转载不进入首页。"
+    },
+    {
+      "id": "hacker-news",
+      "name": "Hacker News",
+      "type": "hn",
+      "url": "https://hacker-news.firebaseio.com/v0/topstories.json",
+      "tier": "C",
+      "region": "global",
+      "topics": [
+        "ai",
+        "developer"
+      ],
+      "story_limit": 50,
+      "max_items": 35
+    },
+    {
+      "id": "huggingface-models",
+      "name": "Hugging Face Models",
+      "type": "huggingface",
+      "url": "https://huggingface.co/api/models?sort=lastModified&direction=-1&limit=100",
+      "tier": "B",
+      "region": "global",
+      "topics": [
+        "ai",
+        "open-source"
+      ],
+      "max_items": 20,
+      "min_likes": 10,
+      "min_downloads": 5000
+    },
+    {
+      "id": "github-cn-top",
+      "name": "GitHub 华人相关当日 Top 5",
+      "type": "github_cn",
+      "url": "https://api.github.com/search/repositories",
+      "tier": "A",
+      "region": "cn",
+      "topics": [
+        "ai",
+        "open-source",
+        "developer"
+      ],
+      "max_items": 5,
+      "min_stars": 100,
+      "organization_limit": 8,
+      "organizations": [
+        "deepseek-ai",
+        "QwenLM",
+        "THUDM",
+        "OpenBMB",
+        "InternLM",
+        "OpenGVLab",
+        "FlagOpen",
+        "PaddlePaddle",
+        "Tencent",
+        "volcengine",
+        "mindspore-lab",
+        "modelscope",
+        "OpenDataLab"
+      ]
+    },
+    {
+      "id": "arxiv-ai",
+      "name": "arXiv AI and Robotics",
+      "type": "arxiv",
+      "url": "https://export.arxiv.org/api/query?search_query=cat%3Acs.AI+OR+cat%3Acs.RO+OR+cat%3Aq-bio.NC&sortBy=submittedDate&sortOrder=descending&max_results=80",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "robotics",
+        "bci",
+        "research"
+      ],
+      "max_items": 40
+    },
+    {
+      "id": "primary-discovery",
+      "name": "公司与研究机构一手发布",
+      "type": "agent",
+      "url": "https://www.google.com/",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "robotics",
+        "bci",
+        "chips",
+        "research"
+      ],
+      "note": "用网页检索发现后必须回到公司、论文、监管或研究机构原文"
+    },
+    {
+      "id": "frontier-labs",
+      "name": "前沿模型实验室",
+      "type": "agent",
+      "url": "https://www.anthropic.com/news",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "company",
+        "research",
+        "product"
+      ],
+      "companies": [
+        "OpenAI",
+        "Anthropic",
+        "Google DeepMind",
+        "Meta AI",
+        "xAI",
+        "Mistral AI",
+        "Cohere",
+        "Thinking Machines Lab",
+        "Safe Superintelligence"
+      ],
+      "note": "逐家公司检查 newsroom、research、release notes、system card 与招聘动态"
+    },
+    {
+      "id": "cn-model-labs",
+      "name": "中国模型公司与研究机构",
+      "type": "agent",
+      "url": "https://www.modelscope.cn/",
+      "tier": "A",
+      "region": "cn",
+      "topics": [
+        "ai",
+        "company",
+        "research",
+        "open-source"
+      ],
+      "companies": [
+        "DeepSeek",
+        "阿里通义千问",
+        "月之暗面 Kimi",
+        "智谱 AI",
+        "MiniMax",
+        "字节 Seed",
+        "腾讯混元",
+        "百度文心",
+        "华为诺亚",
+        "阶跃星辰",
+        "零一万物",
+        "面壁智能"
+      ],
+      "note": "检查官方站、模型仓库、GitHub、公众号和具名负责人账号"
+    },
+    {
+      "id": "robotics-companies",
+      "name": "具身智能公司雷达",
+      "type": "agent",
+      "url": "https://spectrum.ieee.org/robotics",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "robotics",
+        "company",
+        "capital"
+      ],
+      "companies": [
+        "NVIDIA GEAR",
+        "Tesla Optimus",
+        "Figure AI",
+        "Physical Intelligence",
+        "1X",
+        "Apptronik",
+        "Boston Dynamics",
+        "宇树科技",
+        "智元机器人",
+        "优必选",
+        "银河通用",
+        "逐际动力",
+        "星海图"
+      ],
+      "note": "抓技术更新、订单、融资、量产、部署、人才和独立演示验证"
+    },
+    {
+      "id": "bci-companies",
+      "name": "脑机接口公司与临床雷达",
+      "type": "agent",
+      "url": "https://clinicaltrials.gov/",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "bci",
+        "research",
+        "company",
+        "policy"
+      ],
+      "companies": [
+        "Neuralink",
+        "Synchron",
+        "Precision Neuroscience",
+        "Paradromics",
+        "Blackrock Neurotech",
+        "BrainCo 强脑科技",
+        "脑虎科技",
+        "NeuraMatrix"
+      ],
+      "note": "优先临床注册、监管、论文、医院和公司原始材料"
+    },
+    {
+      "id": "chip-compute",
+      "name": "AI 芯片、算力与数据中心",
+      "type": "agent",
+      "url": "https://www.nvidia.com/en-us/news/",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "chips",
+        "company",
+        "policy"
+      ],
+      "companies": [
+        "NVIDIA",
+        "AMD",
+        "Intel",
+        "Broadcom",
+        "TSMC",
+        "ASML",
+        "Cerebras",
+        "Groq",
+        "SambaNova",
+        "华为昇腾",
+        "寒武纪",
+        "壁仞科技",
+        "摩尔线程"
+      ],
+      "note": "关注产品路线、产能、出口管制、云采购、能源与数据中心建设"
+    },
+    {
+      "id": "policy-regulators",
+      "name": "AI 政策、监管与司法",
+      "type": "agent",
+      "url": "https://www.reuters.com/technology/artificial-intelligence/",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "policy",
+        "company"
+      ],
+      "note": "检查中国网信办、工信部、美国白宫/商务部/法院、欧盟委员会及权威媒体"
+    },
+    {
+      "id": "capital-talent",
+      "name": "AI 融资、并购与人才流动",
+      "type": "agent",
+      "url": "https://www.crunchbase.com/",
+      "tier": "B",
+      "region": "global",
+      "topics": [
+        "ai",
+        "capital",
+        "people",
+        "company"
+      ],
+      "note": "只记录改变团队或赛道结构的交易和关键人才，金额需官方或权威媒体确认"
+    },
+    {
+      "id": "reddit-radar",
+      "name": "Reddit 技术社区",
+      "type": "agent",
+      "url": "https://www.reddit.com/",
+      "tier": "C",
+      "region": "global",
+      "topics": [
+        "ai",
+        "robotics",
+        "bci",
+        "developer"
+      ],
+      "communities": [
+        "LocalLLaMA",
+        "MachineLearning",
+        "robotics",
+        "singularity"
+      ],
+      "note": "只作线索发现，最终发布必须回到原始项目或权威来源"
+    },
+    {
+      "id": "papers-code",
+      "name": "Papers with Code and paper radar",
+      "type": "agent",
+      "url": "https://paperswithcode.com/",
+      "tier": "C",
+      "region": "global",
+      "topics": [
+        "ai",
+        "robotics",
+        "bci",
+        "research"
+      ],
+      "note": "追踪论文与复现，最终链接优先论文、代码仓库和作者页面"
+    },
+    {
+      "id": "core-x",
+      "name": "核心人物 X 名单",
+      "type": "agent",
+      "url": "https://x.com/",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "people"
+      ],
+      "handles": [
+        "karpathy",
+        "ilyasut",
+        "AndrewYNg",
+        "lilianweng",
+        "DrJimFan",
+        "jeremyphoward",
+        "natolambert",
+        "philduanai",
+        "hwchase17",
+        "rauchg",
+        "levelsio",
+        "swyx",
+        "JensenHuang"
+      ],
+      "note": "每天由 Codex 浏览器逐个检查公开主页，抓取器不伪造 X API"
+    },
+    {
+      "id": "extended-x",
+      "name": "扩展 CEO、CTO 与研究者 X 雷达",
+      "type": "agent",
+      "url": "https://x.com/",
+      "tier": "A",
+      "region": "global",
+      "topics": [
+        "ai",
+        "people",
+        "company"
+      ],
+      "handles": [
+        "sama",
+        "gdb",
+        "danielaamodei",
+        "DarioAmodei",
+        "demishassabis",
+        "ylecun",
+        "fchollet",
+        "JeffDean",
+        "OriolVinyalsML",
+        "NoamShazeer",
+        "drfeifei",
+        "chelseabfinn",
+        "jiajunwu_cs",
+        "EricXing",
+        "ZhitingHu",
+        "SongHanMIT",
+        "realSharonZhou",
+        "arankomatsuzaki",
+        "tri_dao",
+        "vikhyatk",
+        "andrew_n_carr"
+      ],
+      "note": "只抓有技术、组织、产品、政策或市场信息量的原创内容"
+    },
+    {
+      "id": "podcasts-cn",
+      "name": "中文科技播客",
+      "type": "agent",
+      "url": "https://www.xiaoyuzhoufm.com/",
+      "tier": "B",
+      "region": "cn",
+      "topics": [
+        "ai",
+        "people",
+        "podcast"
+      ],
+      "shows": [
+        "硅谷101",
+        "晚点聊 LateTalk",
+        "42章经",
+        "十字路口 Crossing",
+        "OnBoard!",
+        "海外独角兽"
+      ],
+      "note": "通过节目公开页或 RSS 检查新集"
+    },
+    {
+      "id": "podcasts-global",
+      "name": "全球 AI 与科技播客",
+      "type": "agent",
+      "url": "https://www.youtube.com/@ycombinator",
+      "tier": "B",
+      "region": "global",
+      "topics": [
+        "ai",
+        "people",
+        "podcast"
+      ],
+      "shows": [
+        "a16z Podcast",
+        "Y Combinator",
+        "Latent Space",
+        "No Priors",
+        "Dwarkesh Podcast",
+        "Lex Fridman Podcast",
+        "The Cognitive Revolution"
+      ],
+      "note": "优先官方节目页、文字稿和具名嘉宾原始陈述"
+    },
+    {
+      "id": "video-technical",
+      "name": "技术视频与模型实测",
+      "type": "agent",
+      "url": "https://www.youtube.com/",
+      "tier": "C",
+      "region": "global",
+      "topics": [
+        "ai",
+        "research",
+        "developer"
+      ],
+      "channels": [
+        "AI Explained",
+        "Matthew Berman",
+        "Two Minute Papers",
+        "Yannic Kilcher",
+        "3Blue1Brown",
+        "Fireship"
+      ],
+      "note": "作为评测与论文发现；重要结论回到模型、论文、代码或可复现实验"
+    }
+  ],
+  "updated_at": "2026-08-15T14:43:22Z"
+}

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>SIGNAL 维护台</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <section class="login-view" id="loginView">
+    <form class="login-card" id="loginForm">
+      <a href="/" class="brand"><span aria-hidden="true"></span>SIGNAL</a>
+      <p class="eyebrow">LOCAL MAINTENANCE</p><h1>维护台登录</h1>
+      <label>账号<input name="username" autocomplete="username" required></label>
+      <label>密码<input name="password" type="password" autocomplete="current-password" required></label>
+      <button type="submit">登录</button><p class="form-message" id="loginMessage" aria-live="polite"></p>
+    </form>
+  </section>
+  <div id="adminApp" hidden>
+  <header class="topbar"><a href="/" class="brand"><span aria-hidden="true"></span>SIGNAL</a><nav><a href="/">返回情报页</a><button type="button" id="refreshButton">刷新状态</button><button type="button" id="logoutButton">退出</button></nav></header>
+  <main>
+    <section class="intro">
+      <p>LOCAL MAINTENANCE</p>
+      <h1>维护台</h1>
+      <div class="actions"><button type="button" data-job="collect">运行直接采集</button><button type="button" data-job="wechat">检查公众号 RSS</button><button type="button" data-job="ingest">导入浏览器候选</button><button type="button" data-job="publish" id="publishButton">发布到 GitHub</button></div>
+      <p class="note">任务只能串行运行。候选不会自动变成已验证事件；发布器只上传公开静态文件。</p>
+    </section>
+
+    <section class="deployment" aria-labelledby="deploymentTitle">
+      <header><h2 id="deploymentTitle">线上发布</h2><p>正式数据写入 <code>feed.js</code> 后，可手动发布；也可以在采集或导入成功后自动同步 GitHub Pages。</p></header>
+      <div class="deployment-grid">
+        <div>
+          <p class="eyebrow">DEPLOYMENT STATUS</p>
+          <h3 id="publishState">正在读取...</h3>
+          <p id="publishMessage" class="note">正在比较本地与线上版本。</p>
+          <a id="liveSite" href="https://starry-nn.github.io/signal-weekly/" target="_blank" rel="noopener">打开线上情报站 ↗</a>
+        </div>
+        <label class="toggle-row" for="autoPublishToggle">
+          <span><strong>采集后自动发布</strong><small>采集或导入成功后，自动执行安全检查并同步公开页面。</small></span>
+          <input type="checkbox" id="autoPublishToggle">
+        </label>
+      </div>
+    </section>
+
+    <section class="status" aria-labelledby="statusTitle">
+      <div><h2 id="statusTitle">运行状态</h2><p id="statusMessage">正在读取...</p></div>
+      <dl>
+        <div><dt>候选</dt><dd id="candidateCount">0</dd></div>
+        <div><dt>登记来源</dt><dd id="sourceCount">0</dd></div>
+        <div><dt>失败来源</dt><dd id="errorCount">0</dd></div>
+        <div><dt>最后更新</dt><dd id="updatedAt">-</dd></div>
+      </dl>
+    </section>
+
+    <section class="sources" aria-labelledby="sourcesTitle">
+      <header><h2 id="sourcesTitle">信源管理</h2><p>直接新增、编辑、停用或删除 RSS 与其他来源；修改会自动备份并记录审计日志。</p></header>
+      <div class="source-toolbar"><input id="sourceSearch" type="search" placeholder="搜索名称、ID 或网址" aria-label="搜索来源"><button type="button" id="importSources">导入 JSON / CSV</button><input id="sourceFile" type="file" accept=".json,.csv,application/json,text/csv" hidden><button type="button" id="exportSources">导出 JSON</button><button type="button" class="primary" id="addSource">新增来源</button></div>
+      <div class="table-wrap"><table><thead><tr><th>来源</th><th>类型 / 区域</th><th>级别</th><th>状态</th><th>本轮数量</th><th>操作</th></tr></thead><tbody id="sourceRows"></tbody></table></div>
+    </section>
+
+    <section class="candidates" aria-labelledby="candidatesTitle">
+      <header><h2 id="candidatesTitle">候选池</h2><p>这里只展示线索和相关性分数，升级发布仍需证据审查。</p></header>
+      <div id="candidateRows"></div>
+    </section>
+
+    <section class="logs" aria-labelledby="logsTitle"><h2 id="logsTitle">最近任务输出</h2><pre id="jobLog">暂无运行记录</pre></section>
+  </main>
+  </div>
+  <dialog id="sourceDialog">
+    <form id="sourceForm" method="dialog">
+      <header><div><p class="eyebrow">SOURCE REGISTRY</p><h2 id="sourceDialogTitle">新增来源</h2></div><button type="button" class="icon-button" id="closeSourceDialog" aria-label="关闭">×</button></header>
+      <div class="form-grid">
+        <label>来源 ID<input name="id" pattern="[a-z0-9][a-z0-9-]{1,63}" placeholder="example-rss" required><small>保存后不可修改，使用小写字母、数字与连字符。</small></label>
+        <label>名称<input name="name" maxlength="120" required></label>
+        <label class="wide">RSS / 网站地址<input name="url" type="url" placeholder="https://example.com/feed.xml" required></label>
+        <label>类型<select name="type"><option value="rss">RSS</option><option value="wechat_rss">微信公众号 RSS</option><option value="html">网页</option><option value="agent">人工 / 浏览器</option><option value="github">GitHub</option><option value="github_cn">GitHub 华人</option><option value="hn">Hacker News</option><option value="huggingface">Hugging Face</option><option value="arxiv">arXiv</option></select></label>
+        <label>区域<select name="region"><option value="cn">国内</option><option value="global">海外</option></select></label>
+        <label>信源级别<select name="tier"><option value="A">A · 一手 / 权威</option><option value="B" selected>B · 可信媒体</option><option value="C">C · 线索来源</option></select></label>
+        <label>主题<input name="topics" placeholder="ai, robotics, bci"><small>使用英文逗号分隔。</small></label>
+        <label class="wide">备注<textarea name="note" maxlength="600" rows="3"></textarea></label>
+        <label class="check-row"><input name="enabled" type="checkbox" checked> 启用此来源</label>
+      </div>
+      <p class="form-message" id="sourceMessage" aria-live="polite"></p>
+      <footer><button type="button" id="cancelSource">取消</button><button type="submit" class="primary">保存来源</button></footer>
+    </form>
+  </dialog>
+  <script src="admin.js"></script>
+</body>
+</html>
