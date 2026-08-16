@@ -386,6 +386,23 @@ function selectCompany(company) {
   document.querySelector("#briefing").scrollIntoView({behavior:"smooth"});
 }
 
+function buildEventDetail(item, summary, why) {
+  const title = String(item.title || "这条事件").trim();
+  const text = String(summary || "").trim();
+  const thinSummary = !text || text === title || /^(点击查看原文>?|查看原文>?|暂无摘要|待补充)$/i.test(text);
+  const verified = item.signal_type === "verified";
+  const evidenceNote = String(item.evidence_note || "").trim();
+  if (thinSummary) {
+    const boundary = verified
+      ? "当前条目还缺少足够的事实摘要，详情只保留原始标题与来源，不把标题中的宣传性表述扩写成事实。"
+      : "当前公开材料只确认了标题所述动作，主体、日期和关键数字仍需回到原文二次核验；因此不把标题中的宣传性表述当作已证实事实。";
+    return boundary;
+  }
+  const impact = String(item.why || why || "").trim();
+  const boundary = !verified && evidenceNote ? `证据边界：${evidenceNote}` : "";
+  return [`这条事件的具体变化是：${text}`, impact ? `它的直接影响在于：${impact}` : "", boundary].filter(Boolean).join(" ");
+}
+
 function openDetail(id) {
   const item = [...events, ...radarItems].find(event => event.id === id);
   if (!item) return;
@@ -396,7 +413,8 @@ function openDetail(id) {
   const evidence = verified ? `${item.evidence || "—"} 级 · ${item.confidence || "待核验"}` : `候选雷达 · ${item.source || "来源待核验"}`;
   const why = item.why || item.evidence_note || (item.taste_reasons || []).join("；") || "这条信息已通过相关性筛选，仍需结合原文和交叉来源判断。";
   const next = item.next || "回到原始来源核对事实、日期与后续确认。";
-  dialogContent.innerHTML = `<article class="dialog-body"><div class="dialog-company"><span>${escapeHtml(item.companyEn || item.org || "")}</span><strong>${escapeHtml(company)}</strong></div><span class="category">${escapeHtml(category)}</span><h2 id="dialogTitle">${escapeHtml(item.title)}</h2><p class="lead">${escapeHtml(item.summary || "")}</p><div class="dialog-meta"><div><span>日期</span><strong>${escapeHtml(item.date || "")}</strong></div><div><span>重要度 / 相关性</span><strong>${escapeHtml(score)}</strong></div><div><span>证据与来源</span><strong>${escapeHtml(evidence)}</strong></div></div><section class="dialog-section"><h3>为什么重要</h3><p>${escapeHtml(why)}</p></section><section class="dialog-section"><h3>下一个观察点</h3><p>${escapeHtml(next)}</p></section><a class="source-link" href="${escapeHtml(safeUrl(item.url))}" target="_blank" rel="noopener">打开原始来源 ↗</a></article>`;
+  const detail = item.detail_zh || item.detail || buildEventDetail(item, item.summary, why);
+  dialogContent.innerHTML = `<article class="dialog-body"><div class="dialog-company"><span>${escapeHtml(item.companyEn || item.org || "")}</span><strong>${escapeHtml(company)}</strong></div><span class="category">${escapeHtml(category)}</span><h2 id="dialogTitle">${escapeHtml(item.title)}</h2><p class="lead">${escapeHtml(item.summary || "")}</p><section class="dialog-section dialog-detail"><h3>事件阐述</h3><p>${escapeHtml(detail)}</p></section><div class="dialog-meta"><div><span>日期</span><strong>${escapeHtml(item.date || "")}</strong></div><div><span>重要度 / 相关性</span><strong>${escapeHtml(score)}</strong></div><div><span>证据与来源</span><strong>${escapeHtml(evidence)}</strong></div></div><section class="dialog-section"><h3>为什么重要</h3><p>${escapeHtml(why)}</p></section><section class="dialog-section"><h3>下一个观察点</h3><p>${escapeHtml(next)}</p></section><a class="source-link" href="${escapeHtml(safeUrl(item.url))}" target="_blank" rel="noopener">打开原始来源 ↗</a></article>`;
   dialog.showModal();
 }
 
@@ -419,4 +437,3 @@ renderAtlas();
 renderWeekFilters();
 renderPipelineStatus();
 render();
-
