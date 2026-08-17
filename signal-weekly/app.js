@@ -160,7 +160,10 @@ const mondayKey = item => {
   return shanghaiDay.toISOString().slice(0, 10);
 };
 const allSignals = [...events, ...insights, ...radarItems];
-// Pre-create the current Shanghai week every Monday, even before the first\n// item is collected. This keeps weekly navigation stable on a quiet morning.\nconst currentWeekKey = mondayKey({published_at:new Date().toISOString()});\nconst weekKeys = [...new Set([currentWeekKey, ...allSignals.map(mondayKey)])].sort((a,b) => b.localeCompare(a));
+// Pre-create the current Shanghai week every Monday, even before the first
+// item is collected. This keeps weekly navigation stable on a quiet morning.
+const currentWeekKey = mondayKey({published_at:new Date().toISOString()});
+const weekKeys = [...new Set([currentWeekKey, ...allSignals.map(mondayKey)])].sort((a,b) => b.localeCompare(a));
 let activeWeek = weekKeys[0];
 let activeRegion = "all";
 let activeTopic = "all";
@@ -355,7 +358,12 @@ function render() {
   renderGithub(githubSignals);
   renderX(visibleX);
   insightFeed.innerHTML = visibleInsights.length ? `<header class="insight-head"><div><span>PEOPLE & SOURCE WATCH</span><h3>人物与来源动态</h3></div><p>观点、实践与技术解读单独标注，不与已确认公司事件混写。</p></header><div class="insight-grid">${visibleInsights.map(item=>`<article class="insight-item"><div class="insight-author"><strong>${item.person}</strong><span>${item.handle}</span><small>${item.org}</small></div><div class="insight-copy"><div><span class="category">${item.kind}</span><time>${item.date}</time></div><h4>${item.title}</h4><p>${item.summary}</p><small>${item.signal}</small></div><a href="${item.url}" target="_blank" rel="noopener" aria-label="打开 ${item.person} 的原始来源">${item.source} ↗</a></article>`).join("")}</div>` : "";
-  if (activeWeek === currentWeekKey && companySignals.length + githubSignals.length + visibleX.length + visibleInsights.length === 0) {\n    empty.innerHTML = "<strong>本周情报正在更新</strong><span>本周已建立，今天 14:00 起会持续写入最新事件。</span>";\n  } else {\n    empty.innerHTML = "<strong>没有匹配的情报</strong><span>换一个区域、赛道或搜索词试试。</span>";\n  }\n  empty.hidden = companySignals.length + githubSignals.length + visibleX.length + visibleInsights.length > 0;
+  if (activeWeek === currentWeekKey && companySignals.length + githubSignals.length + visibleX.length + visibleInsights.length === 0) {
+    empty.innerHTML = "<strong>本周情报正在更新</strong><span>本周已建立，今天 14:00 起会持续写入最新事件。</span>";
+  } else {
+    empty.innerHTML = "<strong>没有匹配的情报</strong><span>换一个区域、赛道或搜索词试试。</span>";
+  }
+  empty.hidden = companySignals.length + githubSignals.length + visibleX.length + visibleInsights.length > 0;
   renderWeeklyArchive();
 }
 
