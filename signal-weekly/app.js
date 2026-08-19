@@ -161,7 +161,8 @@ const mondayKey = item => {
 };
 const allSignals = [...events, ...insights, ...radarItems];
 // Pre-create the current Shanghai week every Monday, even before the first
-// item is collected. This keeps weekly navigation stable on a quiet morning.
+// item is collected. This keeps the weekly navigation stable and gives the
+// scheduled 14:00 run a visible landing section on a quiet news morning.
 const currentWeekKey = mondayKey({published_at:new Date().toISOString()});
 const weekKeys = [...new Set([currentWeekKey, ...allSignals.map(mondayKey)])].sort((a,b) => b.localeCompare(a));
 let activeWeek = weekKeys[0];
@@ -359,9 +360,9 @@ function render() {
   renderX(visibleX);
   insightFeed.innerHTML = visibleInsights.length ? `<header class="insight-head"><div><span>PEOPLE & SOURCE WATCH</span><h3>人物与来源动态</h3></div><p>观点、实践与技术解读单独标注，不与已确认公司事件混写。</p></header><div class="insight-grid">${visibleInsights.map(item=>`<article class="insight-item"><div class="insight-author"><strong>${item.person}</strong><span>${item.handle}</span><small>${item.org}</small></div><div class="insight-copy"><div><span class="category">${item.kind}</span><time>${item.date}</time></div><h4>${item.title}</h4><p>${item.summary}</p><small>${item.signal}</small></div><a href="${item.url}" target="_blank" rel="noopener" aria-label="打开 ${item.person} 的原始来源">${item.source} ↗</a></article>`).join("")}</div>` : "";
   if (activeWeek === currentWeekKey && companySignals.length + githubSignals.length + visibleX.length + visibleInsights.length === 0) {
-    empty.innerHTML = "<strong>本周情报正在更新</strong><span>本周已建立，今天 14:00 起会持续写入最新事件。</span>";
+    empty.innerHTML = `<strong>本周情报正在更新</strong><span>本周已建立，今天 14:00 起会持续写入最新事件。</span>`;
   } else {
-    empty.innerHTML = "<strong>没有匹配的情报</strong><span>换一个区域、赛道或搜索词试试。</span>";
+    empty.innerHTML = `<strong>没有匹配的情报</strong><span>换一个区域、赛道或搜索词试试。</span>`;
   }
   empty.hidden = companySignals.length + githubSignals.length + visibleX.length + visibleInsights.length > 0;
   renderWeeklyArchive();
@@ -394,21 +395,39 @@ function selectCompany(company) {
   document.querySelector("#briefing").scrollIntoView({behavior:"smooth"});
 }
 
-function buildEventDetail(item, summary, why) {
-  const title = String(item.title || "这条事件").trim();
-  const text = String(summary || "").trim();
-  const thinSummary = !text || text === title || /^(点击查看原文>?|查看原文>?|暂无摘要|待补充)$/i.test(text);
-  const verified = item.signal_type === "verified";
-  const evidenceNote = String(item.evidence_note || "").trim();
-  if (thinSummary) {
-    const boundary = verified
-      ? "当前条目还缺少足够的事实摘要，详情只保留原始标题与来源，不把标题中的宣传性表述扩写成事实。"
-      : "当前公开材料只确认了标题所述动作，主体、日期和关键数字仍需回到原文二次核验；因此不把标题中的宣传性表述当作已证实事实。";
-    return boundary;
-  }
-  const impact = String(item.why || why || "").trim();
-  const boundary = !verified && evidenceNote ? `证据边界：${evidenceNote}` : "";
-  return [`这条事件的具体变化是：${text}`, impact ? `它的直接影响在于：${impact}` : "", boundary].filter(Boolean).join(" ");
+function buildEventDetail(item) {
+  const rawTitle = String(item.title_zh || item.title || "").trim();
+  let title = rawTitle
+    .replace(/^(?:高瓴种子|硬氪首发|独角兽早知道[^|｜]*[|｜])\s*/i, "")
+    .replace(/^(?:全球首个|全球第一|国内唯一)\s*/, "")
+    .replace(/[，,]\s*[^，,。]*?(?:是|究竟|到底|开始|终于|大招|有惊喜|阳谋|泡沫|冲刺|实干派|举重|支持跨|下一代Agent范式|让机器人).*?[？?]?$/, "")
+    .replace(/[:：]\s*(?:代码不是|不是写给|从“|从\")?.*(?:不是|大招|有惊喜|阳谋|泡沫|野蛮生长|品牌复利).*?$/, "")
+    .replace(/[“\"]?千问之父[”\"]?\s*/g, "")
+    .replace(/[“”\"]/g, "")
+    .trim();
+  let text = String(item.detail_zh || item.summary_zh || item.summary || "").trim();
+  if (!text || /^(点击查看原文>?|查看原文>?|暂无摘要|待补充)$/i.test(text)) text = title;
+  text = text
+    .replace(/\s*(?:原始项目说明|Original description)\s*[:：].*$/i, "")
+    .replace(/^(?:据|根据)\s*[^，。]{1,40}(?:报道|报道称|消息|披露)[，,]\s*/i, "")
+    .replace(/^[^，。]{1,40}援引[^，。]{1,40}(?:称|表示)[，,]\s*/i, "")
+    .replace(/^[^，。]{1,40}(?:报道|报道称)[，,]\s*/i, "")
+    .replace(/^[^，。]{1,40}(?:官网|官方|报告)(?:显示|说明|披露)[，,]\s*/i, "")
+    .replace(/(?:证监会)?官网显示[，,]\s*/i, "")
+    .replace(/辅导备案报告显示[，,]\s*/i, "")
+    .replace(/备案报告显示[，,]\s*/i, "")
+    .replace(/^([^，。]{1,30})(?:官方)?(?:宣布|表示|说明|披露)[，,]\s*/, "$1：")
+    .replace(/^DeepSeek 官方 API 文档将模型版本更新为/, "DeepSeek API 模型版本更新为")
+    .replace(/^Anthropic\s*：/, "Anthropic 的")
+    .replace(/^NVIDIA\s*：与/, "NVIDIA 与")
+    .replace(/^NVIDIA\s+宣布与/, "NVIDIA 与")
+    .replace(/^Anthropic 的2026 年/, "Anthropic 的 2026 年")
+    .replace(/\s+/g, " ")
+    .trim();
+  const editorialMarkers = ["这条事件的具体变化", "该事件的价值", "事件的价值在于", "它的直接影响在于", "这里记录的是", "该条记录的是", "这不是", "不是普通", "不是手机", "不是单纯", "不把", "不纳入", "不冒充", "不能把", "值得观察", "尚待独立验证", "公司自述", "属于结构性", "属于生成式", "属于正式", "属于会改变", "会改变赛道", "反映 AI", "体现 AI", "重点是", "该页面不等同于", "它与", "合并展示", "第三方跑分", "旁证", "官方结论", "官方 API 文档", "官方说明", "官方帮助文档", "研究人员称", "公司称", "去掉", "只保留", "不写成", "价值在于", "它把", "暴露模型服务", "作者", "编辑", "智东西", "人才与组织网络"];
+  const factual = text.split(/(?<=[。！？!?；;])\s*/).map(part => part.trim()).filter(part => part && !editorialMarkers.some(marker => part.includes(marker)));
+  const result = (factual.slice(0, 3).join(" ") || title || text).trim().replace(/；\s*。/g, "。").replace(/。；/g, "。").replace(/ ：/g, "：").replace(/[；;]+$/, "");
+  return result && !/[。！？!?]$/.test(result) ? `${result}。` : result;
 }
 
 function openDetail(id) {
@@ -421,7 +440,7 @@ function openDetail(id) {
   const evidence = verified ? `${item.evidence || "—"} 级 · ${item.confidence || "待核验"}` : `候选雷达 · ${item.source || "来源待核验"}`;
   const why = item.why || item.evidence_note || (item.taste_reasons || []).join("；") || "这条信息已通过相关性筛选，仍需结合原文和交叉来源判断。";
   const next = item.next || "回到原始来源核对事实、日期与后续确认。";
-  const detail = item.detail_zh || item.detail || buildEventDetail(item, item.summary, why);
+  const detail = buildEventDetail(item);
   dialogContent.innerHTML = `<article class="dialog-body"><div class="dialog-company"><span>${escapeHtml(item.companyEn || item.org || "")}</span><strong>${escapeHtml(company)}</strong></div><span class="category">${escapeHtml(category)}</span><h2 id="dialogTitle">${escapeHtml(item.title)}</h2><p class="lead">${escapeHtml(item.summary || "")}</p><section class="dialog-section dialog-detail"><h3>事件阐述</h3><p>${escapeHtml(detail)}</p></section><div class="dialog-meta"><div><span>日期</span><strong>${escapeHtml(item.date || "")}</strong></div><div><span>重要度 / 相关性</span><strong>${escapeHtml(score)}</strong></div><div><span>证据与来源</span><strong>${escapeHtml(evidence)}</strong></div></div><section class="dialog-section"><h3>为什么重要</h3><p>${escapeHtml(why)}</p></section><section class="dialog-section"><h3>下一个观察点</h3><p>${escapeHtml(next)}</p></section><a class="source-link" href="${escapeHtml(safeUrl(item.url))}" target="_blank" rel="noopener">打开原始来源 ↗</a></article>`;
   dialog.showModal();
 }
