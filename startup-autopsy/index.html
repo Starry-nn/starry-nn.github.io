@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Startup Autopsy is an evidence-led archive of ambitious technology companies that shut down, sold off, or collapsed."
+    />
+    <meta name="theme-color" content="#e8ebe9" />
+    <title>Startup Autopsy | An evidence-led archive of failure</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./data/cases.js"></script>
+    <script defer src="./app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#case-library">Skip to the archive</a>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Startup Autopsy home">
+        <span class="brand-mark" aria-hidden="true">SA</span>
+        <span class="brand-name">Startup Autopsy</span>
+      </a>
+      <nav class="header-actions" aria-label="Primary navigation">
+        <a class="nav-link" href="#method" data-i18n="navMethod">Method</a>
+        <button class="text-button" id="language-toggle" type="button" aria-label="切换为中文">
+          中文
+        </button>
+        <button class="text-button" id="theme-toggle" type="button" aria-label="Switch color theme">
+          Dark
+        </button>
+        <button class="primary-button compact" type="button" data-open-nomination>
+          <span data-i18n="nominate">Nominate a case</span>
+        </button>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy reveal-sequence">
+          <p class="eyebrow" data-i18n="eyebrow">An evidence-led archive of ambitious failures</p>
+          <h1 id="hero-title" data-i18n="heroTitle">Every dead startup leaves evidence.</h1>
+          <p class="hero-intro" data-i18n="heroIntro">
+            We preserve what was promised, what changed, and what founders can learn after the headlines disappear.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-button" href="#case-library" data-i18n="openArchive">Open the archive</a>
+            <button class="secondary-button" type="button" data-open-random>
+              <span data-i18n="randomCase">Draw a random case</span>
+            </button>
+          </div>
+        </div>
+
+        <figure class="hero-visual reveal-sequence">
+          <img
+            src="./assets/autopsy-desk.jpg"
+            alt="An archival desk holding case folders, charts, punched cards, and a circuit board in an evidence sleeve"
+            width="1680"
+            height="945"
+            fetchpriority="high"
+          />
+          <figcaption>
+            <span data-i18n="heroCaption">Failure is rarely one event. The archive keeps the sequence intact.</span>
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="featured" aria-labelledby="featured-heading">
+        <div class="featured-heading">
+          <p class="section-kicker" data-i18n="featuredKicker">Featured autopsy</p>
+          <h2 id="featured-heading">Argo AI</h2>
+          <p data-i18n="featuredSummary">
+            A $7 billion autonomous-driving bet that ran out of strategic patience before the technology reached commercial scale.
+          </p>
+          <button class="case-link" type="button" data-case-id="argo-ai">
+            <span data-i18n="readFile">Read the case file</span>
+            <span aria-hidden="true">&#8599;</span>
+          </button>
+        </div>
+
+        <div class="death-certificate" aria-label="Argo AI case summary">
+          <div class="certificate-stamp" aria-hidden="true" data-i18n="closed">CLOSED</div>
+          <div class="certificate-title">
+            <span data-i18n="certificate">Certificate of cessation</span>
+            <strong>Argo AI</strong>
+          </div>
+          <dl class="certificate-grid">
+            <div>
+              <dt data-i18n="founded">Founded</dt>
+              <dd>2016</dd>
+            </div>
+            <div>
+              <dt data-i18n="ceased">Ceased</dt>
+              <dd>2022</dd>
+            </div>
+            <div>
+              <dt data-i18n="peakValue">Reported value</dt>
+              <dd>$7B+</dd>
+            </div>
+            <div>
+              <dt data-i18n="capital">Capital committed</dt>
+              <dd>$3.6B</dd>
+            </div>
+          </dl>
+          <div class="certificate-cause">
+            <span data-i18n="probableCause">Probable mechanism</span>
+            <p data-i18n="argoCause">Long commercialization horizon combined with strategic investor dependency.</p>
+          </div>
+          <p class="certificate-note" data-i18n="certificateNote">
+            Editorial assessment. Open the file to inspect the underlying evidence.
+          </p>
+        </div>
+      </section>
+
+      <section class="archive" id="case-library" aria-labelledby="archive-title">
+        <div class="archive-heading">
+          <h2 id="archive-title" data-i18n="archiveTitle">The archive</h2>
+          <p data-i18n="archiveIntro">Search by company, sector, or failure mechanism. Every file links back to public evidence.</p>
+        </div>
+
+        <div class="archive-tools" aria-label="Archive controls">
+          <label class="search-field" for="case-search">
+            <span class="visually-hidden" data-i18n="searchLabel">Search cases</span>
+            <input
+              id="case-search"
+              type="search"
+              autocomplete="off"
+              placeholder="Search the archive"
+              data-i18n-placeholder="searchPlaceholder"
+            />
+            <kbd>/</kbd>
+          </label>
+          <div class="filter-group" id="sector-filters" aria-label="Filter by sector"></div>
+        </div>
+
+        <div class="archive-meta" aria-live="polite">
+          <span id="result-count"></span>
+          <button class="reset-button" id="reset-filters" type="button" hidden data-i18n="clearFilters">
+            Clear filters
+          </button>
+        </div>
+
+        <div class="case-grid" id="case-grid" aria-live="polite" aria-busy="true"></div>
+
+        <div class="empty-state" id="empty-state" hidden>
+          <p class="empty-title" data-i18n="emptyTitle">No case file matches that search.</p>
+          <p data-i18n="emptyBody">Try a company name, a sector, or clear the filters.</p>
+          <button class="secondary-button" id="empty-reset" type="button" data-i18n="clearFilters">Clear filters</button>
+        </div>
+      </section>
+
+      <section class="method" id="method" aria-labelledby="method-title">
+        <div class="method-copy">
+          <h2 id="method-title" data-i18n="methodTitle">A postmortem, not a verdict.</h2>
+          <p data-i18n="methodIntro">
+            Companies fail through a chain of choices, constraints, and timing. We separate records from interpretation so readers can disagree with the diagnosis.
+          </p>
+        </div>
+        <ol class="method-list">
+          <li>
+            <span class="method-label" data-i18n="methodCollect">Collect</span>
+            <p data-i18n="methodCollectBody">Prefer filings, company statements, and contemporaneous reporting.</p>
+          </li>
+          <li>
+            <span class="method-label" data-i18n="methodReconstruct">Reconstruct</span>
+            <p data-i18n="methodReconstructBody">Put funding, product shifts, layoffs, and shutdowns back in order.</p>
+          </li>
+          <li>
+            <span class="method-label" data-i18n="methodSeparate">Separate</span>
+            <p data-i18n="methodSeparateBody">Label verified facts, disputed claims, and editorial inference.</p>
+          </li>
+          <li>
+            <span class="method-label" data-i18n="methodRevise">Revise</span>
+            <p data-i18n="methodReviseBody">Keep each file open to corrections and stronger evidence.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="closing-callout" aria-labelledby="closing-title">
+        <p data-i18n="closingLead">Know a shutdown worth studying?</p>
+        <h2 id="closing-title" data-i18n="closingTitle">Help preserve the lesson before the links disappear.</h2>
+        <button class="primary-button" type="button" data-open-nomination data-i18n="nominateCase">
+          Nominate a case
+        </button>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Startup Autopsy</p>
+      <p data-i18n="footerNote">Open research for builders who prefer evidence to mythology.</p>
+      <a href="./README.md" data-i18n="aboutProject">About this project</a>
+    </footer>
+
+    <dialog class="case-dialog" id="case-dialog" aria-labelledby="dialog-company-name">
+      <div class="dialog-shell">
+        <button class="dialog-close" type="button" data-close-dialog aria-label="Close case file">Close</button>
+        <article id="case-detail"></article>
+      </div>
+    </dialog>
+
+    <dialog class="nomination-dialog" id="nomination-dialog" aria-labelledby="nomination-title">
+      <form class="nomination-form" id="nomination-form" novalidate>
+        <div class="nomination-heading">
+          <p class="section-kicker" data-i18n="communityLead">Community leads</p>
+          <h2 id="nomination-title" data-i18n="nominationTitle">Nominate a case</h2>
+          <p data-i18n="nominationIntro">Send one strong source. Your lead stays in this browser in this prototype.</p>
+        </div>
+
+        <label for="nomination-company">
+          <span data-i18n="companyName">Company name</span>
+          <input id="nomination-company" name="company" type="text" required autocomplete="organization" />
+          <span class="field-error" data-error-for="company"></span>
+        </label>
+
+        <label for="nomination-source">
+          <span data-i18n="sourceUrl">Best source URL</span>
+          <input id="nomination-source" name="source" type="url" required inputmode="url" placeholder="https://" />
+          <span class="field-error" data-error-for="source"></span>
+        </label>
+
+        <label for="nomination-note">
+          <span data-i18n="whyStudy">Why should we study it?</span>
+          <textarea id="nomination-note" name="note" rows="4"></textarea>
+        </label>
+
+        <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+        <div class="form-actions">
+          <button class="text-button" type="button" data-close-nomination data-i18n="cancel">Cancel</button>
+          <button class="primary-button" type="submit" data-i18n="saveLead">Save lead</button>
+        </div>
+      </form>
+    </dialog>
+  </body>
+</html>
