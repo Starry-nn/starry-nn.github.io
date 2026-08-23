@@ -3,100 +3,222 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Nan 的个人 AI Skills 工作台。按日常任务搜索、筛选并复制可直接交给 Codex 的调用语。">
-  <meta name="theme-color" content="#f4f5f2">
-  <title>Nan's Skills Desk</title>
+  <meta name="description" content="面向一级市场投资人的公开与私人 AI Skills 仓库。">
+  <meta name="theme-color" content="#f3f5f1">
+  <title>Skills Desk | 一级市场 AI Skills</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <a class="skip-link" href="#library">跳到 Skills 列表</a>
+  <a class="skip-link" href="#catalog">跳到 Skills 目录</a>
 
   <header class="site-header">
-    <a class="brand" href="./" aria-label="Nan's Skills Desk 首页">
-      <span class="brand-mark">N</span>
+    <a class="brand" href="#top" aria-label="Skills Desk 首页">
+      <span class="brand-mark">S</span>
       <span>Skills Desk</span>
     </a>
     <nav aria-label="主导航">
-      <a href="#workflows">工作流</a>
-      <a href="#library">Skills</a>
-      <button class="theme-button" id="themeButton" type="button" aria-label="切换深色或浅色主题">切换主题</button>
+      <a href="#catalog">公开 Skills</a>
+      <a href="#my-skills">我的仓库</a>
+      <a href="#guide">上传教程</a>
     </nav>
+    <div class="header-actions">
+      <button class="quiet-button" id="themeButton" type="button">深色模式</button>
+      <button class="primary-button" id="accountButton" type="button">登录 / 注册</button>
+    </div>
   </header>
 
-  <main>
+  <main id="top">
     <section class="hero" aria-labelledby="hero-title">
-      <div class="hero-copy">
-        <p class="kicker">个人 AI 能力索引</p>
-        <h1 id="hero-title">今天做什么？<br>找对 Skill。</h1>
-        <p class="hero-description">为投资研究、人才 mapping、飞书协作和内容交付整理的个人工作台。</p>
-      </div>
-
-      <div class="search-panel" role="search">
-        <label for="searchInput">搜索任务或 Skill</label>
-        <div class="search-row">
-          <input id="searchInput" type="search" autocomplete="off" placeholder="例如：研究一家公司、整理会议、更新人才库" aria-describedby="searchHelp">
-          <button id="clearSearch" type="button">清空</button>
-        </div>
-        <p id="searchHelp">也可以按 <kbd>/</kbd> 直接开始搜索，按 <kbd>Esc</kbd> 清空。</p>
-        <div class="hot-searches" aria-label="常用搜索">
-          <button type="button" data-query="公司研究">公司研究</button>
-          <button type="button" data-query="人物 mapping">人物 mapping</button>
-          <button type="button" data-query="会议纪要">会议纪要</button>
-          <button type="button" data-query="飞书">飞书</button>
-          <button type="button" data-query="周报">周报</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="workflows" id="workflows" aria-labelledby="workflow-title">
-      <div class="section-heading">
-        <h2 id="workflow-title">从你最常做的事开始</h2>
-        <p>每个入口会组合多个 Skills，并把列表切到对应任务。</p>
-      </div>
-      <div class="workflow-grid" id="workflowGrid"></div>
-    </section>
-
-    <section class="library" id="library" aria-labelledby="library-title">
-      <div class="library-heading">
-        <div>
-          <h2 id="library-title">Skills Library</h2>
-          <p id="resultSummary" aria-live="polite"></p>
-        </div>
-        <button class="reset-button" id="resetFilters" type="button">重置筛选</button>
-      </div>
-
-      <div class="filter-bar" aria-label="Skill 筛选器">
-        <div class="filter-group" id="categoryFilters" aria-label="按任务分类"></div>
-        <div class="filter-group compact" aria-label="按可用状态筛选">
-          <button class="filter-button active" type="button" data-status="all" aria-pressed="true">全部状态</button>
-          <button class="filter-button" type="button" data-status="installed" aria-pressed="false">本地已安装</button>
-          <button class="filter-button" type="button" data-status="available" aria-pressed="false">当前可用</button>
-        </div>
-      </div>
-
-      <div class="skills-list" id="skillsList"></div>
-      <div class="empty-state" id="emptyState" hidden>
-        <h3>没有匹配结果</h3>
-        <p>换一个更短的关键词，或重置筛选。</p>
-        <button type="button" id="emptyReset">查看全部 Skills</button>
-      </div>
-    </section>
-
-    <section class="usage-note" aria-labelledby="usage-title">
-      <h2 id="usage-title">怎么用这个工作台</h2>
       <div>
-        <p>找到任务后，复制卡片里的调用语，直接粘贴给 Codex。Skill 名称已经写进调用语中。</p>
-        <p>“本地已安装”表示个人 Skill 已经在这台机器上；“当前可用”表示来自已连接的工具或插件能力。</p>
+        <p class="kicker">一级市场 AI Skills Hub</p>
+        <h1 id="hero-title">公开能力可发现。<br>私人方法只属于你。</h1>
+        <p class="hero-copy">查找 Anthropic、OpenAI 和 Lark 生态的常用 Skills。登录后保存、打包并安装自己的完整工作流。</p>
+        <div class="hero-actions">
+          <a class="primary-button link-button" href="#catalog">浏览公开目录</a>
+          <a class="quiet-button link-button" href="#my-skills">打开私人仓库</a>
+        </div>
+      </div>
+      <aside class="hero-facts" aria-label="平台能力">
+        <div><strong id="publicCount">0</strong><span>公开 Skills</span></div>
+        <div><strong>私有</strong><span>账号隔离存储</span></div>
+        <div><strong>ZIP</strong><span>单项与整库安装</span></div>
+      </aside>
+    </section>
+
+    <section class="task-map" aria-labelledby="task-title">
+      <div class="section-heading">
+        <h2 id="task-title">你正在做哪一步？</h2>
+        <p>从投资动作进入，比记住 Skill 名称更快。</p>
+      </div>
+      <div class="task-grid" id="taskGrid"></div>
+    </section>
+
+    <section class="catalog" id="catalog" aria-labelledby="catalog-title">
+      <div class="catalog-heading">
+        <div>
+          <h2 id="catalog-title">公开 Skills</h2>
+          <p id="publicSummary" aria-live="polite">正在读取公开目录</p>
+        </div>
+        <label class="search-box" for="searchInput">
+          <span>搜索</span>
+          <input id="searchInput" type="search" placeholder="BP、尽调、IC Memo、飞书、投后">
+        </label>
+      </div>
+      <div class="filter-stack">
+        <div class="filter-row" id="providerFilters" aria-label="按来源筛选"></div>
+        <div class="filter-row" id="categoryFilters" aria-label="按任务筛选"></div>
+      </div>
+      <div class="skills-grid" id="publicSkills"></div>
+      <div class="empty-state" id="publicEmpty" hidden>
+        <h3>没有匹配的公开 Skill</h3>
+        <p>缩短关键词，或重置来源与任务筛选。</p>
+        <button class="quiet-button" type="button" data-reset-public>查看全部</button>
+      </div>
+    </section>
+
+    <section class="private-library" id="my-skills" aria-labelledby="private-title">
+      <div class="library-topline">
+        <div>
+          <p class="kicker">登录后可见</p>
+          <h2 id="private-title">我的私人 Skill 仓库</h2>
+          <p>你的 Skill 包不会进入公开目录，也不会被其他账号检索或下载。</p>
+        </div>
+        <div class="private-actions" id="privateActions" hidden>
+          <button class="quiet-button" id="tokenButton" type="button">安装与上传令牌</button>
+          <button class="quiet-button" id="bundleButton" type="button">下载整库 ZIP</button>
+          <button class="primary-button" id="uploadButton" type="button">上传 Skill</button>
+        </div>
+      </div>
+
+      <div class="locked-state" id="lockedState">
+        <div>
+          <h3>登录后进入你的独立仓库</h3>
+          <p>注册账号即可保存自己的 Skills；每个账号拥有独立的数据与下载权限。</p>
+        </div>
+        <button class="primary-button" type="button" data-open-auth>登录 / 注册</button>
+      </div>
+
+      <div class="private-content" id="privateContent" hidden>
+        <div class="private-status">
+          <p id="welcomeText"></p>
+          <button class="text-button" id="logoutButton" type="button">退出登录</button>
+        </div>
+        <div class="skills-grid private" id="privateSkills"></div>
+        <div class="empty-state" id="privateEmpty" hidden>
+          <h3>私人仓库还是空的</h3>
+          <p>上传单个 Skill ZIP，或生成上传令牌让 Agent 帮你打包。</p>
+          <button class="primary-button" type="button" data-open-upload>上传第一个 Skill</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="guide" id="guide" aria-labelledby="guide-title">
+      <div class="section-heading">
+        <h2 id="guide-title">把 Skill 交给你的 Agent</h2>
+        <p>平台接受标准 Skill 目录的 ZIP 包。每个包只包含一个 Skill。</p>
+      </div>
+      <div class="guide-layout">
+        <div class="guide-steps">
+          <article>
+            <span>准备</span>
+            <h3>整理标准目录</h3>
+            <p>根目录名与 SKILL.md 的 name 一致，可附带 scripts、references、assets 和 agents。</p>
+          </article>
+          <article>
+            <span>上传</span>
+            <h3>保存到私人仓库</h3>
+            <p>登录后上传 ZIP，或创建只显示一次的访问令牌，让 Agent 通过 API 上传。</p>
+          </article>
+          <article>
+            <span>安装</span>
+            <h3>一次安装完整仓库</h3>
+            <p>下载整库 ZIP 到用户级 Skills 目录，Codex 会自动发现新增内容。</p>
+          </article>
+        </div>
+        <div class="prompt-panel">
+          <div class="prompt-head">
+            <h3>给 Agent 的打包 Prompt</h3>
+            <button class="text-button" type="button" data-copy-id="agentPrompt">复制</button>
+          </div>
+          <pre id="agentPrompt">检查我要保存的 Skill：确保根目录使用小写短横线命名，根目录中有 SKILL.md，frontmatter 包含 name 和 description；排除凭据、缓存、日志和无关文档；验证脚本与引用路径；最后将单一 Skill 根目录打包为 ZIP。未经我提供 Skills Desk 上传令牌，不要上传任何文件。</pre>
+        </div>
       </div>
     </section>
   </main>
 
   <footer>
-    <p>Nan's Skills Desk</p>
-    <p>根据日常工作持续更新</p>
+    <div><strong>Skills Desk</strong><p>为一级市场工作流整理的 AI Skills 目录。</p></div>
+    <a href="#top">回到顶部</a>
   </footer>
 
-  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+  <dialog id="authDialog" class="modal">
+    <form method="dialog" class="modal-shell" id="authForm">
+      <div class="modal-head">
+        <div><p class="kicker">私人仓库</p><h2>登录或创建账号</h2></div>
+        <button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button>
+      </div>
+      <div class="segmented" id="authMode">
+        <button class="active" type="button" data-auth-mode="login">登录</button>
+        <button type="button" data-auth-mode="register">注册</button>
+      </div>
+      <label>用户名<input id="authUsername" name="username" autocomplete="username" required></label>
+      <label>密码<input id="authPassword" name="password" type="password" autocomplete="current-password" required></label>
+      <p class="form-help" id="authHelp">使用你的账号进入私人 Skill 仓库。</p>
+      <p class="form-error" id="authError" role="alert"></p>
+      <button class="primary-button full" id="authSubmit" type="submit">登录</button>
+    </form>
+  </dialog>
+
+  <dialog id="passwordDialog" class="modal">
+    <form method="dialog" class="modal-shell" id="passwordForm">
+      <div class="modal-head"><div><p class="kicker">安全设置</p><h2>修改临时密码</h2></div></div>
+      <p class="form-help">首次登录必须设置至少 10 位、同时包含字母和数字或符号的新密码。</p>
+      <label>当前密码<input id="currentPassword" type="password" autocomplete="current-password" required></label>
+      <label>新密码<input id="newPassword" type="password" autocomplete="new-password" required minlength="10"></label>
+      <p class="form-error" id="passwordError" role="alert"></p>
+      <button class="primary-button full" type="submit">保存新密码</button>
+    </form>
+  </dialog>
+
+  <dialog id="uploadDialog" class="modal">
+    <form method="dialog" class="modal-shell" id="uploadForm">
+      <div class="modal-head">
+        <div><p class="kicker">私人 Skill</p><h2>上传 ZIP</h2></div>
+        <button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button>
+      </div>
+      <label>任务分类<select id="uploadCategory"></select></label>
+      <label class="file-drop" for="skillFile">
+        <strong>选择 Skill ZIP</strong><span>单一 Skill 根目录，最大 6 MB</span>
+        <input id="skillFile" type="file" accept=".zip,application/zip" required>
+      </label>
+      <p class="form-error" id="uploadError" role="alert"></p>
+      <button class="primary-button full" type="submit">上传并保存</button>
+    </form>
+  </dialog>
+
+  <dialog id="tokenDialog" class="modal wide">
+    <div class="modal-shell">
+      <div class="modal-head">
+        <div><p class="kicker">Agent 连接</p><h2>安装与上传令牌</h2></div>
+        <button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button>
+      </div>
+      <p class="form-help">令牌只在创建时显示一次。不要放进 Skill、GitHub 或公开 Prompt。</p>
+      <div class="token-create">
+        <input id="tokenLabel" placeholder="例如：我的 MacBook">
+        <button class="primary-button" id="createTokenButton" type="button">创建令牌</button>
+      </div>
+      <div class="generated-token" id="generatedToken" hidden>
+        <div class="prompt-head"><h3>整库安装命令</h3><button class="text-button" type="button" data-copy-id="installCommand">复制</button></div>
+        <pre id="installCommand"></pre>
+        <div class="prompt-head"><h3>给 Agent 的上传 Prompt</h3><button class="text-button" type="button" data-copy-id="uploadPrompt">复制</button></div>
+        <pre id="uploadPrompt"></pre>
+      </div>
+      <div class="token-list" id="tokenList"></div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="./app.js"></script>
 </body>
 </html>

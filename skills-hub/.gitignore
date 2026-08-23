@@ -1,0 +1,6 @@
+.local-state/
+private-bundles/
+infra/admin.env
+infra/admin-credentials.txt
+__pycache__/
+*.pyc
