@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Nan 的个人 AI Skills 工作台。按日常任务搜索、筛选并复制可直接交给 Codex 的调用语。">
+  <meta name="theme-color" content="#f4f5f2">
+  <title>Nan's Skills Desk</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#library">跳到 Skills 列表</a>
+
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="Nan's Skills Desk 首页">
+      <span class="brand-mark">N</span>
+      <span>Skills Desk</span>
+    </a>
+    <nav aria-label="主导航">
+      <a href="#workflows">工作流</a>
+      <a href="#library">Skills</a>
+      <button class="theme-button" id="themeButton" type="button" aria-label="切换深色或浅色主题">切换主题</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="kicker">个人 AI 能力索引</p>
+        <h1 id="hero-title">今天做什么？<br>找对 Skill。</h1>
+        <p class="hero-description">为投资研究、人才 mapping、飞书协作和内容交付整理的个人工作台。</p>
+      </div>
+
+      <div class="search-panel" role="search">
+        <label for="searchInput">搜索任务或 Skill</label>
+        <div class="search-row">
+          <input id="searchInput" type="search" autocomplete="off" placeholder="例如：研究一家公司、整理会议、更新人才库" aria-describedby="searchHelp">
+          <button id="clearSearch" type="button">清空</button>
+        </div>
+        <p id="searchHelp">也可以按 <kbd>/</kbd> 直接开始搜索，按 <kbd>Esc</kbd> 清空。</p>
+        <div class="hot-searches" aria-label="常用搜索">
+          <button type="button" data-query="公司研究">公司研究</button>
+          <button type="button" data-query="人物 mapping">人物 mapping</button>
+          <button type="button" data-query="会议纪要">会议纪要</button>
+          <button type="button" data-query="飞书">飞书</button>
+          <button type="button" data-query="周报">周报</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="workflows" id="workflows" aria-labelledby="workflow-title">
+      <div class="section-heading">
+        <h2 id="workflow-title">从你最常做的事开始</h2>
+        <p>每个入口会组合多个 Skills，并把列表切到对应任务。</p>
+      </div>
+      <div class="workflow-grid" id="workflowGrid"></div>
+    </section>
+
+    <section class="library" id="library" aria-labelledby="library-title">
+      <div class="library-heading">
+        <div>
+          <h2 id="library-title">Skills Library</h2>
+          <p id="resultSummary" aria-live="polite"></p>
+        </div>
+        <button class="reset-button" id="resetFilters" type="button">重置筛选</button>
+      </div>
+
+      <div class="filter-bar" aria-label="Skill 筛选器">
+        <div class="filter-group" id="categoryFilters" aria-label="按任务分类"></div>
+        <div class="filter-group compact" aria-label="按可用状态筛选">
+          <button class="filter-button active" type="button" data-status="all" aria-pressed="true">全部状态</button>
+          <button class="filter-button" type="button" data-status="installed" aria-pressed="false">本地已安装</button>
+          <button class="filter-button" type="button" data-status="available" aria-pressed="false">当前可用</button>
+        </div>
+      </div>
+
+      <div class="skills-list" id="skillsList"></div>
+      <div class="empty-state" id="emptyState" hidden>
+        <h3>没有匹配结果</h3>
+        <p>换一个更短的关键词，或重置筛选。</p>
+        <button type="button" id="emptyReset">查看全部 Skills</button>
+      </div>
+    </section>
+
+    <section class="usage-note" aria-labelledby="usage-title">
+      <h2 id="usage-title">怎么用这个工作台</h2>
+      <div>
+        <p>找到任务后，复制卡片里的调用语，直接粘贴给 Codex。Skill 名称已经写进调用语中。</p>
+        <p>“本地已安装”表示个人 Skill 已经在这台机器上；“当前可用”表示来自已连接的工具或插件能力。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Nan's Skills Desk</p>
+    <p>根据日常工作持续更新</p>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+  <script src="./app.js"></script>
+</body>
+</html>
