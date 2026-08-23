@@ -1,5 +1,25 @@
 # Startup Autopsy
 
+Startup Autopsy 是一个中英双语的创业失败档案馆。它用公开材料还原公司停运、破产清算和核心产品下线的过程，并把可验证事实与编辑判断分开。
+
+## 2026 coverage
+
+- 数据更新至 2026-08-23。
+- 当前共收录 19 份 2026 年公开可核验档案，其中 10 份来自中国，9 份来自海外。
+- 收录标准包括法院已受理的破产清算、公司确认停运，以及核心产品正式下线。
+- 普通裁员、未经证实的传闻和仍处于申请阶段的破产案件不纳入统计。
+- 这是一份公开样本，不代表所有未公开或无法核验的失败项目。
+
+## Features
+
+- 中英文切换与独立中文排版系统
+- 按年份、地区、行业和退出方式筛选
+- 搜索与时间排序
+- 2 至 3 个案例并排对比
+- 深浅色主题
+- 随机案例与可分享的案例链接
+- 本地保存的社区线索表单
+
 Startup Autopsy is an evidence-led archive of ambitious technology companies that shut down, sold off, or collapsed.
 
 Instead of reducing failure to a single cause, each case file reconstructs the sequence of funding, product shifts, layoffs, strategic changes, and shutdown events. Verified facts are labeled separately from editorial inference.

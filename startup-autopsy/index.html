@@ -12,6 +12,7 @@
     <link rel="icon" href="data:," />
     <link rel="stylesheet" href="./styles.css" />
     <script defer src="./data/cases.js"></script>
+    <script defer src="./data/cases-2026.js"></script>
     <script defer src="./app.js"></script>
   </head>
   <body>
@@ -39,8 +40,8 @@
     <main id="top">
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-copy reveal-sequence">
-          <p class="eyebrow" data-i18n="eyebrow">An evidence-led archive of ambitious failures</p>
-          <h1 id="hero-title" data-i18n="heroTitle">Every dead startup leaves evidence.</h1>
+          <p class="eyebrow" data-i18n="eyebrow">Reconstructing failure from public evidence</p>
+          <h1 id="hero-title" data-i18n="heroTitle">Failure leaves more than a conclusion.</h1>
           <p class="hero-intro" data-i18n="heroIntro">
             We preserve what was promised, what changed, and what founders can learn after the headlines disappear.
           </p>
@@ -64,6 +65,16 @@
             <span data-i18n="heroCaption">Failure is rarely one event. The archive keeps the sequence intact.</span>
           </figcaption>
         </figure>
+      </section>
+
+      <section class="year-snapshot" aria-labelledby="snapshot-title">
+        <div class="snapshot-copy">
+          <h2 id="snapshot-title" data-i18n="snapshotTitle">2026, so far</h2>
+          <p data-i18n="snapshotIntro">A verified public sample through August 23. China leads the archive; global cases provide comparison.</p>
+          <button class="case-link" type="button" id="show-2026" data-i18n="view2026">View 2026 files</button>
+        </div>
+        <dl class="snapshot-stats" id="snapshot-stats"></dl>
+        <p class="coverage-note" data-i18n="coverageNote">Coverage includes court-accepted liquidation, confirmed shutdowns, and core product sunsets. It excludes layoffs, rumors, and pending petitions.</p>
       </section>
 
       <section class="featured" aria-labelledby="featured-heading">
@@ -131,6 +142,42 @@
             />
             <kbd>/</kbd>
           </label>
+          <div class="filter-panel">
+            <label>
+              <span data-i18n="filterYear">Year</span>
+              <select id="year-filter">
+                <option value="all" data-i18n="allYears">All years</option>
+                <option value="2026">2026</option>
+                <option value="historical" data-i18n="historical">Historical</option>
+              </select>
+            </label>
+            <label>
+              <span data-i18n="filterRegion">Region</span>
+              <select id="region-filter">
+                <option value="all" data-i18n="allRegions">All regions</option>
+                <option value="china" data-i18n="china">China</option>
+                <option value="global" data-i18n="global">Global</option>
+              </select>
+            </label>
+            <label>
+              <span data-i18n="filterOutcome">Outcome</span>
+              <select id="outcome-filter">
+                <option value="all" data-i18n="allOutcomes">All outcomes</option>
+                <option value="bankruptcy" data-i18n="bankruptcy">Bankruptcy</option>
+                <option value="shutdown" data-i18n="shutdown">Shutdown</option>
+                <option value="product-sunset" data-i18n="productSunset">Product sunset</option>
+                <option value="other" data-i18n="otherOutcome">Other exit</option>
+              </select>
+            </label>
+            <label>
+              <span data-i18n="sortBy">Sort</span>
+              <select id="sort-filter">
+                <option value="newest" data-i18n="newest">Newest first</option>
+                <option value="oldest" data-i18n="oldest">Oldest first</option>
+                <option value="name" data-i18n="byName">Name</option>
+              </select>
+            </label>
+          </div>
           <div class="filter-group" id="sector-filters" aria-label="Filter by sector"></div>
         </div>
 
@@ -186,6 +233,14 @@
       </section>
     </main>
 
+    <aside class="compare-tray" id="compare-tray" hidden aria-live="polite">
+      <span id="compare-count"></span>
+      <div>
+        <button class="text-button" id="clear-compare" type="button" data-i18n="clearCompare">Clear</button>
+        <button class="primary-button compact" id="open-compare" type="button" data-i18n="compareCases">Compare files</button>
+      </div>
+    </aside>
+
     <footer class="site-footer">
       <p>Startup Autopsy</p>
       <p data-i18n="footerNote">Open research for builders who prefer evidence to mythology.</p>
@@ -230,6 +285,14 @@
           <button class="primary-button" type="submit" data-i18n="saveLead">Save lead</button>
         </div>
       </form>
+    </dialog>
+
+    <dialog class="compare-dialog" id="compare-dialog" aria-labelledby="compare-title">
+      <div class="dialog-shell compare-shell">
+        <button class="dialog-close" type="button" data-close-compare data-i18n="close">Close</button>
+        <h2 id="compare-title" data-i18n="compareTitle">Compare case files</h2>
+        <div id="compare-detail"></div>
+      </div>
     </dialog>
   </body>
 </html>

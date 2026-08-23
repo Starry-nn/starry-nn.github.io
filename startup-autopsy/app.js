@@ -1,14 +1,22 @@
 (function () {
   "use strict";
 
-  const cases = Array.isArray(window.AUTOPSY_CASES) ? window.AUTOPSY_CASES : [];
+  const cases = [
+    ...(Array.isArray(window.AUTOPSY_CASES_2026) ? window.AUTOPSY_CASES_2026 : []),
+    ...(Array.isArray(window.AUTOPSY_CASES) ? window.AUTOPSY_CASES : [])
+  ].map((item) => ({
+    region: item.region || "global",
+    outcome: item.outcome || "other",
+    eventDate: item.eventDate || `${item.ceased}-01-01`,
+    ...item
+  }));
   const translations = {
     en: {
       navMethod: "Method",
       nominate: "Nominate a case",
-      eyebrow: "An evidence-led archive of ambitious failures",
-      heroTitle: "Every dead startup leaves evidence.",
-      heroIntro: "We preserve what was promised, what changed, and what founders can learn after the headlines disappear.",
+      eyebrow: "Reconstructing failure from public evidence",
+      heroTitle: "Failure leaves more than a conclusion.",
+      heroIntro: "We trace how products, capital, and pivotal decisions arrived at the final day.",
       openArchive: "Open the archive",
       randomCase: "Draw a random case",
       heroCaption: "Failure is rarely one event. The archive keeps the sequence intact.",
@@ -24,7 +32,19 @@
       argoCause: "Long commercialization horizon combined with strategic investor dependency.",
       certificateNote: "Editorial assessment. Open the file to inspect the underlying evidence.",
       archiveTitle: "The archive",
-      archiveIntro: "Search by company, sector, or failure mechanism. Every file links back to public evidence.",
+      archiveIntro: "Search, filter, and compare the evidence. Every file links back to public records.",
+      snapshotTitle: "2026, so far",
+      snapshotIntro: "A verified public sample through August 23. China leads the archive; global cases provide comparison.",
+      view2026: "View 2026 files",
+      coverageNote: "Coverage includes court-accepted liquidation, confirmed shutdowns, and core product sunsets. It excludes layoffs, rumors, and pending petitions.",
+      filterYear: "Year", filterRegion: "Region", filterOutcome: "Outcome", sortBy: "Sort",
+      allYears: "All years", historical: "Historical", allRegions: "All regions", china: "China", global: "Global",
+      allOutcomes: "All outcomes", bankruptcy: "Bankruptcy", shutdown: "Shutdown", productSunset: "Product sunset", otherOutcome: "Other exit",
+      newest: "Newest first", oldest: "Oldest first", byName: "Name",
+      statFiles: "verified 2026 files", statChina: "from China", statGlobal: "global comparisons", statSources: "linked sources",
+      compare: "Compare", selected: "Selected", compareCases: "Compare files", compareTitle: "Compare case files", clearCompare: "Clear",
+      compareCount: "{count} selected, choose 2 or 3", compareNeedTwo: "Select at least 2 files to compare.",
+      coreMechanism: "Core mechanism", takeaway: "What this tells us", eventDate: "Event date",
       searchLabel: "Search cases",
       searchPlaceholder: "Search the archive",
       clearFilters: "Clear filters",
@@ -57,6 +77,7 @@
       autonomy: "Autonomy",
       health: "Health",
       robotics: "Robotics",
+      "ai-app": "AI applications", "ai-companion": "AI companion", hardware: "Smart hardware", productivity: "Productivity", "ai-infra": "AI infrastructure",
       resultSingle: "1 case file",
       resultPlural: "{count} case files",
       yearClosed: "Year closed",
@@ -89,28 +110,40 @@
     },
     zh: {
       navMethod: "研究方法",
-      nominate: "推荐案例",
-      eyebrow: "记录野心勃勃的失败，并保留证据",
-      heroTitle: "每家消失的创业公司都留下证据。",
-      heroIntro: "保存它曾经承诺什么、后来改变什么，以及热搜消失后仍然值得学习的部分。",
-      openArchive: "打开档案馆",
-      randomCase: "随机抽取案例",
-      heroCaption: "失败很少只发生在一个瞬间。档案馆保留完整的事件顺序。",
-      featuredKicker: "本期尸检报告",
-      featuredSummary: "一场估值超过 70 亿美元的自动驾驶押注，在技术商业化之前先耗尽了战略耐心。",
-      readFile: "阅读完整档案",
-      certificate: "停止运营证明",
+      nominate: "提交线索",
+      eyebrow: "用公开证据，还原创业项目如何走到终点",
+      heroTitle: "创业失败，别只看结论。",
+      heroIntro: "沿着产品、资金和关键决策，还原它们一步步走到终点的过程。",
+      openArchive: "查看全部档案",
+      randomCase: "随机读一份",
+      heroCaption: "失败通常不是一个瞬间，而是一连串可以被还原的变化。",
+      featuredKicker: "重点档案",
+      featuredSummary: "一家估值超过 70 亿美元的自动驾驶公司，在技术规模化之前先失去了股东的战略耐心。",
+      readFile: "查看完整档案",
+      certificate: "结案记录",
       founded: "成立",
       ceased: "停止",
       peakValue: "披露估值",
       capital: "资本",
-      probableCause: "可能的失败机制",
+      probableCause: "核心症结",
       argoCause: "漫长的商业化周期与对战略投资方的高度依赖同时发生。",
-      certificateNote: "这是编辑判断。打开档案可查看支持判断的公开证据。",
-      archiveTitle: "死亡档案馆",
-      archiveIntro: "按公司、行业或失败机制检索。每份档案都链接回公开证据。",
+      certificateNote: "这是基于公开材料的编辑判断，完整证据见案例详情。",
+      archiveTitle: "失败档案",
+      archiveIntro: "可以搜索、筛选，也可以把案例放在一起比较。每份档案都附有公开来源。",
+      snapshotTitle: "2026 年度切片",
+      snapshotIntro: "统计截至 8 月 23 日的公开可核验样本，以国内案例为主，并加入海外对照。",
+      view2026: "只看 2026 年",
+      coverageNote: "收录范围包括法院已受理的破产清算、官方确认的停运，以及核心产品下线；不收录普通裁员、传闻和仍在申请阶段的案件。",
+      filterYear: "时间", filterRegion: "地区", filterOutcome: "退出方式", sortBy: "排序",
+      allYears: "全部年份", historical: "历史案例", allRegions: "全部地区", china: "国内", global: "海外",
+      allOutcomes: "全部方式", bankruptcy: "破产清算", shutdown: "公司停运", productSunset: "产品下线", otherOutcome: "其他退出",
+      newest: "按时间从近到远", oldest: "按时间从远到近", byName: "按名称",
+      statFiles: "份 2026 档案", statChina: "份国内样本", statGlobal: "份海外对照", statSources: "条公开来源",
+      compare: "加入对比", selected: "已选择", compareCases: "开始对比", compareTitle: "案例对比", clearCompare: "清空",
+      compareCount: "已选 {count} 份，请选择 2 至 3 份", compareNeedTwo: "至少选择 2 份档案才能对比。",
+      coreMechanism: "核心症结", takeaway: "这件事告诉我们什么", eventDate: "事件时间",
       searchLabel: "搜索案例",
-      searchPlaceholder: "搜索档案馆",
+      searchPlaceholder: "搜索公司、产品或失败原因",
       clearFilters: "清除筛选",
       emptyTitle: "没有匹配的案例档案。",
       emptyBody: "尝试公司名称、行业关键词，或清除筛选条件。",
@@ -124,23 +157,24 @@
       methodSeparateBody: "分别标记可验证事实、争议信息和编辑推断。",
       methodRevise: "修订",
       methodReviseBody: "接受纠错，并在出现更强证据时更新档案。",
-      closingLead: "知道一家值得研究的消失公司？",
-      closingTitle: "在链接失效之前，帮我们把教训保存下来。",
-      nominateCase: "推荐一个案例",
-      footerNote: "为更相信证据而不是神话的建设者提供开放研究。",
+      closingLead: "还有遗漏的项目？",
+      closingTitle: "趁公开链接还在，帮我们把证据补齐。",
+      nominateCase: "提交一条线索",
+      footerNote: "给愿意从真实失败中学习的人，一份持续更新的公开档案。",
       aboutProject: "关于这个项目",
-      communityLead: "社区线索",
-      nominationTitle: "推荐案例",
-      nominationIntro: "提供一个可靠来源。原型阶段的线索只保存在你的浏览器中。",
+      communityLead: "补充档案",
+      nominationTitle: "提交案例线索",
+      nominationIntro: "请附上一条可靠来源。当前版本会先把线索保存在你的浏览器中。",
       companyName: "公司名称",
       sourceUrl: "最佳来源链接",
-      whyStudy: "为什么值得研究？",
+      whyStudy: "为什么这件事值得复盘？",
       cancel: "取消",
-      saveLead: "保存线索",
+      saveLead: "提交线索",
       all: "全部行业",
       autonomy: "自动驾驶",
       health: "医疗",
       robotics: "机器人",
+      "ai-app": "AI 应用", "ai-companion": "AI 陪伴", hardware: "智能硬件", productivity: "效率工具", "ai-infra": "AI 基础设施",
       resultSingle: "1 份案例档案",
       resultPlural: "{count} 份案例档案",
       yearClosed: "停止年份",
@@ -150,12 +184,12 @@
       sector: "行业",
       location: "地点",
       status: "状态",
-      diagnosis: "编辑诊断",
+      diagnosis: "核心症结",
       timeline: "发生了什么",
       findings: "证据与判断",
       fact: "可验证事实",
       inference: "编辑推断",
-      lesson: "留下的教训",
+      lesson: "这件事告诉我们什么",
       sources: "证据来源",
       primary: "一手来源",
       reporting: "媒体报道",
@@ -164,7 +198,7 @@
       copied: "链接已复制",
       requiredCompany: "请输入公司名称。",
       requiredSource: "请输入有效的来源链接。",
-      savedLead: "线索已保存在本地。感谢你补上一条可追踪的路径。",
+      savedLead: "线索已保存在本机。谢谢你补上一条可核验的证据。",
       switchLanguageLabel: "Switch to English",
       lightTheme: "浅色",
       darkTheme: "深色",
@@ -177,6 +211,11 @@
     language: localStorage.getItem("autopsy-language") === "zh" ? "zh" : "en",
     sector: "all",
     query: "",
+    year: "all",
+    region: "all",
+    outcome: "all",
+    sort: "newest",
+    compare: [],
     openCaseId: null
   };
 
@@ -194,7 +233,16 @@
     nominationForm: document.querySelector("#nomination-form"),
     formStatus: document.querySelector("#form-status"),
     languageToggle: document.querySelector("#language-toggle"),
-    themeToggle: document.querySelector("#theme-toggle")
+    themeToggle: document.querySelector("#theme-toggle"),
+    yearFilter: document.querySelector("#year-filter"),
+    regionFilter: document.querySelector("#region-filter"),
+    outcomeFilter: document.querySelector("#outcome-filter"),
+    sortFilter: document.querySelector("#sort-filter"),
+    snapshotStats: document.querySelector("#snapshot-stats"),
+    compareTray: document.querySelector("#compare-tray"),
+    compareCount: document.querySelector("#compare-count"),
+    compareDialog: document.querySelector("#compare-dialog"),
+    compareDetail: document.querySelector("#compare-detail")
   };
 
   function t(key, replacements) {
@@ -222,6 +270,10 @@
 
   function applyTranslations() {
     document.documentElement.lang = state.language === "zh" ? "zh-CN" : "en";
+    document.title = state.language === "zh" ? "Startup Autopsy | 创业失败档案馆" : "Startup Autopsy | An evidence-led archive of failure";
+    document.querySelector('meta[name="description"]').content = state.language === "zh"
+      ? "用公开证据还原创业公司停运、破产清算和产品下线的过程。"
+      : "An evidence-led archive of startup shutdowns, bankruptcies, and product sunsets.";
     document.querySelectorAll("[data-i18n]").forEach((element) => {
       element.textContent = t(element.dataset.i18n);
     });
@@ -237,7 +289,7 @@
   }
 
   function renderFilters() {
-    const filters = ["all", "autonomy", "health", "robotics"];
+    const filters = ["all", "ai-app", "ai-companion", "robotics", "hardware", "autonomy", "health", "productivity", "ai-infra"];
     elements.filters.innerHTML = filters
       .map(
         (filter) => `
@@ -254,9 +306,13 @@
 
   function getFilteredCases() {
     const normalized = state.query.trim().toLocaleLowerCase(state.language === "zh" ? "zh-CN" : "en-US");
-    return cases.filter((item) => {
+    const filtered = cases.filter((item) => {
       const copy = caseCopy(item);
       const sectorMatch = state.sector === "all" || item.sector === state.sector;
+      const yearMatch = state.year === "all" || (state.year === "historical" ? item.ceased !== "2026" : item.ceased === state.year);
+      const regionMatch = state.region === "all" || item.region === state.region;
+      const outcomeGroup = ["acqui-hire", "pivot", "liquidation", "other"];
+      const outcomeMatch = state.outcome === "all" || item.outcome === state.outcome || (state.outcome === "other" && outcomeGroup.includes(item.outcome));
       const searchText = [
         item.name,
         item.location,
@@ -267,8 +323,24 @@
       ]
         .join(" ")
         .toLocaleLowerCase(state.language === "zh" ? "zh-CN" : "en-US");
-      return sectorMatch && (!normalized || searchText.includes(normalized));
+      return sectorMatch && yearMatch && regionMatch && outcomeMatch && (!normalized || searchText.includes(normalized));
     });
+    return filtered.sort((a, b) => {
+      if (state.sort === "name") return a.name.localeCompare(b.name, state.language === "zh" ? "zh-CN" : "en");
+      const direction = state.sort === "oldest" ? 1 : -1;
+      return String(a.eventDate).localeCompare(String(b.eventDate)) * direction;
+    });
+  }
+
+  function renderSnapshot() {
+    const current = cases.filter((item) => item.ceased === "2026");
+    const stats = [
+      [current.length, "statFiles"],
+      [current.filter((item) => item.region === "china").length, "statChina"],
+      [current.filter((item) => item.region === "global").length, "statGlobal"],
+      [current.reduce((sum, item) => sum + caseCopy(item).sources.length, 0), "statSources"]
+    ];
+    elements.snapshotStats.innerHTML = stats.map(([value, key]) => `<div><dd>${value}</dd><dt>${escapeHtml(t(key))}</dt></div>`).join("");
   }
 
   function renderSkeletons() {
@@ -278,7 +350,7 @@
 
   function renderCases() {
     const filtered = getFilteredCases();
-    const hasFilters = state.sector !== "all" || state.query.trim().length > 0;
+    const hasFilters = state.sector !== "all" || state.year !== "all" || state.region !== "all" || state.outcome !== "all" || state.query.trim().length > 0;
 
     elements.resultCount.textContent = filtered.length === 1 ? t("resultSingle") : t("resultPlural", { count: String(filtered.length) });
     elements.reset.hidden = !hasFilters;
@@ -290,11 +362,11 @@
       .map((item) => {
         const copy = caseCopy(item);
         return `
-          <button class="case-card" type="button" data-case-id="${item.id}" aria-label="${escapeHtml(t("openFile", { name: item.name }))}">
+          <article class="case-card" data-case-id="${item.id}">
             <div>
               <div class="card-topline">
                 <span class="card-status">${escapeHtml(copy.statusLabel)}</span>
-                <span class="card-year">${escapeHtml(item.ceased)}</span>
+                <span class="card-year">${escapeHtml(item.eventDate || item.ceased)}</span>
               </div>
               <h3>${escapeHtml(item.name)}</h3>
               <p class="card-sector">${escapeHtml(copy.sectorLabel)}</p>
@@ -310,10 +382,39 @@
                 <strong>${escapeHtml(copy.capitalLabel || item.capital)}</strong>
               </div>
             </div>
-          </button>
+            <div class="card-actions">
+              <button class="case-link" type="button" data-open-case="${item.id}">${escapeHtml(t("readFile"))}</button>
+              <button class="compare-button" type="button" data-compare-id="${item.id}" aria-pressed="${String(state.compare.includes(item.id))}">${escapeHtml(t(state.compare.includes(item.id) ? "selected" : "compare"))}</button>
+            </div>
+          </article>
         `;
       })
       .join("");
+  }
+
+  function renderCompareTray() {
+    elements.compareTray.hidden = state.compare.length === 0;
+    elements.compareCount.textContent = t("compareCount", { count: String(state.compare.length) });
+  }
+
+  function toggleCompare(caseId) {
+    if (state.compare.includes(caseId)) state.compare = state.compare.filter((id) => id !== caseId);
+    else if (state.compare.length < 3) state.compare.push(caseId);
+    renderCases();
+    renderCompareTray();
+  }
+
+  function openCompare() {
+    if (state.compare.length < 2) {
+      elements.compareCount.textContent = t("compareNeedTwo");
+      return;
+    }
+    const selected = state.compare.map((id) => cases.find((item) => item.id === id)).filter(Boolean);
+    elements.compareDetail.innerHTML = `<div class="compare-grid">${selected.map((item) => {
+      const copy = caseCopy(item);
+      return `<article><p class="detail-record">${escapeHtml(item.eventDate)}</p><h3>${escapeHtml(item.name)}</h3><dl><div><dt>${escapeHtml(t("status"))}</dt><dd>${escapeHtml(copy.statusLabel)}</dd></div><div><dt>${escapeHtml(t("sector"))}</dt><dd>${escapeHtml(copy.sectorLabel)}</dd></div><div><dt>${escapeHtml(t("capital"))}</dt><dd>${escapeHtml(copy.capitalLabel || item.capital)}</dd></div></dl><h4>${escapeHtml(t("coreMechanism"))}</h4><p>${escapeHtml(copy.cause)}</p><h4>${escapeHtml(t("takeaway"))}</h4><p>${escapeHtml(copy.lesson)}</p><button class="case-link" type="button" data-open-case="${item.id}">${escapeHtml(t("readFile"))}</button></article>`;
+    }).join("")}</div>`;
+    elements.compareDialog.showModal();
   }
 
   function renderCaseDetail(item) {
@@ -437,7 +538,13 @@
   function resetFilters() {
     state.sector = "all";
     state.query = "";
+    state.year = "all";
+    state.region = "all";
+    state.outcome = "all";
     elements.search.value = "";
+    elements.yearFilter.value = "all";
+    elements.regionFilter.value = "all";
+    elements.outcomeFilter.value = "all";
     renderFilters();
     renderCases();
   }
@@ -496,8 +603,13 @@
   }
 
   document.addEventListener("click", (event) => {
-    const caseTrigger = event.target.closest("[data-case-id]");
-    if (caseTrigger) openCase(caseTrigger.dataset.caseId);
+    const caseTrigger = event.target.closest("[data-open-case]");
+    if (caseTrigger) openCase(caseTrigger.dataset.openCase);
+    const legacyCaseTrigger = event.target.closest("[data-case-id].case-link");
+    if (legacyCaseTrigger) openCase(legacyCaseTrigger.dataset.caseId);
+
+    const compareTrigger = event.target.closest("[data-compare-id]");
+    if (compareTrigger) toggleCompare(compareTrigger.dataset.compareId);
 
     const filter = event.target.closest("[data-sector]");
     if (filter) {
@@ -514,12 +626,26 @@
     if (event.target.closest("[data-open-nomination]")) openNomination();
     if (event.target.closest("[data-close-nomination]")) closeNomination();
     if (event.target.closest("[data-close-dialog]")) closeCase();
+    if (event.target.closest("[data-close-compare]")) elements.compareDialog.close();
   });
 
   elements.search.addEventListener("input", (event) => {
     state.query = event.target.value;
     renderCases();
   });
+
+  [[elements.yearFilter, "year"], [elements.regionFilter, "region"], [elements.outcomeFilter, "outcome"], [elements.sortFilter, "sort"]].forEach(([element, key]) => {
+    element.addEventListener("change", (event) => { state[key] = event.target.value; renderCases(); });
+  });
+
+  document.querySelector("#show-2026").addEventListener("click", () => {
+    state.year = "2026";
+    elements.yearFilter.value = "2026";
+    renderCases();
+    document.querySelector("#case-library").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  });
+  document.querySelector("#open-compare").addEventListener("click", openCompare);
+  document.querySelector("#clear-compare").addEventListener("click", () => { state.compare = []; renderCases(); renderCompareTray(); });
 
   elements.reset.addEventListener("click", resetFilters);
   elements.emptyReset.addEventListener("click", resetFilters);
@@ -530,6 +656,7 @@
     applyTranslations();
     renderFilters();
     renderCases();
+    renderSnapshot();
     if (state.openCaseId) renderCaseDetail(cases.find((item) => item.id === state.openCaseId));
   });
 
@@ -591,6 +718,7 @@
 
   initializeTheme();
   applyTranslations();
+  renderSnapshot();
   renderFilters();
   renderSkeletons();
   window.setTimeout(renderCases, 360);
