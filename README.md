@@ -8,7 +8,7 @@ Personal portfolio: [starry-nn.github.io](https://starry-nn.github.io/)
 
 I work across AI, venture, product, and investment operations, with New York, Beijing, and Shenzhen as my main bases. My experience sits between market and company research, product thinking, founder and stakeholder communication, content systems, and hands-on project delivery.
 
-I have worked as an Investment Operations Intern at Monolith Capital, a Content Operations / Editorial Intern at Crossing Media, a Venture Platform & Marketing Operations Intern at Linear Capital, and a Media Operations Intern at 36Kr - Waves. I am currently pursuing an M.S. in Project Management at New York University and hold a B.A. in Public Relations & Advertising from BNBU.
+I have worked as an Investment & Investment Operations Intern at Monolith Capital, a Content Operations / Editorial Intern at Crossing Media, a Venture Platform & Marketing Operations Intern at Linear Capital, and a Media Operations Intern at 36Kr - Waves. I am currently pursuing an M.S. in Project Management at New York University and hold a B.A. in Public Relations & Advertising from BNBU.
 
 ### What I work on
 
@@ -27,7 +27,7 @@ I have worked as an Investment Operations Intern at Monolith Capital, a Content 
 
 ### Experience at a glance
 
-- **Monolith Capital | Investment Operations Intern** - Built and maintained AI startup and product tracking workflows; independently designed an internal tracking and operations product that has been consolidated for repeated use. Supported bilingual market mapping, pipeline organization, research memos, and reusable operating processes.
+- **Monolith Capital | Investment & Investment Operations Intern** - Translated AI investment themes into sourcing criteria, proactively identified companies through databases, product launches, industry networks, events, and referrals, and maintained a structured deal pipeline. Mapped founders, technical operators, repeat entrepreneurs, and domain experts; completed first-pass company screening and diligence preparation across team, product, market, financing, competition, and commercial signals. Independently designed an internal AI startup and product tracking system that is now reused across projects, alongside sourcing, validation, and handoff SOPs.
 - **Crossing Media | Content Operations / Editorial Intern** - Researched AI companies, products, and market developments; supported topic selection, interview preparation, editorial production, and distribution. Improved content production efficiency by about 40% through process and template improvements.
 - **Linear Capital | Venture Platform & Marketing Operations Intern** - Supported AI-focused venture ecosystem work, founder and investor communication, partner coordination, event planning, and marketing operations. Helped deliver a Demo Day with more than 100 participants.
 - **36Kr - Waves | Media Operations Intern** - Worked on AI and venture-media growth, content planning, Xiaohongshu operations, and social distribution. Built a channel to more than 10,000 followers; the highest-viewed post exceeded 400,000 views and generated 3,000+ engagements.
@@ -57,7 +57,7 @@ The website includes **Experience**, **Selected Work**, **Focus**, **Education**
 
 我主要在纽约、北京和深圳之间工作，关注 AI、创投、产品和投资运营的交叉领域。我的经历连接了市场与公司研究、产品判断、创始人与合作方沟通、内容体系搭建，以及从想法到落地的项目推进。
 
-我曾在 Monolith 砺思资本做投资运营实习生，在十字路口 Crossing 做内容运营 / 编辑实习生，在线性资本做创投平台与市场运营实习生，在 36氪暗涌 Waves 做新媒体运营实习生。目前就读于纽约大学项目管理硕士，本科毕业于北师香港浸会大学公共关系与广告专业。
+我曾在 Monolith 砺思资本做投资 & 投资运营实习生，在十字路口 Crossing 做内容运营 / 编辑实习生，在线性资本做创投平台与市场运营实习生，在 36氪暗涌 Waves 做新媒体运营实习生。目前就读于纽约大学项目管理硕士，本科毕业于北师香港浸会大学公共关系与广告专业。
 
 ### 我可以做什么
 
@@ -76,7 +76,7 @@ The website includes **Experience**, **Selected Work**, **Focus**, **Education**
 
 ### 工作经历概览
 
-- **Monolith 砺思资本｜投资运营实习生：** 跟踪 AI 创业公司和产品动态，搭建并维护项目资料与跟踪流程；自主设计投资跟踪和运营产品供内部使用，现已沉淀为可复用的工作系统。支持双语市场图谱、项目管线、研究备忘录和标准化流程建设。
+- **Monolith 砺思资本｜投资 & 投资运营实习生：** 根据 AI 投资主题拆解赛道、公司画像和筛选标准，通过数据库、产品发布、行业网络、活动与推荐等渠道主动寻找项目并维护项目管线；围绕创始人、技术负责人、连续创业者和行业专家建立人才图谱。完成团队、产品、市场、融资、竞争和商业信号等维度的项目初筛与尽调准备，并独立设计内部 AI 项目跟踪系统，现已在不同项目中持续复用，同时沉淀了 sourcing、信息核验和交接 SOP。
 - **十字路口 Crossing｜内容运营 / 编辑实习生：** 负责 AI 公司、产品和行业动态研究，参与选题、采访准备、编辑制作和内容分发；通过流程和模板优化，将内容生产效率提升约 40%。
 - **线性资本 Linear Capital｜创投平台与市场运营实习生：** 支持 AI 创投生态、创始人与投资人沟通、合作方协调、活动策划和市场运营，参与落地一场 100+ 人 Demo Day。
 - **36氪暗涌 Waves｜新媒体运营实习生：** 负责 AI 与创投媒体的内容策划、增长和小红书运营，账号粉丝增长至 1 万+；单篇最高浏览量超过 40 万，互动量超过 3,000。
