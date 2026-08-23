@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="在浏览器本地解析公司报销模板和发票，逐项确认后生成可下载的 Excel 报销单。" />
+  <title>轻报销 - 发票到表格，一次完成</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script defer src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script defer src="https://unpkg.com/xlsx-populate@1.21.0/browser/xlsx-populate.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.5/dist/tesseract.min.js"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="轻报销首页">
+      <span class="brand-mark"><i class="ph ph-receipt"></i></span>
+      <span>轻报销</span>
+    </a>
+    <div class="privacy-chip"><i class="ph ph-lock-key"></i> 票据只在当前浏览器处理</div>
+  </header>
+
+  <main id="top" class="shell">
+    <section class="intro">
+      <div>
+        <p class="eyebrow">从发票到公司模板</p>
+        <h1>报销表格，<br /><span>一遍就填对。</span></h1>
+        <p class="intro-copy">识别票面事实，提醒你补充真实发生日期和用途，再按公司模板原样导出。</p>
+      </div>
+      <aside class="promise" aria-label="产品原则">
+        <div class="promise-icon"><i class="ph ph-check-circle"></i></div>
+        <strong>不靠文件名猜</strong>
+        <p>文件名只用于帮你找到原文件，不参与金额、日期、商户或类别判断。</p>
+      </aside>
+    </section>
+
+    <nav class="stepper" aria-label="报销流程">
+      <button class="step is-active" data-step="template"><span>1</span>上传模板</button>
+      <button class="step" data-step="receipts"><span>2</span>导入票据</button>
+      <button class="step" data-step="review"><span>3</span>逐项确认</button>
+      <button class="step" data-step="export"><span>4</span>下载表格</button>
+    </nav>
+
+    <section id="workspace" class="workspace" aria-live="polite"></section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
