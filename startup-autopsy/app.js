@@ -12,27 +12,35 @@
   }));
   const translations = {
     en: {
+      navLab: "Cause of death",
       navMethod: "Method",
       nominate: "Nominate a case",
-      eyebrow: "Reconstructing failure from public evidence",
-      heroTitle: "Failure leaves more than a conclusion.",
-      heroIntro: "We trace how products, capital, and pivotal decisions arrived at the final day.",
-      openArchive: "Open the archive",
-      randomCase: "Draw a random case",
-      heroCaption: "Failure is rarely one event. The archive keeps the sequence intact.",
-      featuredKicker: "Featured autopsy",
+      eyebrow: "Digital forensics for dead startups",
+      heroTitle: "Every death leaves a chain of evidence.",
+      heroIntro: "We examine public records to separate fatal damage from noise, hindsight, and myth.",
+      openArchive: "Enter the archive",
+      randomCase: "Draw a case file",
+      heroCaption: "Evidence item A: the archive preserves sequence, source, and uncertainty.",
+      featuredKicker: "Priority examination",
       featuredSummary: "A $7 billion autonomous-driving bet that ran out of strategic patience before the technology reached commercial scale.",
       readFile: "Read the case file",
-      certificate: "Certificate of cessation",
+      certificate: "Postmortem report",
       founded: "Founded",
-      ceased: "Ceased",
+      ceased: "Time of death",
       peakValue: "Reported value",
       capital: "Capital",
-      probableCause: "Probable mechanism",
+      probableCause: "Preliminary cause",
       argoCause: "Long commercialization horizon combined with strategic investor dependency.",
       certificateNote: "Editorial assessment. Open the file to inspect the underlying evidence.",
-      archiveTitle: "The archive",
-      archiveIntro: "Search, filter, and compare the evidence. Every file links back to public records.",
+      archiveTitle: "The death archive",
+      archiveIntro: "Search the evidence room, compare files, and challenge the diagnosis. Every claim leads back to a public record.",
+      labIndex: "Interactive examination", labTitle: "Name the cause of death.",
+      labIntro: "Read three pieces of evidence, choose the primary failure mechanism, then open the full file.",
+      subjectSealed: "Identity sealed", streak: "Current streak", chooseCause: "Choose the primary mechanism",
+      nextAutopsy: "Examine another", openFullFile: "Open full file", evidenceItem: "Evidence {number}",
+      verdictCorrect: "Cause confirmed", verdictWrong: "Diagnosis rejected", verdictCorrectBody: "Your diagnosis matches the archive's primary mechanism.",
+      verdictWrongBody: "The archive classifies the primary mechanism as {cause}.", identityRevealed: "Identity confirmed",
+      causeCapital: "Capital failure", causeMarket: "No durable market", causeCompetition: "Moat collapse", causeStrategy: "Strategic withdrawal", causeRegulation: "Compliance shock",
       snapshotTitle: "2026, so far",
       snapshotIntro: "A verified public sample through August 23. China leads the archive; global cases provide comparison.",
       view2026: "View 2026 files",
@@ -42,7 +50,7 @@
       allOutcomes: "All outcomes", bankruptcy: "Bankruptcy", shutdown: "Shutdown", productSunset: "Product sunset", otherOutcome: "Other exit",
       newest: "Newest first", oldest: "Oldest first", byName: "Name",
       statFiles: "verified 2026 files", statChina: "from China", statGlobal: "global comparisons", statSources: "linked sources",
-      compare: "Compare", selected: "Selected", compareCases: "Compare files", compareTitle: "Compare case files", clearCompare: "Clear",
+      compare: "Add to examination", selected: "On the bench", compareCases: "Compare remains", compareTitle: "Parallel examination", clearCompare: "Clear",
       compareCount: "{count} selected, choose 2 or 3", compareNeedTwo: "Select at least 2 files to compare.",
       coreMechanism: "Core mechanism", takeaway: "What this tells us", eventDate: "Event date",
       searchLabel: "Search cases",
@@ -83,17 +91,17 @@
       yearClosed: "Year closed",
       reportedValue: "Reported value",
       openFile: "Open case file for {name}",
-      record: "Case record",
+      record: "Autopsy file",
       sector: "Sector",
       location: "Location",
       status: "Status",
-      diagnosis: "Editorial diagnosis",
-      timeline: "What happened",
+      diagnosis: "Forensic opinion",
+      timeline: "Terminal sequence",
       findings: "Evidence and interpretation",
-      fact: "Verified fact",
-      inference: "Inference",
-      lesson: "What survives",
-      sources: "Evidence sources",
+      fact: "Examined fact",
+      inference: "Forensic inference",
+      lesson: "Finding for the living",
+      sources: "Chain of evidence",
       primary: "Primary source",
       reporting: "Reporting",
       close: "Close",
@@ -109,27 +117,35 @@
       closed: "CLOSED"
     },
     zh: {
+      navLab: "死因盲猜",
       navMethod: "研究方法",
       nominate: "提交线索",
-      eyebrow: "用公开证据，还原创业项目如何走到终点",
-      heroTitle: "创业失败，别只看结论。",
-      heroIntro: "沿着产品、资金和关键决策，还原它们一步步走到终点的过程。",
-      openArchive: "查看全部档案",
-      randomCase: "随机读一份",
-      heroCaption: "失败通常不是一个瞬间，而是一连串可以被还原的变化。",
-      featuredKicker: "重点档案",
+      eyebrow: "数字法医科 / 创业公司死亡档案",
+      heroTitle: "每一次死亡，都有证据链。",
+      heroIntro: "从公开材料中检验致命伤，区分事实、推断与事后神话。",
+      openArchive: "进入档案馆",
+      randomCase: "随机调取案卷",
+      heroCaption: "证物 A：档案保留事件顺序、原始来源和仍未确定的部分。",
+      featuredKicker: "重点尸检",
       featuredSummary: "一家估值超过 70 亿美元的自动驾驶公司，在技术规模化之前先失去了股东的战略耐心。",
       readFile: "查看完整档案",
-      certificate: "结案记录",
+      certificate: "尸检报告",
       founded: "成立",
-      ceased: "停止",
+      ceased: "死亡时间",
       peakValue: "披露估值",
       capital: "资本",
-      probableCause: "核心症结",
+      probableCause: "初步死因",
       argoCause: "漫长的商业化周期与对战略投资方的高度依赖同时发生。",
       certificateNote: "这是基于公开材料的编辑判断，完整证据见案例详情。",
-      archiveTitle: "失败档案",
-      archiveIntro: "可以搜索、筛选，也可以把案例放在一起比较。每份档案都附有公开来源。",
+      archiveTitle: "死亡档案馆",
+      archiveIntro: "在证物室里搜索、对照并质疑结论。每一项判断都能追溯到公开材料。",
+      labIndex: "互动尸检", labTitle: "只看证据，你能判断死因吗？",
+      labIntro: "先读三条证据，再选择首要失败机制，最后揭晓公司和完整尸检结论。",
+      subjectSealed: "身份封存", streak: "连续命中", chooseCause: "选择首要失败机制",
+      nextAutopsy: "再验一例", openFullFile: "查看完整尸检", evidenceItem: "证物 {number}",
+      verdictCorrect: "死因吻合", verdictWrong: "诊断未通过", verdictCorrectBody: "你的判断与档案的首要失败机制一致。",
+      verdictWrongBody: "档案将首要失败机制归为：{cause}。", identityRevealed: "身份确认",
+      causeCapital: "资金链断裂", causeMarket: "没有稳定市场", causeCompetition: "壁垒失守", causeStrategy: "战略撤退", causeRegulation: "合规冲击",
       snapshotTitle: "2026 年度切片",
       snapshotIntro: "统计截至 8 月 23 日的公开可核验样本，以国内案例为主，并加入海外对照。",
       view2026: "只看 2026 年",
@@ -139,7 +155,7 @@
       allOutcomes: "全部方式", bankruptcy: "破产清算", shutdown: "公司停运", productSunset: "产品下线", otherOutcome: "其他退出",
       newest: "按时间从近到远", oldest: "按时间从远到近", byName: "按名称",
       statFiles: "份 2026 档案", statChina: "份国内样本", statGlobal: "份海外对照", statSources: "条公开来源",
-      compare: "加入对比", selected: "已选择", compareCases: "开始对比", compareTitle: "案例对比", clearCompare: "清空",
+      compare: "送上解剖台", selected: "已上台", compareCases: "并排解剖", compareTitle: "并排尸检", clearCompare: "清台",
       compareCount: "已选 {count} 份，请选择 2 至 3 份", compareNeedTwo: "至少选择 2 份档案才能对比。",
       coreMechanism: "核心症结", takeaway: "这件事告诉我们什么", eventDate: "事件时间",
       searchLabel: "搜索案例",
@@ -180,17 +196,17 @@
       yearClosed: "停止年份",
       reportedValue: "披露估值",
       openFile: "打开 {name} 的案例档案",
-      record: "案例档案",
+      record: "尸检编号",
       sector: "行业",
       location: "地点",
       status: "状态",
-      diagnosis: "核心症结",
-      timeline: "发生了什么",
-      findings: "证据与判断",
-      fact: "可验证事实",
-      inference: "编辑推断",
-      lesson: "这件事告诉我们什么",
-      sources: "证据来源",
+      diagnosis: "法医意见",
+      timeline: "死亡过程",
+      findings: "证物与判断",
+      fact: "检验事实",
+      inference: "法医推断",
+      lesson: "给生者的结论",
+      sources: "证据链",
       primary: "一手来源",
       reporting: "媒体报道",
       close: "关闭",
@@ -216,6 +232,9 @@
     outcome: "all",
     sort: "newest",
     compare: [],
+    labCaseId: null,
+    labAnswered: false,
+    labStreak: Number.parseInt(localStorage.getItem("autopsy-streak") || "0", 10) || 0,
     openCaseId: null
   };
 
@@ -242,7 +261,15 @@
     compareTray: document.querySelector("#compare-tray"),
     compareCount: document.querySelector("#compare-count"),
     compareDialog: document.querySelector("#compare-dialog"),
-    compareDetail: document.querySelector("#compare-detail")
+    compareDetail: document.querySelector("#compare-detail"),
+    labSubjectName: document.querySelector("#lab-subject-name"),
+    labSubjectFacts: document.querySelector("#lab-subject-facts"),
+    labEvidence: document.querySelector("#lab-evidence"),
+    labOptions: document.querySelector("#lab-options"),
+    labVerdict: document.querySelector("#lab-verdict"),
+    labStreak: document.querySelector("#lab-streak"),
+    nextAutopsy: document.querySelector("#next-autopsy"),
+    openAutopsyFile: document.querySelector("#open-autopsy-file")
   };
 
   function t(key, replacements) {
@@ -268,6 +295,79 @@
     return item[state.language] || item.en;
   }
 
+  const causeKeys = ["causeCapital", "causeMarket", "causeCompetition", "causeStrategy", "causeRegulation"];
+
+  function classifyCause(item) {
+    const tags = (item.causeTags || []).join(" ").toLowerCase();
+    if (tags.includes("regulation") || tags.includes("compliance")) return "causeRegulation";
+    if (tags.includes("product market fit") || tags.includes("opportunity cost") || tags.includes("consumer retention")) return "causeMarket";
+    if (item.outcome === "acqui-hire" || item.outcome === "pivot" || tags.includes("feature consolidation") || tags.includes("portfolio shift") || tags.includes("strategic pivot")) return "causeStrategy";
+    if (tags.includes("commoditization") || tags.includes("competition") || tags.includes("distribution") || tags.includes("model evolution") || tags.includes("moat")) return "causeCompetition";
+    return "causeCapital";
+  }
+
+  function maskIdentity(text, item) {
+    const variants = [item.name, item.name.replace(/[（(].*?[）)]/g, ""), item.name.split(".")[0]].filter((value) => value.length > 2);
+    return variants.reduce((result, value) => result.replaceAll(value, state.language === "zh" ? "该主体" : "the subject"), text);
+  }
+
+  function renderAutopsy() {
+    const item = cases.find((candidate) => candidate.id === state.labCaseId);
+    if (!item) return;
+    const copy = caseCopy(item);
+    const clues = [copy.timeline.at(-1)?.body, copy.findings[0]?.body, copy.findings[1]?.body || copy.lesson].filter(Boolean);
+    const correct = classifyCause(item);
+
+    elements.labSubjectName.textContent = state.labAnswered ? item.name : t("subjectSealed").toUpperCase();
+    elements.labSubjectFacts.innerHTML = `
+      <div><dt>${escapeHtml(t("sector"))}</dt><dd>${escapeHtml(copy.sectorLabel)}</dd></div>
+      <div><dt>${escapeHtml(t("location"))}</dt><dd>${escapeHtml(item.location)}</dd></div>
+      <div><dt>${escapeHtml(t("eventDate"))}</dt><dd>${escapeHtml(item.eventDate || item.ceased)}</dd></div>
+    `;
+    elements.labStreak.textContent = String(state.labStreak);
+    elements.labEvidence.innerHTML = clues.map((clue, index) => `
+      <li><span>${escapeHtml(t("evidenceItem", { number: String(index + 1).padStart(2, "0") }))}</span><p>${escapeHtml(maskIdentity(clue, item))}</p></li>
+    `).join("");
+    elements.labOptions.innerHTML = `<legend>${escapeHtml(t("chooseCause"))}</legend>${causeKeys.map((key) => `
+      <button type="button" data-cause="${key}" ${state.labAnswered ? "disabled" : ""} class="${state.labAnswered && key === correct ? "is-correct" : ""}">${escapeHtml(t(key))}</button>
+    `).join("")}`;
+    elements.labVerdict.hidden = !state.labAnswered;
+    elements.openAutopsyFile.hidden = !state.labAnswered;
+    elements.openAutopsyFile.dataset.openCase = item.id;
+  }
+
+  function startAutopsy() {
+    const pool = cases.filter((item) => item.ceased === "2026" && caseCopy(item).findings?.length >= 2);
+    const alternatives = pool.filter((item) => item.id !== state.labCaseId);
+    const next = alternatives[Math.floor(Math.random() * alternatives.length)] || pool[0];
+    if (!next) return;
+    state.labCaseId = next.id;
+    state.labAnswered = false;
+    elements.labVerdict.hidden = true;
+    elements.labVerdict.innerHTML = "";
+    renderAutopsy();
+  }
+
+  function answerAutopsy(selected) {
+    if (state.labAnswered) return;
+    const item = cases.find((candidate) => candidate.id === state.labCaseId);
+    if (!item) return;
+    const correct = classifyCause(item);
+    const isCorrect = selected === correct;
+    state.labAnswered = true;
+    state.labStreak = isCorrect ? state.labStreak + 1 : 0;
+    localStorage.setItem("autopsy-streak", String(state.labStreak));
+    renderAutopsy();
+    const selectedButton = elements.labOptions.querySelector(`[data-cause="${selected}"]`);
+    if (selectedButton && !isCorrect) selectedButton.classList.add("is-wrong");
+    elements.labVerdict.className = `lab-verdict ${isCorrect ? "is-correct" : "is-wrong"}`;
+    elements.labVerdict.innerHTML = `
+      <span>${escapeHtml(t("identityRevealed"))}: ${escapeHtml(item.name)}</span>
+      <strong>${escapeHtml(t(isCorrect ? "verdictCorrect" : "verdictWrong"))}</strong>
+      <p>${escapeHtml(isCorrect ? t("verdictCorrectBody") : t("verdictWrongBody", { cause: t(correct) }))}</p>
+    `;
+  }
+
   function applyTranslations() {
     document.documentElement.lang = state.language === "zh" ? "zh-CN" : "en";
     document.title = state.language === "zh" ? "Startup Autopsy | 创业失败档案馆" : "Startup Autopsy | An evidence-led archive of failure";
@@ -286,6 +386,7 @@
     document.querySelector("[data-close-dialog]").textContent = t("close");
     document.querySelector("[data-close-dialog]").setAttribute("aria-label", t("closeCaseLabel"));
     updateThemeLabel();
+    if (state.labCaseId) renderAutopsy();
   }
 
   function renderFilters() {
@@ -611,6 +712,9 @@
     const compareTrigger = event.target.closest("[data-compare-id]");
     if (compareTrigger) toggleCompare(compareTrigger.dataset.compareId);
 
+    const causeTrigger = event.target.closest("[data-cause]");
+    if (causeTrigger) answerAutopsy(causeTrigger.dataset.cause);
+
     const filter = event.target.closest("[data-sector]");
     if (filter) {
       state.sector = filter.dataset.sector;
@@ -646,6 +750,7 @@
   });
   document.querySelector("#open-compare").addEventListener("click", openCompare);
   document.querySelector("#clear-compare").addEventListener("click", () => { state.compare = []; renderCases(); renderCompareTray(); });
+  elements.nextAutopsy.addEventListener("click", startAutopsy);
 
   elements.reset.addEventListener("click", resetFilters);
   elements.emptyReset.addEventListener("click", resetFilters);
@@ -719,6 +824,7 @@
   initializeTheme();
   applyTranslations();
   renderSnapshot();
+  startAutopsy();
   renderFilters();
   renderSkeletons();
   window.setTimeout(renderCases, 360);

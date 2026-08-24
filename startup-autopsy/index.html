@@ -24,6 +24,7 @@
         <span class="brand-name">Startup Autopsy</span>
       </a>
       <nav class="header-actions" aria-label="Primary navigation">
+        <a class="nav-link" href="#autopsy-lab" data-i18n="navLab">Cause of death</a>
         <a class="nav-link" href="#method" data-i18n="navMethod">Method</a>
         <button class="text-button" id="language-toggle" type="button" aria-label="切换为中文">
           中文
@@ -40,8 +41,8 @@
     <main id="top">
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-copy reveal-sequence">
-          <p class="eyebrow" data-i18n="eyebrow">Reconstructing failure from public evidence</p>
-          <h1 id="hero-title" data-i18n="heroTitle">Failure leaves more than a conclusion.</h1>
+          <p class="eyebrow" data-i18n="eyebrow">Digital forensics for dead startups</p>
+          <h1 id="hero-title" data-i18n="heroTitle">Every death leaves a chain of evidence.</h1>
           <p class="hero-intro" data-i18n="heroIntro">
             We preserve what was promised, what changed, and what founders can learn after the headlines disappear.
           </p>
@@ -75,6 +76,40 @@
         </div>
         <dl class="snapshot-stats" id="snapshot-stats"></dl>
         <p class="coverage-note" data-i18n="coverageNote">Coverage includes court-accepted liquidation, confirmed shutdowns, and core product sunsets. It excludes layoffs, rumors, and pending petitions.</p>
+      </section>
+
+      <section class="autopsy-lab" id="autopsy-lab" aria-labelledby="lab-title">
+        <header class="lab-heading">
+          <div>
+            <p class="lab-index" data-i18n="labIndex">Interactive examination</p>
+            <h2 id="lab-title" data-i18n="labTitle">Name the cause of death.</h2>
+          </div>
+          <p data-i18n="labIntro">Read three pieces of evidence, choose the primary failure mechanism, then open the full file.</p>
+        </header>
+
+        <div class="lab-bench" id="lab-bench" aria-live="polite">
+          <aside class="lab-subject">
+            <span class="lab-status" data-i18n="subjectSealed">Identity sealed</span>
+            <strong id="lab-subject-name">CASE UNKNOWN</strong>
+            <dl id="lab-subject-facts"></dl>
+            <div class="lab-score">
+              <span data-i18n="streak">Current streak</span>
+              <strong id="lab-streak">0</strong>
+            </div>
+          </aside>
+
+          <div class="lab-examination">
+            <ol class="evidence-stack" id="lab-evidence"></ol>
+            <fieldset class="cause-options" id="lab-options">
+              <legend data-i18n="chooseCause">Choose the primary mechanism</legend>
+            </fieldset>
+            <div class="lab-verdict" id="lab-verdict" hidden></div>
+            <div class="lab-actions">
+              <button class="primary-button" id="next-autopsy" type="button" data-i18n="nextAutopsy">Examine another</button>
+              <button class="case-link" id="open-autopsy-file" type="button" hidden data-i18n="openFullFile">Open full file</button>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section class="featured" aria-labelledby="featured-heading">
