@@ -121,6 +121,7 @@ const safeUrl = value => /^https?:\/\//i.test(String(value || "")) ? String(valu
 const feed = document.querySelector("#companyFeed");
 const insightFeed = document.querySelector("#insightFeed");
 const githubFeed = document.querySelector("#githubFeed");
+const githubLibrary = document.querySelector("#githubLibrary");
 const xFeed = document.querySelector("#xFeed");
 const atlas = document.querySelector("#companyAtlas");
 const weekFilters = document.querySelector("#weekFilters");
@@ -137,6 +138,7 @@ const sortNewest = (a,b) => eventDate(b) - eventDate(a) || Number(b.importance |
 const isGithubSignal = item => /github/i.test(`${item.source_id || ""} ${item.source_type || ""} ${item.source || ""}`) || /^https?:\/\/(?:www\.)?github\.com\//i.test(String(item.url || ""));
 const isXSignal = item => item.channel === "x" || /(?:^|\b)(?:core-x|extended-x)\b/i.test(String(item.source_id || "")) || /(?:x\.com|twitter\.com)/i.test(String(item.url || "")) || /^x\s*\//i.test(String(item.source || ""));
 const isUnattributed = value => /未归属|其他项目|其他公司|其他机构|^其他$/i.test(String(value || ""));
+const githubHistory = Array.isArray(pipeline.github_history) ? pipeline.github_history : [];
 const signalProject = item => item.project || item.label || item.kind || "公司与技术动态";
 const EVENT_TYPE_LABELS = {
   people: "人事变动",
@@ -269,11 +271,26 @@ function renderCompanyProjects(items) {
 }
 
 function renderGithub(items) {
-  githubFeed.innerHTML = items.length ? `<header class="github-head"><div><span>GITHUB OPEN SOURCE</span><h3>GitHub 开源专栏</h3></div><p>仓库发布、代码更新与华人团队当日 Top 项目统一归档；按真实更新时间倒序，不与普通公司新闻混排。</p></header><div class="github-list">${items.sort(sortNewest).map(item=>`<article class="github-item"><div class="github-meta"><span>${escapeHtml(item.company || item.source || "GitHub")}</span><time>${escapeHtml(item.date)}</time><b>${escapeHtml(signalScore(item))}</b></div><div><span class="category">${escapeHtml(item.kind)}</span><h4>${escapeHtml(item.title)}</h4>${item.summary ? `<p>${escapeHtml(item.summary)}</p>` : ""}<small>${escapeHtml(signalProject(item))}</small></div><a href="${escapeHtml(safeUrl(item.url))}" target="_blank" rel="noopener">打开仓库 / 来源 ↗</a></article>`).join("")}</div>` : "";
+  githubFeed.innerHTML = items.length ? `<header class="github-head"><div><span>GITHUB OPEN SOURCE</span><h3>GitHub 开源专栏</h3></div><p>仓库发布、代码更新与华人团队当日 Top 项目统一归档；按真实更新时间倒序，不与普通公司新闻混排。</p></header><div class="github-list">${items.sort(sortNewest).map(item=>`<article class="github-item"><div class="github-meta"><span>${escapeHtml(item.company || item.source || "GitHub")}</span><time>${escapeHtml(item.date)}</time><b>${escapeHtml(signalScore(item))}</b></div><div><span class="category">${escapeHtml(item.kind)}</span><h4>${escapeHtml(item.title)}</h4>${item.summary ? `<p>${escapeHtml(item.summary)}</p>` : ""}<small>${escapeHtml(signalProject(item))}</small></div><a href="${escapeHtml(safeUrl(item.url))}" target="_blank" rel="noopener">打开仓库 / 来源 ↗</a></article>`).join("")}</div><a class="github-library-link" href="#githubLibrary">查看历史上榜项目 ↓</a>` : "";
+}
+
+function renderGithubLibrary() {
+  if (!githubLibrary) return;
+  const grouped = [...githubHistory.reduce((map, entry) => {
+    const key = entry.url || `${entry.organization}/${entry.repository}`;
+    if (!map.has(key)) map.set(key, {...entry, appearances: []});
+    map.get(key).appearances.push(entry);
+    return map;
+  }, new Map()).values()].sort((left, right) => new Date(right.appearances[0].observed_at) - new Date(left.appearances[0].observed_at));
+  githubLibrary.innerHTML = `<header class="github-library-head"><div><span>GITHUB ARCHIVE</span><h3>历史上榜项目</h3></div><p>保留 75 天。每一行是某个仓库曾进入当日 Top 5 的记录，可展开查看全部上榜日期、排名与 Stars。</p></header>${grouped.length ? `<div class="github-library-list">${grouped.map(project => {
+    const latest = project.appearances[0];
+    const bestRank = Math.min(...project.appearances.map(entry => entry.rank || 99));
+    return `<details class="github-library-project"><summary><div><strong>${escapeHtml(project.organization || project.company)}</strong><h4>${escapeHtml(project.organization ? `${project.organization}/${project.repository}` : project.repository)}</h4></div><div><span>${project.appearances.length} 次上榜</span><small>最高 Top ${bestRank}</small></div></summary><div class="github-history-entries">${project.appearances.map(entry => `<article><time>${escapeHtml(entry.date)}</time><span>Top ${escapeHtml(entry.rank || "-")}</span><strong>${escapeHtml(Number(entry.stars || 0).toLocaleString())} Stars</strong><a href="${escapeHtml(safeUrl(entry.url))}" target="_blank" rel="noopener">仓库 ↗</a></article>`).join("")}</div></details>`;
+  }).join("")}</div>` : `<div class="github-library-empty">历史库将在下一次可用的 GitHub Top 5 采集后开始累积。</div>`}`;
 }
 
 function renderX(items) {
-  xFeed.innerHTML = items.length ? `<header class="x-head"><div><span>X SIGNALS / ORIGINAL POSTS</span><h3>X 关键人物动态</h3></div><p>只收录你指定作者的原创技术、产品、组织、政策或市场信息；回复、情绪争论和重复观点不进入专栏。英文内容先翻译为中文，并保留原帖。</p></header><div class="x-list">${items.map(item=>`<article class="x-item"><div class="x-meta"><strong>${escapeHtml(item.person || item.author || item.handle || "X 作者")}</strong><span>${escapeHtml(item.handle || item.source || "")}</span><time>${escapeHtml(item.date)}</time></div><div class="x-copy"><span class="category">${escapeHtml(item.kind || "X 原创动态")}</span><h4>${escapeHtml(item.title_zh || item.title)}</h4>${(item.summary_zh || item.summary) ? `<p>${escapeHtml(item.summary_zh || item.summary)}</p>` : ""}${item.signal ? `<small>${escapeHtml(item.signal)}</small>` : ""}</div><a href="${escapeHtml(safeUrl(item.url))}" target="_blank" rel="noopener">打开原帖 / 来源 ↗</a></article>`).join("")}</div>` : "";
+  xFeed.innerHTML = items.length ? `<header class="x-head"><div><span>X SIGNALS / ORIGINAL POSTS</span><h3>X 关键人物动态</h3></div><p>只收录你指定作者的原创技术、产品、组织、政策或市场信息；回复、情绪争论和重复观点不进入专栏。英文内容先翻译为中文，并保留原帖。</p></header><div class="x-list">${items.map(item=>`<article class="x-item"><div class="x-meta"><strong>${escapeHtml(item.person || item.author || item.handle || "X 作者")}</strong><span>${escapeHtml(item.handle || item.source || "")}</span><time>${escapeHtml(item.date)}</time></div><div class="x-copy"><span class="category">${escapeHtml(item.kind || "X 原创动态")}</span><h4>${escapeHtml(item.title_zh || item.title)}</h4>${(item.summary_zh || item.summary) ? `<p>${escapeHtml(item.summary_zh || item.summary)}</p>` : ""}${item.signal ? `<small>${escapeHtml(item.signal)}</small>` : ""}</div><a href="${escapeHtml(safeUrl(item.url))}" target="_blank" rel="noopener">打开原帖 / 来源 ↗</a></article>`).join("")}</div>` : `<section class="x-unavailable"><header class="x-head"><div><span>X SIGNALS / ACCESS STATUS</span><h3>X 关键人物动态</h3></div><p>本轮未发布 X 条目。公开主页拒绝自动化读取时，不以搜索摘要或转载补写原帖。</p></header><div><strong>当前状态：公开时间线受限</strong><p>已检查核心与扩展名单，含 @ilyasut。重大技术、组织或产品主张会继续回到作者博客、公司公告、论文或 GitHub 原文核验；访问恢复前保持空栏。</p></div></section>`;
 }
 
 const EVENT_TYPE_ORDER = [
@@ -363,6 +380,7 @@ function render() {
   resultCount.textContent = `${companySignals.length} 条公司/项目动态 + ${githubSignals.length} 条 GitHub + ${visibleX.length} 条 X + ${visibleInsights.length} 条观察`;
   feed.innerHTML = renderTypeGroups(companySignals);
   renderGithub(githubSignals);
+  renderGithubLibrary();
   renderX(visibleX);
   insightFeed.innerHTML = visibleInsights.length ? `<header class="insight-head"><div><span>PEOPLE & SOURCE WATCH</span><h3>人物与来源动态</h3></div><p>观点、实践与技术解读单独标注，不与已确认公司事件混写。</p></header><div class="insight-grid">${visibleInsights.map(item=>`<article class="insight-item"><div class="insight-author"><strong>${item.person}</strong><span>${item.handle}</span><small>${item.org}</small></div><div class="insight-copy"><div><span class="category">${item.kind}</span><time>${item.date}</time></div><h4>${item.title}</h4><p>${item.summary}</p><small>${item.signal}</small></div><a href="${item.url}" target="_blank" rel="noopener" aria-label="打开 ${item.person} 的原始来源">${item.source} ↗</a></article>`).join("")}</div>` : "";
   if (activeWeek === currentWeekKey && companySignals.length + githubSignals.length + visibleX.length + visibleInsights.length === 0) {
