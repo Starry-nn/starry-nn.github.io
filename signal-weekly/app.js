@@ -142,20 +142,18 @@ const isUnattributed = value => /未归属|其他项目|其他公司|其他机�
 const githubHistory = Array.isArray(pipeline.github_history) ? pipeline.github_history : [];
 const signalProject = item => item.project || item.label || item.kind || "公司与技术动态";
 const EVENT_TYPE_LABELS = {
-  people: "人事变动",
-  capital: "融资项目",
-  company: "公司 / 组织变化",
-  model: "模型 / 产品",
-  "open-source": "开源 / 代码",
-  policy: "安全 / 政策",
-  research: "研究 / 论文",
-  robotics: "具身 / 机器人",
-  bci: "脑机 / 临床",
-  chips: "芯片 / 算力",
+  matter: "事",
+  people: "人",
+  capital: "最新融资项目",
 };
+const LEGACY_EVENT_TYPE_LABELS = new Set([
+  "人事变动", "融资项目", "公司 / 组织变化", "模型 / 产品", "开源 / 代码",
+  "安全 / 政策", "研究 / 论文", "具身 / 机器人", "脑机 / 临床", "芯片 / 算力",
+  "事", "人", "最新融资项目",
+]);
 const signalKind = item => {
   const kind = item.label || item.kind;
-  return kind && !/^实质技术进展$/i.test(kind) && !Object.values(EVENT_TYPE_LABELS).includes(kind) ? kind : EVENT_TYPE_LABELS[eventType(item)] || "实质进展";
+  return kind && !/^实质技术进展$/i.test(kind) && !LEGACY_EVENT_TYPE_LABELS.has(kind) ? kind : EVENT_TYPE_LABELS[eventType(item)] || "事";
 };
 const signalScore = item => item.importance ?? item.taste_score ?? item.score ?? "—";
 const normalizedEvent = item => ({...item, signal_type:"verified", project:signalProject(item), kind:signalKind(item)});
@@ -295,44 +293,23 @@ function renderX(items) {
 }
 
 const EVENT_TYPE_ORDER = [
-  ["人事变动", "CEO、CTO、创始人和关键研究/业务负责人的加入、离任与任命", "people"],
-  ["融资项目", "融资、投资、并购、IPO 与估值等改变公司或赛道结构的资本动作", "capital"],
-  ["公司 / 组织变化", "独立运营、拆分、重组与控制权变化", "company"],
-  ["模型 / 产品", "模型、API、产品与 Agent 能力的正式变化", "model"],
-  ["开源 / 代码", "开放权重、代码仓库与可复现工程", "open-source"],
-  ["安全 / 政策", "安全机制、监管、内容溯源与政策变化", "policy"],
-  ["研究 / 论文", "新方法、论文、评测与科学工作流", "research"],
-  ["具身 / 机器人", "人形机器人、物理交互与产业部署", "robotics"],
-  ["脑机 / 临床", "脑机接口、神经技术与临床转化", "bci"],
-  ["芯片 / 算力", "芯片、先进制程、算力与数据中心", "chips"],
+  ["事", "产品、模型、研究、开源、安全政策、组织与技术进展", "matter"],
+  ["人", "关键人物、人事变动与高价值 X 动态", "people"],
+  ["最新融资项目", "融资、投资、并购、IPO 与估值等改变公司或赛道结构的资本动作", "capital"],
 ];
 
 function eventType(item) {
   const rawKind = String(item.kind || "").trim();
-  const kindForClassification = rawKind && !Object.values(EVENT_TYPE_LABELS).includes(rawKind) && !/^实质技术进展$/i.test(rawKind) ? rawKind : "";
-  const companyForClassification = /未归属|研究机构|未命名/i.test(String(item.company || "")) ? "" : item.company || "";
-  const text = `${kindForClassification} ${item.label || ""} ${item.title || ""} ${item.summary || ""} ${item.project || ""} ${companyForClassification}`.toLowerCase();
-  const headline = `${kindForClassification} ${item.label || ""} ${item.title || ""}`.toLowerCase();
-  const categories = item.categories || item.topics || [];
-  // Event semantics always win over the underlying technology topic. This
-  // prevents a personnel or financing story that mentions a model/robot from
-  // being filed under brain-computer or robotics merely because a source feed
-  // supplied broad topic tags.
-  const peopleSignal = value => /人事|关键人物|人才流动|领导层|管理层|leadership|executive/.test(value) || /离职|离任|辞任|卸任|退出|离开|任命|担任|晋升|跳槽/.test(value) || /(?:加入|加盟|joins?|joined)\s*.{0,18}(?:公司|团队|实验室|任职|担任|出任|company|team|lab|as\b)/.test(value);
+  const kindForClassification = rawKind && !LEGACY_EVENT_TYPE_LABELS.has(rawKind) && !/^实质技术进展$/i.test(rawKind) ? rawKind : "";
+  const headline = [kindForClassification, item.label || "", item.title || ""].join(" ").toLowerCase();
+  // The top-level lane is about the action, not the technology mentioned in
+  // the story. Capital is selected only from the headline/kind so a paper
+  // that happens to mention investment is not misfiled as a deal.
   const capitalSignal = value => /融资|投资|领投|跟投|募资|收购|并购|acqui(?:re|sition)|merger|funding|financing|investment|ipo|上市|估值|全股票交易|(?:天使|种子|pre.?a|a|b|c|d)轮/.test(value);
-  if (peopleSignal(headline) && !capitalSignal(headline)) return "people";
-  if (capitalSignal(headline) || capitalSignal(text)) return "capital";
-  if (peopleSignal(text)) return "people";
-  if (/独立运营|恢复独立|拆分|分拆|重组|组织变化|控制权|spin.?out|restructur|independent operation/.test(text)) return "company";
-  if (/安全|风险报告|风险评估|监管|政策|司法|水印|c2pa|内容凭证|出口管制|system card|safety|risk report|risk assessment/.test(text)) return "policy";
-  if (/开源|开放权重|代码|github|repository|repo/.test(text)) return "open-source";
-  if (/论文|研究|评测|benchmark|科学|实验|方法|成果/.test(text)) return "research";
-  if (/发布|上线|推出|正式版|版本|模型|api|launch|release|introduc|product|agent/.test(text)) return "model";
-  if (categories.includes("robotics") || /具身|人形|机器人|灵巧手|物理交互/.test(text)) return "robotics";
-  if (categories.includes("bci") || /脑机|神经接口|脑机接口|brain initiative|neural interface|临床试验/.test(text)) return "bci";
-  if (categories.includes("chips") || /芯片|算力|晶圆|半导体|数据中心/.test(text)) return "chips";
-  if (categories.includes("company")) return "company";
-  return "model";
+  const peopleSignal = value => /人事|关键人物|人才流动|领导层|管理层|leadership|executive/.test(value) || /离职|离任|辞任|卸任|退出|离开|任命|担任|晋升|跳槽/.test(value) || /(?:加入|加盟|joins?|joined)\s*.{0,18}(?:公司|团队|实验室|任职|担任|出任|company|team|lab|as\b)/.test(value);
+  if (capitalSignal(headline)) return "capital";
+  if (peopleSignal(headline)) return "people";
+  return "matter";
 }
 
 function renderTypeGroups(items) {
