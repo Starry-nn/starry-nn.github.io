@@ -19,6 +19,13 @@ const cors = {
 
 type User = { id: string; username: string; role: string; force_password_change: boolean; created_at: string };
 
+class HttpError extends Error {
+  constructor(message: string, readonly status = 400) {
+    super(message);
+    this.name = "HttpError";
+  }
+}
+
 function json(payload: unknown, status = 200, extra: Record<string, string> = {}) {
   return new Response(JSON.stringify(payload), { status, headers: { ...cors, ...extra, "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" } });
 }
@@ -71,15 +78,15 @@ function publicUser(row: Record<string, unknown>): User {
 
 function validateUsername(input: unknown) {
   const value = String(input ?? "").trim();
-  if (!/^[A-Za-z0-9][A-Za-z0-9_.-]{2,31}$/.test(value)) throw new Error("用户名需为 3-32 位字母、数字、点、下划线或短横线");
+  if (!/^[A-Za-z0-9][A-Za-z0-9_.-]{2,31}$/.test(value)) throw new HttpError("用户名需为 3-32 位字母、数字、点、下划线或短横线");
   return value;
 }
 
 function validatePassword(input: unknown, temporary = false) {
   const value = String(input ?? "");
   const minimum = temporary ? 8 : 10;
-  if (value.length < minimum || value.length > 128) throw new Error(`密码长度需为 ${minimum}-128 位`);
-  if (!temporary && (!/[A-Za-z]/.test(value) || !/[^A-Za-z]/.test(value))) throw new Error("密码需同时包含字母和数字或符号");
+  if (value.length < minimum || value.length > 128) throw new HttpError(`密码长度需为 ${minimum}-128 位`);
+  if (!temporary && (!/[A-Za-z]/.test(value) || !/[^A-Za-z]/.test(value))) throw new HttpError("密码需同时包含字母和数字或符号");
   return value;
 }
 
@@ -198,9 +205,10 @@ async function inspectPackage(bytes: Uint8Array) {
 
 async function requestBody(request: Request) {
   const length = Number(request.headers.get("content-length") ?? 0);
-  if (length > 9 * 1024 * 1024) throw new Error("request_too_large");
-  const body = await request.json();
-  if (!body || typeof body !== "object" || Array.isArray(body)) throw new Error("invalid_json");
+  if (length > 9 * 1024 * 1024) throw new HttpError("request_too_large", 413);
+  let body: unknown;
+  try { body = await request.json(); } catch { throw new HttpError("invalid_json"); }
+  if (!body || typeof body !== "object" || Array.isArray(body)) throw new HttpError("invalid_json");
   return body as Record<string, unknown>;
 }
 
@@ -272,7 +280,8 @@ Deno.serve(async request => {
       const { data } = await db.from("skill_users").select("password_salt,password_hash").eq("id", auth.user.id).single();
       if (!data || await passwordHash(current, data.password_salt) !== data.password_hash) return json({ ok: false, error: "invalid_current_password" }, 401);
       const salt = bytesToHex(crypto.getRandomValues(new Uint8Array(16)));
-      await db.from("skill_users").update({ password_salt: salt, password_hash: await passwordHash(next, salt), force_password_change: false }).eq("id", auth.user.id);
+      const { error } = await db.from("skill_users").update({ password_salt: salt, password_hash: await passwordHash(next, salt), force_password_change: false }).eq("id", auth.user.id);
+      if (error) throw error;
       return json({ ok: true });
     }
     if (request.method === "GET" && path === "/api/skills") {
@@ -355,7 +364,7 @@ Deno.serve(async request => {
     return json({ ok: false, error: "not_found" }, 404);
   } catch (error) {
     const message = error instanceof Error ? error.message : "server_error";
-    const status = message === "request_too_large" ? 413 : message.includes("Skill") || message.includes("压缩包") || message.includes("SKILL.md") ? 400 : 500;
+    const status = error instanceof HttpError ? error.status : message === "request_too_large" ? 413 : message.includes("Skill") || message.includes("压缩包") || message.includes("SKILL.md") ? 400 : 500;
     console.error(error);
     return json({ ok: false, error: status === 500 ? "server_error" : message }, status);
   }
