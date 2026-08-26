@@ -51,6 +51,8 @@ deal-screening/
 
 Supabase Storage bucket 为 private，数据库表开启 RLS 且不授予客户端访问策略。所有私有文件操作必须经过 Edge Function 的账号所有权检查。
 
+管理员可在本机设置 `SUPABASE_SERVICE_ROLE_KEY` 后运行 `scripts/import_private_bundles.py`，把被 Git 忽略的 ZIP 批量导入指定账号。该密钥只允许作为进程环境变量使用。
+
 SQLite 数据库、私人 Skill 包、管理员变量和本地打包文件均已加入 `.gitignore`，不得提交到公开仓库。
 
 ## 验证
