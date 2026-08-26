@@ -5,7 +5,9 @@ const tasks = [
   ["看财务", "财务分析"], ["写 IC", "IC 材料"], ["管投后", "投后管理"], ["做基金运营", "基金运营"]
 ];
 
-const state = { publicSkills: [], privateSkills: [], user: null, csrf: null, query: "", provider: "全部来源", category: "全部", authMode: "login" };
+const supabaseConfig = window.SKILLS_DESK_SUPABASE || {url:"", publishableKey:""};
+const usesSupabase = Boolean(supabaseConfig.url && supabaseConfig.publishableKey);
+const state = { publicSkills: [], privateSkills: [], user: null, csrf: null, sessionToken: localStorage.getItem("skills-desk-session") || "", query: "", provider: "全部来源", category: "全部", authMode: "login" };
 const el = id => document.getElementById(id);
 const authDialog = el("authDialog");
 const uploadDialog = el("uploadDialog");
@@ -44,10 +46,23 @@ async function copyText(value, message = "已复制") {
   showToast(message);
 }
 
+function apiUrl(path) {
+  if (!usesSupabase) return path;
+  const clean = path.replace(/^\./, "");
+  return `${supabaseConfig.url.replace(/\/$/, "")}/functions/v1/skills-api${clean}`;
+}
+
+function apiHeaders(extra = {}) {
+  const headers = {"Content-Type":"application/json", ...extra};
+  if (usesSupabase) headers.apikey = supabaseConfig.publishableKey;
+  if (state.sessionToken) headers.Authorization = `Bearer ${state.sessionToken}`;
+  return headers;
+}
+
 async function api(path, options = {}) {
-  const headers = {"Content-Type": "application/json", ...(options.headers || {})};
+  const headers = apiHeaders(options.headers || {});
   if (options.mutation && state.csrf) headers["X-CSRF-Token"] = state.csrf;
-  const response = await fetch(path, {...options, headers, credentials: "same-origin"});
+  const response = await fetch(apiUrl(path), {...options, headers, credentials: usesSupabase ? "omit" : "same-origin"});
   const contentType = response.headers.get("content-type") || "";
   const payload = contentType.includes("application/json") ? await response.json() : null;
   if (!response.ok) {
@@ -72,7 +87,7 @@ function skillCard(skill, isPrivate = false) {
       <div class="skill-meta"><span class="provider">${escapeHtml(skill.category)}</span><span class="skill-type">私人</span></div>
       <div><h3>${escapeHtml(skill.name)}</h3><span class="skill-name">${escapeHtml(skill.slug)}</span></div>
       <div><p class="skill-description">${escapeHtml(skill.description)}</p><p class="skill-when"><strong>包信息</strong>${skill.file_count} 个文件，SHA-256 ${escapeHtml(skill.package_sha256.slice(0, 12))}</p></div>
-      <div class="skill-actions"><a href="./api/skills/${encodeURIComponent(skill.id)}/content">下载 ZIP</a><button class="text-button" type="button" data-delete-skill="${escapeHtml(skill.id)}">删除</button></div>
+      <div class="skill-actions"><button class="text-button" type="button" data-download-skill="${escapeHtml(skill.id)}" data-skill-slug="${escapeHtml(skill.slug)}">下载 ZIP</button><button class="text-button" type="button" data-delete-skill="${escapeHtml(skill.id)}">删除</button></div>
     </article>`;
   }
   return `<article class="skill-card">
@@ -128,6 +143,7 @@ async function loadCatalog() {
 }
 
 async function restoreAuth() {
+  if (usesSupabase && !state.sessionToken) { renderPrivate(); return; }
   try {
     const data = await api("./api/auth");
     state.user = data.authenticated ? data.user : null;
@@ -136,6 +152,8 @@ async function restoreAuth() {
   } catch {
     state.user = null;
     state.csrf = null;
+    state.sessionToken = "";
+    localStorage.removeItem("skills-desk-session");
   }
   renderPrivate();
 }
@@ -170,6 +188,10 @@ async function submitAuth(event) {
     const data = await api(state.authMode === "login" ? "./api/login" : "./api/register", {method: "POST", body: JSON.stringify({username, password})});
     state.user = data.user;
     state.csrf = data.csrf;
+    if (data.session_token) {
+      state.sessionToken = data.session_token;
+      localStorage.setItem("skills-desk-session", data.session_token);
+    }
     authDialog.close();
     el("authForm").reset();
     await loadPrivateSkills();
@@ -229,9 +251,22 @@ async function deleteSkill(id) {
   } catch (error) { showToast(error.message); }
 }
 
+async function downloadSkill(id, slug) {
+  try {
+    const response = await fetch(apiUrl(`./api/skills/${encodeURIComponent(id)}/content`), {headers:apiHeaders(), credentials:usesSupabase ? "omit" : "same-origin"});
+    if (!response.ok) { const payload = await response.json(); throw new Error(payload.error || "下载失败"); }
+    const url = URL.createObjectURL(await response.blob());
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `${slug}.zip`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  } catch (error) { showToast(error.message); }
+}
+
 async function downloadBundle() {
   try {
-    const response = await fetch("./api/bundle", {credentials:"same-origin"});
+    const response = await fetch(apiUrl("./api/bundle"), {headers:apiHeaders(), credentials:usesSupabase ? "omit" : "same-origin"});
     if (!response.ok) { const payload = await response.json(); throw new Error(payload.error || "下载失败"); }
     const blob = await response.blob();
     const url = URL.createObjectURL(blob);
@@ -258,7 +293,7 @@ async function openTokenDialog() {
 async function createToken() {
   try {
     const data = await api("./api/tokens", {method:"POST", mutation:true, body:JSON.stringify({label:el("tokenLabel").value.trim() || "Agent token"})});
-    const base = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, "").replace(/\/$/, "");
+    const base = usesSupabase ? `${supabaseConfig.url.replace(/\/$/, "")}/functions/v1/skills-api` : window.location.origin + window.location.pathname.replace(/\/[^/]*$/, "").replace(/\/$/, "");
     const install = `mkdir -p "$HOME/.agents/skills" && curl -fsSL -H "Authorization: Bearer ${data.token}" "${base}/api/bundle" -o /tmp/skills-desk-bundle.zip && unzip -qo /tmp/skills-desk-bundle.zip -d "$HOME/.agents/skills"`;
     const upload = `检查我要保存的 Skill，确保目录名与 SKILL.md 的 name 一致，排除凭据、缓存、日志和无关文件，将单一 Skill 根目录打包为 ZIP。然后使用 Authorization: Bearer ${data.token} 调用 ${base}/api/skills，以 JSON 提交 category 和 ZIP 的 content_base64。上传前向我展示文件清单，未经确认不要发送。`;
     el("installCommand").textContent = install;
@@ -282,6 +317,8 @@ async function logout() {
   try { await api("./api/logout", {method:"POST", body:"{}"}); } catch {}
   state.user = null;
   state.csrf = null;
+  state.sessionToken = "";
+  localStorage.removeItem("skills-desk-session");
   state.privateSkills = [];
   renderPrivate();
   showToast("已退出登录");
@@ -299,6 +336,7 @@ document.addEventListener("click", event => {
   const category = target.closest("[data-category]");
   const copyId = target.closest("[data-copy-id]");
   const deleteButton = target.closest("[data-delete-skill]");
+  const downloadButton = target.closest("[data-download-skill]");
   const revokeButton = target.closest("[data-revoke-token]");
   if (target.closest("[data-open-auth]")) openAuth();
   if (target.closest("[data-open-upload]")) uploadDialog.showModal();
@@ -310,6 +348,7 @@ document.addEventListener("click", event => {
   if (category) { state.category = category.dataset.category; renderPublic(); }
   if (copyId) copyText(el(copyId.dataset.copyId).textContent);
   if (deleteButton) deleteSkill(deleteButton.dataset.deleteSkill);
+  if (downloadButton) downloadSkill(downloadButton.dataset.downloadSkill, downloadButton.dataset.skillSlug);
   if (revokeButton) revokeToken(revokeButton.dataset.revokeToken);
 });
 

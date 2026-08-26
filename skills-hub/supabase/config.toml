@@ -1,0 +1,5 @@
+project_id = "skills-desk"
+
+[functions.skills-api]
+verify_jwt = false
+

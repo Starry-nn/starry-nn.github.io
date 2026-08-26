@@ -1,6 +1,0 @@
-.git
-.local-state
-private-bundles
-tests
-__pycache__
-*.pyc

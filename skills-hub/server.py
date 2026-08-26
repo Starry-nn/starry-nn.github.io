@@ -46,7 +46,7 @@ MAX_FILES_PER_SKILL = 160
 MAX_SKILLS_PER_BUNDLE = 120
 
 STATIC_FILES = {
-    "/", "/index.html", "/styles.css", "/app.js", "/catalog.json", "/favicon.svg",
+    "/", "/index.html", "/styles.css", "/app.js", "/catalog.json", "/favicon.svg", "/supabase-config.js",
 }
 SKILL_CATEGORIES = {
     "项目发现", "BP 初筛", "行业研究", "商业尽调", "财务分析", "法务合规",
@@ -344,7 +344,7 @@ class SkillsHandler(SimpleHTTPRequestHandler):
         self.send_header("X-Frame-Options", "DENY")
         self.send_header("Referrer-Policy", "same-origin")
         self.send_header("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
-        self.send_header("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'")
+        self.send_header("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://*.supabase.co; base-uri 'none'; frame-ancestors 'none'; form-action 'self'")
         super().end_headers()
 
     def json_response(self, payload, status=HTTPStatus.OK, headers=None):

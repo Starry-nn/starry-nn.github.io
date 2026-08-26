@@ -35,7 +35,7 @@ class ApiTests(unittest.TestCase):
         os.environ["SKILLS_SESSION_SECRET"] = "test-session-secret-that-is-long-enough-123456"
         os.environ["SKILLS_ADMIN_USERNAME"] = "Starry"
         os.environ["SKILLS_ADMIN_PASSWORD_SALT"] = salt
-        os.environ["SKILLS_ADMIN_PASSWORD_HASH"] = server.password_digest("Monolith", salt)
+        os.environ["SKILLS_ADMIN_PASSWORD_HASH"] = server.password_digest("Temporary1!", salt)
         server.auth_failures.clear()
         server.initialize_database()
         self.httpd = server.ThreadingHTTPServer(("127.0.0.1", 0), server.SkillsHandler)
@@ -75,7 +75,7 @@ class ApiTests(unittest.TestCase):
         return status, decoded
 
     def login_starry(self):
-        status, payload = self.request("POST", "/api/login", {"username": "Starry", "password": "Monolith"})
+        status, payload = self.request("POST", "/api/login", {"username": "Starry", "password": "Temporary1!"})
         self.assertEqual(status, 200)
         self.csrf = payload["csrf"]
         self.assertTrue(payload["user"]["force_password_change"])
@@ -84,7 +84,7 @@ class ApiTests(unittest.TestCase):
         status, payload = self.request(
             "POST",
             "/api/password",
-            {"current_password": "Monolith", "new_password": "NewMonolith2026!"},
+            {"current_password": "Temporary1!", "new_password": "ChangedPassword2026!"},
         )
         self.assertEqual((status, payload["ok"]), (200, True))
         status, payload = self.request("GET", "/api/auth")

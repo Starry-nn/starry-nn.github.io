@@ -2,5 +2,6 @@
 private-bundles/
 infra/admin.env
 infra/admin-credentials.txt
+supabase/.temp/
 __pycache__/
 *.pyc
