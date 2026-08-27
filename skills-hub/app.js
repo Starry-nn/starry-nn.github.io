@@ -7,7 +7,7 @@ const tasks = [
 
 const supabaseConfig = window.SKILLS_DESK_SUPABASE || {url:"", publishableKey:""};
 const usesSupabase = Boolean(supabaseConfig.url && supabaseConfig.publishableKey);
-const state = { publicSkills: [], privateSkills: [], privatePrompts: [], user: null, csrf: null, sessionToken: localStorage.getItem("skills-desk-session") || "", query: "", provider: "全部来源", category: "全部", promptQuery: "", promptCategory: "全部", libraryTab: "skills", authMode: "login", skillDraft: null, promptDraft: null, shareCode: "", sharedOwner: null, sharedSkills: [], sharedPrompts: [], sharedTab: "skills" };
+const state = { publicSkills: [], privateSkills: [], privatePrompts: [], user: null, csrf: null, sessionToken: localStorage.getItem("skills-desk-session") || "", query: "", provider: "全部来源", category: "全部", promptQuery: "", promptCategory: "全部", libraryTab: "prompts", authMode: "login", skillDraft: null, promptDraft: null, shareCode: "", sharedOwner: null, sharedSkills: [], sharedPrompts: [], sharedTab: "prompts" };
 const el = id => document.getElementById(id);
 const authDialog = el("authDialog");
 const uploadDialog = el("uploadDialog");
@@ -173,7 +173,7 @@ function renderPrivate() {
 function renderPrivatePrompts() {
   if (!state.user) return;
   const matches = state.privatePrompts.filter(promptMatches);
-  el("privatePrompts").innerHTML = matches.map(promptCard).join("");
+  el("privatePrompts").innerHTML = matches.map(prompt => promptCard(prompt)).join("");
   el("privatePrompts").hidden = matches.length === 0;
   el("promptEmpty").hidden = matches.length !== 0;
   const emptyTitle = el("promptEmpty").querySelector("h3");

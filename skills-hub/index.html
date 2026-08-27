@@ -84,7 +84,7 @@
         <div>
           <p class="kicker">登录后可见</p>
           <h2 id="private-title">我的方法仓库</h2>
-          <p>Skills 负责执行，Prompts 负责思考方式。两类内容都按账号隔离，不会进入公开目录。</p>
+          <p>Prompts 负责沉淀思考方式，Skills 负责执行。两类内容都按账号隔离，不会进入公开目录。</p>
         </div>
         <div class="private-actions" id="privateActions" hidden>
           <button class="quiet-button" id="shareManageButton" type="button">授权访问</button>
@@ -108,21 +108,13 @@
           <div>
             <p id="welcomeText"></p>
             <div class="library-tabs" role="tablist" aria-label="私人仓库类型">
-              <button class="active" type="button" role="tab" aria-selected="true" data-library-tab="skills">Skills <span id="privateSkillCount">0</span></button>
-              <button type="button" role="tab" aria-selected="false" data-library-tab="prompts">Prompts <span id="privatePromptCount">0</span></button>
+              <button class="active" type="button" role="tab" aria-selected="true" data-library-tab="prompts">Prompts <span id="privatePromptCount">0</span></button>
+              <button type="button" role="tab" aria-selected="false" data-library-tab="skills">Skills <span id="privateSkillCount">0</span></button>
             </div>
           </div>
           <button class="text-button" id="logoutButton" type="button">退出登录</button>
         </div>
-        <div id="skillsPanel" role="tabpanel">
-          <div class="skills-grid private" id="privateSkills"></div>
-          <div class="empty-state" id="privateEmpty" hidden>
-            <h3>Skill 仓库还是空的</h3>
-            <p>上传 ZIP，系统会先整理名称、说明、分类和安装信息，再交给你确认。</p>
-            <button class="primary-button" type="button" data-open-upload>添加第一个 Skill</button>
-          </div>
-        </div>
-        <div id="promptsPanel" role="tabpanel" hidden>
+        <div id="promptsPanel" role="tabpanel">
           <div class="library-toolbar">
             <label class="search-box"><span>在我的 Prompts 中搜索</span><input id="promptSearchInput" type="search" placeholder="人物 Mapping、会议纪要、产品跟踪"></label>
             <div class="filter-row" id="promptCategoryFilters"></div>
@@ -132,6 +124,14 @@
             <h3>Prompt 仓库还是空的</h3>
             <p>粘贴主要内容，系统会建议名称、分类、用途和触发条件，确认后才保存。</p>
             <button class="primary-button" type="button" data-open-prompt>添加第一个 Prompt</button>
+          </div>
+        </div>
+        <div id="skillsPanel" role="tabpanel" hidden>
+          <div class="skills-grid private" id="privateSkills"></div>
+          <div class="empty-state" id="privateEmpty" hidden>
+            <h3>Skill 仓库还是空的</h3>
+            <p>上传 ZIP，系统会先整理名称、说明、分类和安装信息，再交给你确认。</p>
+            <button class="primary-button" type="button" data-open-upload>添加第一个 Skill</button>
           </div>
         </div>
       </div>
@@ -294,12 +294,12 @@
       <div id="sharedRepository" hidden>
         <div class="shared-topline"><p id="sharedSummary"></p><button class="text-button" id="leaveSharedButton" type="button">退出授权访问</button></div>
         <div class="library-tabs" role="tablist" aria-label="授权仓库类型">
-          <button class="active" type="button" role="tab" aria-selected="true" data-shared-tab="skills">Skills <span id="sharedSkillCount">0</span></button>
-          <button type="button" role="tab" aria-selected="false" data-shared-tab="prompts">Prompts <span id="sharedPromptCount">0</span></button>
+          <button class="active" type="button" role="tab" aria-selected="true" data-shared-tab="prompts">Prompts <span id="sharedPromptCount">0</span></button>
+          <button type="button" role="tab" aria-selected="false" data-shared-tab="skills">Skills <span id="sharedSkillCount">0</span></button>
         </div>
         <div class="shared-downloads"><button class="quiet-button" id="sharedSkillBundleButton" type="button">下载 Skill 整库</button><button class="quiet-button" id="sharedPromptBundleButton" type="button">下载 Prompt 整库</button></div>
-        <div id="sharedSkillsPanel"><div class="skills-grid private" id="sharedSkills"></div></div>
-        <div id="sharedPromptsPanel" hidden><div class="prompt-library-grid" id="sharedPrompts"></div></div>
+        <div id="sharedPromptsPanel"><div class="prompt-library-grid" id="sharedPrompts"></div></div>
+        <div id="sharedSkillsPanel" hidden><div class="skills-grid private" id="sharedSkills"></div></div>
       </div>
     </div>
   </dialog>
