@@ -615,6 +615,7 @@ async function submitShareAccess(event) {
 
 function renderSharedRepository() {
   const active = Boolean(state.shareCode && state.sharedOwner);
+  shareAccessDialog.classList.toggle("browsing", active);
   el("shareAccessForm").hidden = active;
   el("sharedRepository").hidden = !active;
   if (!active) { el("sharedDialogTitle").textContent = "输入仓库授权码"; return; }
