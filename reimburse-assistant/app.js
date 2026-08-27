@@ -10,6 +10,7 @@ const state = {
   selectedSheet: "",
   records: [],
   screenshots: [],
+  archiveIssues: [],
   currentRecord: 0,
   applicant: "",
   period: "2026-07",
@@ -150,18 +151,26 @@ function renderReceipts() {
   const root = $("#workspace");
   root.innerHTML = `
     <div class="pane">
-      <div class="pane-head"><div><h2>分别上传发票和相关截图</h2><p>我们会先读取票面，再用行程、订单或支付截图寻找对应关系。识别完整的内容只需确认，不确定项才需要补充。</p></div></div>
+      <div class="pane-head"><div><h2>导入发票和相关截图</h2><p>可以分别上传，也可以直接选择一个 ZIP 压缩包。我们会读取内容、匹配对应关系，只把不确定项留给你补充。</p></div></div>
       <div class="upload-grid">
         <label class="dropzone compact" id="invoice-drop">
           <input id="invoice-input" type="file" accept=".pdf,image/*" multiple />
-          <div><span class="upload-kicker">01 · 必需</span><div class="dropzone-icon"><i class="ph ph-receipt"></i></div><strong>上传发票</strong><p>电子发票 PDF 或发票图片，可一次多选</p>${state.records.length ? `<span class="upload-count">已读取 ${state.records.length} 张</span>` : ""}</div>
+          <div><span class="upload-kicker">发票文件 必需</span><div class="dropzone-icon"><i class="ph ph-receipt"></i></div><strong>上传发票</strong><p>电子发票 PDF 或发票图片，可一次多选</p>${state.records.length ? `<span class="upload-count">已读取 ${state.records.length} 张</span>` : ""}</div>
         </label>
         <label class="dropzone compact evidence-zone" id="screenshot-drop">
           <input id="screenshot-input" type="file" accept="image/*" multiple />
-          <div><span class="upload-kicker">02 · 推荐</span><div class="dropzone-icon"><i class="ph ph-image-square"></i></div><strong>上传相关截图</strong><p>行程、订单、支付截图，用来判断真实使用信息</p>${state.screenshots.length ? `<span class="upload-count">已分析 ${state.screenshots.length} 张</span>` : ""}</div>
+          <div><span class="upload-kicker">辅助材料 推荐</span><div class="dropzone-icon"><i class="ph ph-image-square"></i></div><strong>上传相关截图</strong><p>行程、订单、支付截图，用来判断真实使用信息</p>${state.screenshots.length ? `<span class="upload-count">已分析 ${state.screenshots.length} 张</span>` : ""}</div>
         </label>
       </div>
+      <div class="upload-divider"><span>或者</span></div>
+      <label class="dropzone bundle-zone" id="archive-drop">
+        <input id="archive-input" type="file" accept=".zip,application/zip" multiple />
+        <div class="bundle-icon"><i class="ph ph-file-zip"></i></div>
+        <div class="bundle-copy"><strong>上传一个 ZIP 压缩包</strong><p>可包含多层文件夹。我们会在本地解压，并按内容自动区分发票和截图。</p></div>
+        <span class="bundle-action">选择压缩包 <i class="ph ph-arrow-up"></i></span>
+      </label>
       <div id="processing"></div>
+      ${state.archiveIssues.length ? archiveIssuesHtml() : ""}
       ${state.screenshots.length ? screenshotMatchesHtml() : ""}
       ${state.records.length ? receiptListHtml() : ""}
       <div class="action-row">
@@ -171,12 +180,17 @@ function renderReceipts() {
     </div>`;
   bindDropzone("invoice-drop", "invoice-input", processInvoiceFiles);
   bindDropzone("screenshot-drop", "screenshot-input", processScreenshotFiles);
+  bindDropzone("archive-drop", "archive-input", processArchiveFiles);
   $("#receipts-next").addEventListener("click", () => goTo("review"));
   $$("[data-remove]").forEach((button) => button.addEventListener("click", () => {
     state.records = state.records.filter((record) => record.id !== button.dataset.remove);
     matchScreenshotsToInvoices();
     render();
   }));
+}
+
+function archiveIssuesHtml() {
+  return `<section class="archive-report"><div><i class="ph ph-info"></i><strong>压缩包中有 ${state.archiveIssues.length} 个文件未导入</strong></div><ul>${state.archiveIssues.slice(0, 8).map((issue) => `<li><span title="${escapeHtml(issue.name)}">${escapeHtml(issue.name)}</span><em>${escapeHtml(issue.reason)}</em></li>`).join("")}</ul>${state.archiveIssues.length > 8 ? `<p>另有 ${state.archiveIssues.length - 8} 个文件未显示</p>` : ""}</section>`;
 }
 
 function screenshotMatchesHtml() {
@@ -246,6 +260,89 @@ async function processScreenshotFiles(files) {
   matchScreenshotsToInvoices();
   showToast("截图分析完成，已尝试匹配发票");
   setTimeout(render, 350);
+}
+
+async function processArchiveFiles(files) {
+  if (!files.length) return;
+  if (!window.JSZip) { showToast("压缩包组件尚未加载，请稍后重试"); return; }
+  const processing = $("#processing");
+  processing.className = "processing";
+  state.archiveIssues = [];
+  let invoiceCount = 0;
+  let screenshotCount = 0;
+
+  for (const archive of [...files]) {
+    const item = document.createElement("div");
+    item.className = "processing-item";
+    item.innerHTML = `<div class="processing-top"><span title="${escapeHtml(archive.name)}">${escapeHtml(archive.name)}</span><span>检查压缩包</span></div><div class="thin-progress"><span style="width:12%"></span></div>`;
+    processing.appendChild(item);
+    try {
+      const zip = await JSZip.loadAsync(await archive.arrayBuffer());
+      const entries = Object.values(zip.files).filter((entry) => !entry.dir && !isHiddenArchiveEntry(entry.name));
+      const totalSize = entries.reduce((sum, entry) => sum + Number(entry._data?.uncompressedSize || 0), 0);
+      if (entries.length > 100) throw new Error("单个压缩包最多支持 100 个文件");
+      if (totalSize > 80 * 1024 * 1024) throw new Error("解压后的文件总量不能超过 80 MB");
+      if (!entries.length) throw new Error("没有找到可读取的文件");
+
+      for (const [index, entry] of entries.entries()) {
+        const name = entry.name.split("/").filter(Boolean).at(-1) || entry.name;
+        const extension = name.split(".").at(-1)?.toLowerCase() || "";
+        const size = Number(entry._data?.uncompressedSize || 0);
+        if (!["pdf", "png", "jpg", "jpeg", "webp"].includes(extension)) {
+          state.archiveIssues.push({ name: entry.name, reason: "不支持此文件格式" });
+          continue;
+        }
+        if (size > 20 * 1024 * 1024) {
+          state.archiveIssues.push({ name: entry.name, reason: "单个文件超过 20 MB" });
+          continue;
+        }
+        setProgress(item, Math.max(.08, index / entries.length), `识别 ${index + 1}/${entries.length}`);
+        try {
+          const blob = await entry.async("blob");
+          const file = new File([blob], name, { type: mimeForExtension(extension) });
+          if (extension === "pdf") {
+            const text = await extractPdfText(file, () => {});
+            state.records.push(parseInvoiceText(text, name));
+            invoiceCount += 1;
+          } else {
+            const text = await extractImageText(file, () => {});
+            if (!text.trim()) throw new Error("图片中没有识别到文字");
+            if (looksLikeInvoice(text)) {
+              state.records.push(parseInvoiceText(text, name));
+              invoiceCount += 1;
+            } else {
+              state.screenshots.push(parseScreenshotText(text, name));
+              screenshotCount += 1;
+            }
+          }
+        } catch (error) {
+          state.archiveIssues.push({ name: entry.name, reason: error.message || "识别失败" });
+        }
+      }
+      setProgress(item, 1, "解压识别完成");
+    } catch (error) {
+      state.archiveIssues.push({ name: archive.name, reason: error.message || "压缩包读取失败" });
+      setProgress(item, 1, "无法读取");
+    }
+  }
+  matchScreenshotsToInvoices();
+  const imported = invoiceCount + screenshotCount;
+  showToast(imported ? `已导入 ${invoiceCount} 张发票和 ${screenshotCount} 张截图` : "压缩包中没有可导入的票据");
+  setTimeout(render, 450);
+}
+
+function isHiddenArchiveEntry(name) {
+  return name.split("/").some((part) => part === "__MACOSX" || part.startsWith("."));
+}
+
+function mimeForExtension(extension) {
+  return ({ pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", webp: "image/webp" })[extension] || "application/octet-stream";
+}
+
+function looksLikeInvoice(text) {
+  const compact = text.replace(/\s+/g, "");
+  const signals = [/发票号码/, /电子发票/, /数电票/, /价税合计/, /开票日期/, /购买方(?:信息|名称)/, /销售方(?:信息|名称)/, /税额/];
+  return signals.filter((pattern) => pattern.test(compact)).length >= 2;
 }
 
 async function extractPdfText(file, onProgress) {
@@ -354,7 +451,7 @@ function renderReview() {
     <div class="review-layout">
       <aside class="review-nav"><h2>还差 ${state.records.filter((record) => !isConfirmed(record)).length} 项确认</h2>${state.records.map((record, index) => `
         <button class="review-choice ${index === state.currentRecord ? "is-active" : ""}" data-record="${index}">
-          <span class="mini">${index + 1}</span><span><strong>${escapeHtml(record.vendor || "待补充商户")}</strong><small>¥${money(record.amount)}</small></span>
+          <span class="mini">${index + 1}</span><span class="review-choice-copy"><strong title="${escapeHtml(record.vendor || "待补充商户")}">${escapeHtml(record.vendor || "待补充商户")}</strong><small>¥${money(record.amount)}</small></span>
           <i class="ph ${isConfirmed(record) ? "ph-check-circle" : "ph-circle"}"></i>
         </button>`).join("")}</aside>
       <div class="review-editor">
