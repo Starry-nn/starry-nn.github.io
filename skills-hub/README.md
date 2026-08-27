@@ -1,12 +1,14 @@
 # Skills Desk
 
-面向一级市场团队的公开与私人 AI Skills 仓库。公开目录由 GitHub Pages 免费托管；账号、私有 ZIP 和 Agent API 运行在 Supabase Free。登录用户拥有相互隔离的私人仓库，可上传单个 Skill、下载单项或整库 ZIP，并生成可撤销的 Agent 访问令牌。
+面向一级市场团队的公开 Skills 目录与私人 Skills / Prompts 方法仓库。公开页面由 GitHub Pages 免费托管；账号、私有内容和 Agent API 运行在 Supabase Free。
 
 ## 能力
 
 - 公开目录：搜索、来源筛选、任务分类和调用语复制
 - 账号系统：注册、登录、临时管理员密码强制更新
 - 私人仓库：用户级数据隔离、ZIP 校验、单项下载、整库打包
+- Prompt 仓库：保留原文、内容辅助命名与分类、确认后入库、单项复制/下载与整库打包
+- 智能录入：Skill ZIP 和 Prompt 都先生成名称、说明、分类与使用信息，待用户修改确认后保存
 - Agent 接入：一次性显示的 Bearer Token、整库安装命令、上传 Prompt
 - 数据安全：Supabase 私有 Storage、服务端所有权检查、数据库 RLS 与最小权限
 
@@ -52,6 +54,8 @@ deal-screening/
 Supabase Storage bucket 为 private，数据库表开启 RLS 且不授予客户端访问策略。所有私有文件操作必须经过 Edge Function 的账号所有权检查。
 
 管理员可在本机设置 `SUPABASE_SERVICE_ROLE_KEY` 后运行 `scripts/import_private_bundles.py`，把被 Git 忽略的 ZIP 批量导入指定账号。该密钥只允许作为进程环境变量使用。
+
+现有 Prompt library 可通过 `scripts/import_private_prompts.py` 导入指定账号；脚本保留每条 Prompt 正文，并把 frontmatter 作为独立检索元数据。
 
 SQLite 数据库、私人 Skill 包、管理员变量和本地打包文件均已加入 `.gitignore`，不得提交到公开仓库。
 

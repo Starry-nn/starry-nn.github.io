@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="面向一级市场投资人的公开与私人 AI Skills 仓库。">
+  <meta name="description" content="面向一级市场投资人的私人 Skills 与 Prompts 工作台。">
   <meta name="theme-color" content="#f3f5f1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://*.supabase.co; base-uri 'none'; frame-ancestors 'none'; form-action 'self'">
   <title>Skills Desk | 一级市场 AI Skills</title>
@@ -20,7 +20,7 @@
     </a>
     <nav aria-label="主导航">
       <a href="#catalog">公开 Skills</a>
-      <a href="#my-skills">我的仓库</a>
+      <a href="#my-library">我的仓库</a>
       <a href="#guide">上传教程</a>
     </nav>
     <div class="header-actions">
@@ -34,16 +34,16 @@
       <div>
         <p class="kicker">一级市场 AI Skills Hub</p>
         <h1 id="hero-title">公开能力可发现。<br>私人方法只属于你。</h1>
-        <p class="hero-copy">查找 Anthropic、OpenAI 和 Lark 生态的常用 Skills。登录后保存、打包并安装自己的完整工作流。</p>
+        <p class="hero-copy">查找 Anthropic、OpenAI 和 Lark 生态的常用 Skills。登录后，把自己的 Skills 与 Prompts 整理成一眼能找到、随手能调用的工作台。</p>
         <div class="hero-actions">
           <a class="primary-button link-button" href="#catalog">浏览公开目录</a>
-          <a class="quiet-button link-button" href="#my-skills">打开私人仓库</a>
+          <a class="quiet-button link-button" href="#my-library">打开私人仓库</a>
         </div>
       </div>
       <aside class="hero-facts" aria-label="平台能力">
         <div><strong id="publicCount">0</strong><span>公开 Skills</span></div>
         <div><strong>私有</strong><span>账号隔离存储</span></div>
-        <div><strong>ZIP</strong><span>单项与整库安装</span></div>
+        <div><strong>双库</strong><span>Skills 与 Prompts</span></div>
       </aside>
     </section>
 
@@ -78,71 +78,92 @@
       </div>
     </section>
 
-    <section class="private-library" id="my-skills" aria-labelledby="private-title">
+    <section class="private-library" id="my-library" aria-labelledby="private-title">
       <div class="library-topline">
         <div>
           <p class="kicker">登录后可见</p>
-          <h2 id="private-title">我的私人 Skill 仓库</h2>
-          <p>你的 Skill 包不会进入公开目录，也不会被其他账号检索或下载。</p>
+          <h2 id="private-title">我的方法仓库</h2>
+          <p>Skills 负责执行，Prompts 负责思考方式。两类内容都按账号隔离，不会进入公开目录。</p>
         </div>
         <div class="private-actions" id="privateActions" hidden>
           <button class="quiet-button" id="tokenButton" type="button">安装与上传令牌</button>
-          <button class="quiet-button" id="bundleButton" type="button">下载整库 ZIP</button>
-          <button class="primary-button" id="uploadButton" type="button">上传 Skill</button>
+          <button class="quiet-button" id="bundleButton" type="button">下载 Skill 整库</button>
+          <button class="quiet-button" id="promptBundleButton" type="button">下载 Prompt 整库</button>
+          <button class="primary-button" id="addLibraryButton" type="button">添加内容</button>
         </div>
       </div>
 
       <div class="locked-state" id="lockedState">
         <div>
           <h3>登录后进入你的独立仓库</h3>
-          <p>注册账号即可保存自己的 Skills；每个账号拥有独立的数据与下载权限。</p>
+          <p>注册账号即可保存自己的 Skills 与 Prompts；每个账号拥有独立的数据与下载权限。</p>
         </div>
         <button class="primary-button" type="button" data-open-auth>登录 / 注册</button>
       </div>
 
       <div class="private-content" id="privateContent" hidden>
-        <div class="private-status">
-          <p id="welcomeText"></p>
+        <div class="private-status library-status">
+          <div>
+            <p id="welcomeText"></p>
+            <div class="library-tabs" role="tablist" aria-label="私人仓库类型">
+              <button class="active" type="button" role="tab" aria-selected="true" data-library-tab="skills">Skills <span id="privateSkillCount">0</span></button>
+              <button type="button" role="tab" aria-selected="false" data-library-tab="prompts">Prompts <span id="privatePromptCount">0</span></button>
+            </div>
+          </div>
           <button class="text-button" id="logoutButton" type="button">退出登录</button>
         </div>
-        <div class="skills-grid private" id="privateSkills"></div>
-        <div class="empty-state" id="privateEmpty" hidden>
-          <h3>私人仓库还是空的</h3>
-          <p>上传单个 Skill ZIP，或生成上传令牌让 Agent 帮你打包。</p>
-          <button class="primary-button" type="button" data-open-upload>上传第一个 Skill</button>
+        <div id="skillsPanel" role="tabpanel">
+          <div class="skills-grid private" id="privateSkills"></div>
+          <div class="empty-state" id="privateEmpty" hidden>
+            <h3>Skill 仓库还是空的</h3>
+            <p>上传 ZIP，系统会先整理名称、说明、分类和安装信息，再交给你确认。</p>
+            <button class="primary-button" type="button" data-open-upload>添加第一个 Skill</button>
+          </div>
+        </div>
+        <div id="promptsPanel" role="tabpanel" hidden>
+          <div class="library-toolbar">
+            <label class="search-box"><span>在我的 Prompts 中搜索</span><input id="promptSearchInput" type="search" placeholder="人物 Mapping、会议纪要、产品跟踪"></label>
+            <div class="filter-row" id="promptCategoryFilters"></div>
+          </div>
+          <div class="prompt-library-grid" id="privatePrompts"></div>
+          <div class="empty-state" id="promptEmpty" hidden>
+            <h3>Prompt 仓库还是空的</h3>
+            <p>粘贴主要内容，系统会建议名称、分类、用途和触发条件，确认后才保存。</p>
+            <button class="primary-button" type="button" data-open-prompt>添加第一个 Prompt</button>
+          </div>
         </div>
       </div>
     </section>
 
     <section class="guide" id="guide" aria-labelledby="guide-title">
       <div class="section-heading">
-        <h2 id="guide-title">把 Skill 交给你的 Agent</h2>
-        <p>平台接受标准 Skill 目录的 ZIP 包。每个包只包含一个 Skill。</p>
+        <h2 id="guide-title">把内容交给你的 Agent</h2>
+        <p>一段 Prompt 或一个 Skill ZIP 都可以。Agent 先整理建议，你确认后才上传。</p>
       </div>
       <div class="guide-layout">
         <div class="guide-steps">
           <article>
             <span>准备</span>
-            <h3>整理标准目录</h3>
-            <p>根目录名与 SKILL.md 的 name 一致，可附带 scripts、references、assets 和 agents。</p>
+            <h3>给出主要内容</h3>
+            <p>Prompt 可直接粘贴或提供 Markdown；Skill 使用单一标准根目录的 ZIP。</p>
           </article>
           <article>
             <span>上传</span>
-            <h3>保存到私人仓库</h3>
-            <p>登录后上传 ZIP，或创建只显示一次的访问令牌，让 Agent 通过 API 上传。</p>
+            <h3>先看整理建议</h3>
+            <p>系统生成名称、说明、分类、触发条件或安装方式；修改确认后再入库。</p>
           </article>
           <article>
             <span>安装</span>
-            <h3>一次安装完整仓库</h3>
-            <p>下载整库 ZIP 到用户级 Skills 目录，Codex 会自动发现新增内容。</p>
+            <h3>直接复制或安装</h3>
+            <p>Prompt 随手复制或下载 Markdown；Skills 可单项下载，也能整库安装。</p>
           </article>
         </div>
         <div class="prompt-panel">
           <div class="prompt-head">
-            <h3>给 Agent 的打包 Prompt</h3>
+            <h3>给 Agent 的整理 Prompt</h3>
             <button class="text-button" type="button" data-copy-id="agentPrompt">复制</button>
           </div>
-          <pre id="agentPrompt">检查我要保存的 Skill：确保根目录使用小写短横线命名，根目录中有 SKILL.md，frontmatter 包含 name 和 description；排除凭据、缓存、日志和无关文档；验证脚本与引用路径；最后将单一 Skill 根目录打包为 ZIP。未经我提供 Skills Desk 上传令牌，不要上传任何文件。</pre>
+          <pre id="agentPrompt">判断我要保存的内容更适合 Prompt 还是 Skill：如果是可直接复用的指令，保留原文并建议名称、用途、分类、触发条件、输入与输出；如果包含脚本、引用或资产，检查 SKILL.md 和目录结构并打包成单一 Skill ZIP。先向我展示建议和可能重复项，等我确认或修改后再保存。未经我提供 Skills Desk 上传令牌，不要上传任何内容。</pre>
         </div>
       </div>
     </section>
@@ -185,16 +206,59 @@
   <dialog id="uploadDialog" class="modal">
     <form method="dialog" class="modal-shell" id="uploadForm">
       <div class="modal-head">
-        <div><p class="kicker">私人 Skill</p><h2>上传 ZIP</h2></div>
+        <div><p class="kicker">私人 Skill</p><h2>添加 Skill</h2></div>
         <button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button>
       </div>
-      <label>任务分类<select id="uploadCategory"></select></label>
-      <label class="file-drop" for="skillFile">
-        <strong>选择 Skill ZIP</strong><span>单一 Skill 根目录，最大 6 MB</span>
-        <input id="skillFile" type="file" accept=".zip,application/zip" required>
-      </label>
+      <div id="skillInputStep">
+        <label>它主要用来做什么？<textarea id="skillHint" rows="3" placeholder="例如：整理公司融资、创始人和联系方式，供项目初筛使用"></textarea></label>
+        <label class="file-drop" for="skillFile">
+          <strong>选择 Skill ZIP</strong><span>单一 Skill 根目录，最大 6 MB；我们会检查结构并生成建议</span>
+          <input id="skillFile" type="file" accept=".zip,application/zip" required>
+        </label>
+        <button class="primary-button full" id="analyzeSkillButton" type="button">整理上传信息</button>
+      </div>
+      <div class="review-sheet" id="skillReviewStep" hidden>
+        <div class="review-banner"><span>待你确认</span><p id="skillReviewSummary"></p></div>
+        <label>显示名称<input id="uploadTitle" maxlength="80"></label>
+        <label>说明<textarea id="uploadDescription" rows="4" maxlength="600"></textarea></label>
+        <label>任务分类<select id="uploadCategory"></select></label>
+        <p class="form-help" id="skillInstallNote"></p>
+        <button class="format-suggestion" id="skillAlternative" type="button" hidden></button>
+        <div class="review-actions"><button class="quiet-button" id="backToSkillInput" type="button">返回修改</button><button class="primary-button" type="submit">确认并保存 Skill</button></div>
+      </div>
       <p class="form-error" id="uploadError" role="alert"></p>
-      <button class="primary-button full" type="submit">上传并保存</button>
+    </form>
+  </dialog>
+
+  <dialog id="addLibraryDialog" class="modal">
+    <div class="modal-shell">
+      <div class="modal-head"><div><p class="kicker">添加到私人仓库</p><h2>你要保存什么？</h2></div><button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button></div>
+      <div class="add-choice-grid">
+        <button type="button" data-choose-add="skill"><span>可执行能力</span><strong>Skill ZIP</strong><small>检查目录，整理名称、分类与安装方式</small></button>
+        <button type="button" data-choose-add="prompt"><span>可复用方法</span><strong>Prompt</strong><small>保留原文，整理用途、触发条件与分类</small></button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="promptDialog" class="modal wide">
+    <form method="dialog" class="modal-shell" id="promptForm">
+      <div class="modal-head"><div><p class="kicker">私人 Prompt</p><h2>添加 Prompt</h2></div><button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button></div>
+      <div id="promptInputStep">
+        <label>简单说说用途（可选）<textarea id="promptHint" rows="2" placeholder="例如：每周整理 AI 产品融资和创始人信息"></textarea></label>
+        <label>Prompt 主要内容<textarea id="promptBody" rows="12" placeholder="直接粘贴 Prompt 原文；也可以从下方选择 Markdown 或文本文件"></textarea></label>
+        <label class="compact-file">或读取文件<input id="promptFile" type="file" accept=".md,.txt,text/markdown,text/plain"></label>
+        <button class="primary-button full" id="analyzePromptButton" type="button">智能整理，进入确认</button>
+      </div>
+      <div class="review-sheet" id="promptReviewStep" hidden>
+        <div class="review-banner"><span>原文保持不变</span><p>以下是根据内容生成的建议。确认或修改后再录入你的仓库。</p></div>
+        <div class="review-columns"><label>名称<input id="promptName" maxlength="80"></label><label>分类<select id="promptCategory"></select></label></div>
+        <label>用途说明<textarea id="promptDescription" rows="3" maxlength="600"></textarea></label>
+        <div class="review-columns"><label>触发场景<input id="promptTriggers" placeholder="用逗号分隔"></label><label>任务类型<input id="promptTaskTypes" placeholder="用逗号分隔"></label></div>
+        <div class="review-columns"><label>需要的输入<input id="promptInputs" placeholder="用逗号分隔"></label><label>输出结果<input id="promptOutputs" placeholder="用逗号分隔"></label></div>
+        <div class="duplicate-note" id="promptDuplicateNote" hidden></div>
+        <div class="review-actions"><button class="quiet-button" id="backToPromptInput" type="button">返回原文</button><button class="primary-button" type="submit">确认并保存 Prompt</button></div>
+      </div>
+      <p class="form-error" id="promptError" role="alert"></p>
     </form>
   </dialog>
 
@@ -212,7 +276,7 @@
       <div class="generated-token" id="generatedToken" hidden>
         <div class="prompt-head"><h3>整库安装命令</h3><button class="text-button" type="button" data-copy-id="installCommand">复制</button></div>
         <pre id="installCommand"></pre>
-        <div class="prompt-head"><h3>给 Agent 的上传 Prompt</h3><button class="text-button" type="button" data-copy-id="uploadPrompt">复制</button></div>
+        <div class="prompt-head"><h3>给 Agent 的智能整理与上传 Prompt</h3><button class="text-button" type="button" data-copy-id="uploadPrompt">复制</button></div>
         <pre id="uploadPrompt"></pre>
       </div>
       <div class="token-list" id="tokenList"></div>
