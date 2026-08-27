@@ -7,13 +7,15 @@ const tasks = [
 
 const supabaseConfig = window.SKILLS_DESK_SUPABASE || {url:"", publishableKey:""};
 const usesSupabase = Boolean(supabaseConfig.url && supabaseConfig.publishableKey);
-const state = { publicSkills: [], privateSkills: [], privatePrompts: [], user: null, csrf: null, sessionToken: localStorage.getItem("skills-desk-session") || "", query: "", provider: "全部来源", category: "全部", promptQuery: "", promptCategory: "全部", libraryTab: "skills", authMode: "login", skillDraft: null, promptDraft: null };
+const state = { publicSkills: [], privateSkills: [], privatePrompts: [], user: null, csrf: null, sessionToken: localStorage.getItem("skills-desk-session") || "", query: "", provider: "全部来源", category: "全部", promptQuery: "", promptCategory: "全部", libraryTab: "skills", authMode: "login", skillDraft: null, promptDraft: null, shareCode: "", sharedOwner: null, sharedSkills: [], sharedPrompts: [], sharedTab: "skills" };
 const el = id => document.getElementById(id);
 const authDialog = el("authDialog");
 const uploadDialog = el("uploadDialog");
 const addLibraryDialog = el("addLibraryDialog");
 const promptDialog = el("promptDialog");
 const tokenDialog = el("tokenDialog");
+const shareManageDialog = el("shareManageDialog");
+const shareAccessDialog = el("shareAccessDialog");
 const passwordDialog = el("passwordDialog");
 let toastTimer;
 
@@ -57,7 +59,7 @@ function apiUrl(path) {
 function apiHeaders(extra = {}) {
   const headers = {"Content-Type":"application/json", ...extra};
   if (usesSupabase) headers.apikey = supabaseConfig.publishableKey;
-  if (state.sessionToken) headers.Authorization = `Bearer ${state.sessionToken}`;
+  if (state.sessionToken && !headers.Authorization) headers.Authorization = `Bearer ${state.sessionToken}`;
   return headers;
 }
 
@@ -100,6 +102,15 @@ function skillCard(skill, isPrivate = false) {
   </article>`;
 }
 
+function sharedSkillCard(skill) {
+  return `<article class="skill-card private-card">
+    <div class="skill-meta"><span class="provider">${escapeHtml(skill.category)}</span><span class="skill-type">只读授权</span></div>
+    <div><h3>${escapeHtml(skill.title || skill.name)}</h3><span class="skill-name">${escapeHtml(skill.slug)}</span></div>
+    <div><p class="skill-description">${escapeHtml(skill.description)}</p><p class="skill-when"><strong>包信息</strong>${skill.file_count} 个文件</p></div>
+    <div class="skill-actions"><button class="text-button" type="button" data-download-shared-skill="${escapeHtml(skill.id)}" data-skill-slug="${escapeHtml(skill.slug)}">下载 ZIP</button></div>
+  </article>`;
+}
+
 function promptMatches(prompt) {
   const categoryMatch = state.promptCategory === "全部" || prompt.category === state.promptCategory;
   const words = normalize(state.promptQuery).split(" ").filter(Boolean);
@@ -107,14 +118,16 @@ function promptMatches(prompt) {
   return categoryMatch && words.every(word => haystack.includes(word));
 }
 
-function promptCard(prompt) {
+function promptCard(prompt, shared = false) {
   const preview = String(prompt.body || "").replace(/^---[\s\S]*?---\s*/, "").trim().slice(0, 220);
   return `<article class="prompt-card">
     <div class="prompt-card-index">PROMPT / ${escapeHtml(prompt.category)}</div>
     <div><h3>${escapeHtml(prompt.name)}</h3><p>${escapeHtml(prompt.description)}</p></div>
     <blockquote>${escapeHtml(preview)}${String(prompt.body || "").trim().length > 220 ? "…" : ""}</blockquote>
     <div class="prompt-tags">${(prompt.triggers || []).slice(0, 4).map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>
-    <div class="skill-actions"><button class="text-button" type="button" data-copy-private-prompt="${escapeHtml(prompt.id)}">复制 Prompt</button><button class="text-button" type="button" data-download-prompt="${escapeHtml(prompt.id)}" data-prompt-slug="${escapeHtml(prompt.slug)}">下载 .md</button><button class="text-button danger-text" type="button" data-delete-prompt="${escapeHtml(prompt.id)}">删除</button></div>
+    <div class="skill-actions">${shared
+      ? `<button class="text-button" type="button" data-copy-shared-prompt="${escapeHtml(prompt.id)}">复制 Prompt</button><button class="text-button" type="button" data-download-shared-prompt="${escapeHtml(prompt.id)}" data-prompt-slug="${escapeHtml(prompt.slug)}">下载 .md</button>`
+      : `<button class="text-button" type="button" data-copy-private-prompt="${escapeHtml(prompt.id)}">复制</button><button class="text-button" type="button" data-edit-prompt="${escapeHtml(prompt.id)}">修改</button><button class="text-button" type="button" data-download-prompt="${escapeHtml(prompt.id)}" data-prompt-slug="${escapeHtml(prompt.slug)}">下载</button><button class="text-button danger-text" type="button" data-delete-prompt="${escapeHtml(prompt.id)}">删除</button>`}</div>
   </article>`;
 }
 
@@ -361,6 +374,7 @@ async function analyzePrompt() {
     state.promptDraft = {body:data.body, slug:data.proposal.slug, language:data.proposal.language};
     el("promptName").value = data.proposal.name;
     el("promptDescription").value = data.proposal.description;
+    el("promptReviewBody").value = data.body;
     el("promptCategory").value = data.proposal.category;
     el("promptTriggers").value = data.proposal.triggers.join("，");
     el("promptTaskTypes").value = data.proposal.task_types.join("，");
@@ -381,15 +395,16 @@ async function submitPrompt(event) {
   el("promptError").textContent = "";
   if (!state.promptDraft) { el("promptError").textContent = "请先智能整理 Prompt。"; return; }
   try {
-    await api("./api/prompts", {method:"POST", mutation:true, body:JSON.stringify({
-      ...state.promptDraft, name:el("promptName").value, description:el("promptDescription").value, category:el("promptCategory").value,
+    const editing = Boolean(state.promptDraft.editingId);
+    const data = await api(editing ? `./api/prompts/${encodeURIComponent(state.promptDraft.editingId)}` : "./api/prompts", {method:editing ? "PUT" : "POST", mutation:true, body:JSON.stringify({
+      ...state.promptDraft, body:el("promptReviewBody").value, name:el("promptName").value, description:el("promptDescription").value, category:el("promptCategory").value,
       triggers:listValue("promptTriggers"), task_types:listValue("promptTaskTypes"), inputs:listValue("promptInputs"), outputs:listValue("promptOutputs")
     })});
     promptDialog.close();
     resetPromptDialog();
     state.libraryTab = "prompts";
     await loadPrivatePrompts();
-    showToast("Prompt 已保存，可以直接复制使用");
+    showToast(editing ? `Prompt 已更新为 v${data.prompt.version}` : "Prompt 已保存，可以直接复制使用");
   } catch (error) { el("promptError").textContent = error.message === "prompt_exists" ? "仓库中已有相同 Prompt，请修改名称或保留现有版本。" : error.message; }
 }
 
@@ -399,6 +414,9 @@ function resetPromptDialog() {
   el("promptReviewStep").hidden = true;
   el("promptDuplicateNote").hidden = true;
   el("promptError").textContent = "";
+  el("promptDialogTitle").textContent = "添加 Prompt";
+  el("promptSaveButton").textContent = "确认并保存 Prompt";
+  el("backToPromptInput").hidden = false;
   state.promptDraft = null;
 }
 
@@ -406,6 +424,27 @@ function openPromptDialog() {
   resetPromptDialog();
   promptDialog.showModal();
   el("promptBody").focus();
+}
+
+function editPrompt(id) {
+  const prompt = state.privatePrompts.find(item => item.id === id);
+  if (!prompt) return;
+  resetPromptDialog();
+  state.promptDraft = {editingId:prompt.id, slug:prompt.slug, language:prompt.language, version:prompt.version};
+  el("promptName").value = prompt.name;
+  el("promptDescription").value = prompt.description;
+  el("promptReviewBody").value = prompt.body;
+  el("promptCategory").value = prompt.category;
+  el("promptTriggers").value = (prompt.triggers || []).join("，");
+  el("promptTaskTypes").value = (prompt.task_types || []).join("，");
+  el("promptInputs").value = (prompt.inputs || []).join("，");
+  el("promptOutputs").value = (prompt.outputs || []).join("，");
+  el("promptInputStep").hidden = true;
+  el("promptReviewStep").hidden = false;
+  el("backToPromptInput").hidden = true;
+  el("promptDialogTitle").textContent = `修改 Prompt · v${prompt.version}`;
+  el("promptSaveButton").textContent = `确认修改并保存为 v${prompt.version + 1}`;
+  promptDialog.showModal();
 }
 
 async function readPromptFile() {
@@ -515,6 +554,105 @@ async function revokeToken(id) {
   } catch (error) { showToast(error.message); }
 }
 
+function shareStatus(share) {
+  if (share.revoked_at) return "已撤销";
+  if (share.expires_at && new Date(share.expires_at).getTime() <= Date.now()) return "已过期";
+  return share.expires_at ? `有效至 ${new Date(share.expires_at).toLocaleDateString("zh-CN")}` : "长期有效";
+}
+
+async function loadShares() {
+  const data = await api("./api/shares");
+  el("shareList").innerHTML = data.shares.length ? data.shares.map(share => `<div class="token-row"><div><p>${escapeHtml(share.label)}</p><small>${escapeHtml(shareStatus(share))}${share.last_used_at ? ` · 最近访问 ${escapeHtml(new Date(share.last_used_at).toLocaleDateString("zh-CN"))}` : ""}</small></div>${share.revoked_at ? "" : `<button class="text-button danger-text" type="button" data-revoke-share="${escapeHtml(share.id)}">撤销</button>`}</div>`).join("") : "<p class='form-help'>还没有创建仓库授权码。</p>";
+}
+
+async function openShareManage() {
+  el("generatedShare").hidden = true;
+  shareManageDialog.showModal();
+  try { await loadShares(); } catch (error) { showToast(error.message); }
+}
+
+async function createShare() {
+  try {
+    const data = await api("./api/shares", {method:"POST", mutation:true, body:JSON.stringify({label:el("shareLabel").value.trim() || "共享访问", expires_days:Number(el("shareExpiry").value)})});
+    el("shareCodeOutput").textContent = data.code;
+    el("generatedShare").hidden = false;
+    el("shareLabel").value = "";
+    await loadShares();
+    showToast("授权码已生成，只显示这一次");
+  } catch (error) { showToast(error.message); }
+}
+
+async function revokeShare(id) {
+  try {
+    await api(`./api/shares/${encodeURIComponent(id)}`, {method:"DELETE", mutation:true});
+    await loadShares();
+    showToast("授权码已撤销");
+  } catch (error) { showToast(error.message); }
+}
+
+function openShareAccess() {
+  el("shareAccessError").textContent = "";
+  shareAccessDialog.showModal();
+  if (!state.shareCode) el("shareCodeInput").focus();
+}
+
+async function submitShareAccess(event) {
+  event.preventDefault();
+  el("shareAccessError").textContent = "";
+  const code = el("shareCodeInput").value.trim();
+  try {
+    const data = await api("./api/share/open", {method:"POST", body:JSON.stringify({code})});
+    state.shareCode = code;
+    state.sharedOwner = data.owner;
+    state.sharedSkills = data.skills || [];
+    state.sharedPrompts = data.prompts || [];
+    renderSharedRepository();
+    showToast("已打开只读授权仓库");
+  } catch (error) {
+    el("shareAccessError").textContent = error.message === "invalid_share_code" ? "授权码无效、已过期或已被撤销。" : error.message;
+  }
+}
+
+function renderSharedRepository() {
+  const active = Boolean(state.shareCode && state.sharedOwner);
+  el("shareAccessForm").hidden = active;
+  el("sharedRepository").hidden = !active;
+  if (!active) { el("sharedDialogTitle").textContent = "输入仓库授权码"; return; }
+  el("sharedDialogTitle").textContent = `${state.sharedOwner.username} 的授权仓库`;
+  el("sharedSummary").textContent = `只读访问 · ${state.sharedSkills.length} 个 Skills · ${state.sharedPrompts.length} 个 Prompts`;
+  el("sharedSkillCount").textContent = state.sharedSkills.length;
+  el("sharedPromptCount").textContent = state.sharedPrompts.length;
+  el("sharedSkills").innerHTML = state.sharedSkills.length ? state.sharedSkills.map(sharedSkillCard).join("") : "<p class='form-help'>这个仓库还没有 Skill。</p>";
+  el("sharedPrompts").innerHTML = state.sharedPrompts.length ? state.sharedPrompts.map(prompt => promptCard(prompt, true)).join("") : "<p class='form-help'>这个仓库还没有 Prompt。</p>";
+  setSharedTab(state.sharedTab);
+}
+
+function setSharedTab(tab) {
+  state.sharedTab = tab === "prompts" ? "prompts" : "skills";
+  el("sharedSkillsPanel").hidden = state.sharedTab !== "skills";
+  el("sharedPromptsPanel").hidden = state.sharedTab !== "prompts";
+  document.querySelectorAll("[data-shared-tab]").forEach(button => {
+    const active = button.dataset.sharedTab === state.sharedTab;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-selected", String(active));
+  });
+}
+
+function leaveShared() {
+  state.shareCode = ""; state.sharedOwner = null; state.sharedSkills = []; state.sharedPrompts = [];
+  el("shareCodeInput").value = "";
+  renderSharedRepository();
+}
+
+async function downloadShared(path, filename) {
+  try {
+    const response = await fetch(apiUrl(path), {headers:apiHeaders({Authorization:`Bearer ${state.shareCode}`}), credentials:usesSupabase ? "omit" : "same-origin"});
+    if (!response.ok) { const payload = await response.json(); throw new Error(payload.error || "下载失败"); }
+    const url = URL.createObjectURL(await response.blob());
+    const anchor = document.createElement("a"); anchor.href = url; anchor.download = filename; anchor.click(); URL.revokeObjectURL(url);
+  } catch (error) { showToast(error.message === "invalid_share_code" ? "授权码已失效。" : error.message); }
+}
+
 async function logout() {
   try { await api("./api/logout", {method:"POST", body:"{}"}); } catch {}
   state.user = null;
@@ -546,6 +684,12 @@ document.addEventListener("click", event => {
   const copyPrivatePrompt = target.closest("[data-copy-private-prompt]");
   const downloadPromptButton = target.closest("[data-download-prompt]");
   const deletePromptButton = target.closest("[data-delete-prompt]");
+  const editPromptButton = target.closest("[data-edit-prompt]");
+  const revokeShareButton = target.closest("[data-revoke-share]");
+  const sharedTab = target.closest("[data-shared-tab]");
+  const copySharedPrompt = target.closest("[data-copy-shared-prompt]");
+  const downloadSharedPrompt = target.closest("[data-download-shared-prompt]");
+  const downloadSharedSkill = target.closest("[data-download-shared-skill]");
   const chooseAdd = target.closest("[data-choose-add]");
   if (target.closest("[data-open-auth]")) openAuth();
   if (target.closest("[data-open-upload]")) openSkillDialog();
@@ -565,6 +709,12 @@ document.addEventListener("click", event => {
   if (copyPrivatePrompt) { const prompt = state.privatePrompts.find(item => item.id === copyPrivatePrompt.dataset.copyPrivatePrompt); if (prompt) copyText(prompt.body, `已复制「${prompt.name}」`); }
   if (downloadPromptButton) downloadPrompt(downloadPromptButton.dataset.downloadPrompt, downloadPromptButton.dataset.promptSlug);
   if (deletePromptButton) deletePrompt(deletePromptButton.dataset.deletePrompt);
+  if (editPromptButton) editPrompt(editPromptButton.dataset.editPrompt);
+  if (revokeShareButton) revokeShare(revokeShareButton.dataset.revokeShare);
+  if (sharedTab) setSharedTab(sharedTab.dataset.sharedTab);
+  if (copySharedPrompt) { const prompt = state.sharedPrompts.find(item => item.id === copySharedPrompt.dataset.copySharedPrompt); if (prompt) copyText(prompt.body, `已复制「${prompt.name}」`); }
+  if (downloadSharedPrompt) downloadShared(`./api/share/prompts/${encodeURIComponent(downloadSharedPrompt.dataset.downloadSharedPrompt)}/download`, `${downloadSharedPrompt.dataset.promptSlug}.md`);
+  if (downloadSharedSkill) downloadShared(`./api/share/skills/${encodeURIComponent(downloadSharedSkill.dataset.downloadSharedSkill)}/content`, `${downloadSharedSkill.dataset.skillSlug}.zip`);
   if (chooseAdd) { addLibraryDialog.close(); chooseAdd.dataset.chooseAdd === "skill" ? openSkillDialog() : openPromptDialog(); }
 });
 
@@ -573,6 +723,7 @@ el("authForm").addEventListener("submit", submitAuth);
 el("passwordForm").addEventListener("submit", submitPassword);
 el("uploadForm").addEventListener("submit", submitUpload);
 el("promptForm").addEventListener("submit", submitPrompt);
+el("shareAccessForm").addEventListener("submit", submitShareAccess);
 el("analyzeSkillButton").addEventListener("click", analyzeSkill);
 el("analyzePromptButton").addEventListener("click", analyzePrompt);
 el("promptFile").addEventListener("change", readPromptFile);
@@ -582,10 +733,16 @@ el("skillAlternative").addEventListener("click", moveSkillToPrompt);
 el("authMode").addEventListener("click", event => { if (event.target.dataset.authMode) setAuthMode(event.target.dataset.authMode); });
 el("accountButton").addEventListener("click", () => state.user ? el("my-library").scrollIntoView({behavior:"smooth"}) : openAuth());
 el("addLibraryButton").addEventListener("click", () => addLibraryDialog.showModal());
+el("shareManageButton").addEventListener("click", openShareManage);
+el("shareAccessButton").addEventListener("click", openShareAccess);
 el("bundleButton").addEventListener("click", downloadBundle);
 el("promptBundleButton").addEventListener("click", downloadPromptBundle);
 el("tokenButton").addEventListener("click", openTokenDialog);
 el("createTokenButton").addEventListener("click", createToken);
+el("createShareButton").addEventListener("click", createShare);
+el("leaveSharedButton").addEventListener("click", leaveShared);
+el("sharedSkillBundleButton").addEventListener("click", () => downloadShared("./api/share/skills/bundle", `${state.sharedOwner?.username || "shared"}-skills.zip`));
+el("sharedPromptBundleButton").addEventListener("click", () => downloadShared("./api/share/prompts/bundle", `${state.sharedOwner?.username || "shared"}-prompts.zip`));
 el("logoutButton").addEventListener("click", logout);
 el("promptSearchInput").addEventListener("input", event => { state.promptQuery = event.target.value; renderPrivatePrompts(); });
 el("themeButton").addEventListener("click", () => {

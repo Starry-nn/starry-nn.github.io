@@ -16,6 +16,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .site-header nav { justify-content:center; gap:26px; color:var(--muted); font-size:14px; }
 .site-header nav a:hover { color:var(--text); }
 .header-actions,.hero-actions,.private-actions { gap:9px; }
+.private-actions { flex-wrap:wrap; justify-content:flex-end; }
 main,footer { width:min(1240px,calc(100% - 40px)); margin-inline:auto; }
 .primary-button,.quiet-button,.text-button,.icon-button { border:0; background:none; }
 .primary-button,.quiet-button { min-height:40px; padding:0 15px; border-radius:10px; white-space:nowrap; }
@@ -116,6 +117,7 @@ footer strong { color:var(--text); }
 footer p { margin:6px 0 0; }
 .modal { width:min(500px,calc(100% - 28px)); max-height:calc(100dvh - 32px); padding:0; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); color:var(--text); box-shadow:var(--shadow); }
 .modal.wide { width:min(760px,calc(100% - 28px)); }
+.modal.share-browser { width:min(1180px,calc(100% - 28px)); }
 .modal::backdrop { background:rgb(8 13 10 / .52); backdrop-filter:blur(4px); }
 .modal-shell { display:grid; gap:16px; padding:24px; }
 .modal-head { align-items:flex-start; }
@@ -149,6 +151,12 @@ footer p { margin:6px 0 0; }
 .add-choice-grid strong { align-self:end; font-family:ui-serif,Georgia,"Songti SC",serif; font-size:28px; }
 .add-choice-grid small { color:var(--muted); line-height:1.5; }
 .token-create { display:grid; grid-template-columns:1fr auto; gap:8px; }
+.share-create { display:grid; grid-template-columns:minmax(180px,1fr) 150px auto; align-items:end; gap:10px; }
+.share-access-form { display:grid; grid-template-columns:1fr auto; align-items:end; gap:10px; }
+.shared-topline { display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:12px; }
+.shared-topline p { margin:0; color:var(--muted); }
+.shared-downloads { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; margin:-42px 0 22px; }
+#sharedSkillsPanel,#sharedPromptsPanel { padding-top:4px; }
 .generated-token { display:grid; gap:12px; }
 .token-list { display:grid; gap:8px; }
 .token-row { padding:12px 0; border-bottom:1px solid var(--line); }
@@ -157,5 +165,5 @@ footer p { margin:6px 0 0; }
 .toast { position:fixed; right:20px; bottom:20px; z-index:20; max-width:min(380px,calc(100% - 40px)); padding:12px 16px; border-radius:10px; background:var(--text); color:var(--bg); box-shadow:var(--shadow); opacity:0; pointer-events:none; transform:translateY(10px); transition:opacity 160ms ease,transform 160ms ease; }
 .toast.visible { opacity:1; transform:translateY(0); }
 @media (max-width:1020px) { .site-header { grid-template-columns:auto 1fr; } .site-header nav { display:none; } .header-actions { justify-content:end; } .hero { grid-template-columns:1fr; min-height:auto; padding:70px 0; } .hero-facts { display:grid; grid-template-columns:repeat(3,1fr); } .hero-facts div { display:block; } .hero-facts div + div { border-top:0; border-left:1px solid var(--line); } .hero-facts span { display:block; margin-top:6px; } .task-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .skills-grid,.prompt-library-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .guide-layout { grid-template-columns:1fr; } .library-toolbar { grid-template-columns:1fr; } .library-toolbar .filter-row { justify-content:flex-start; } }
-@media (max-width:700px) { .site-header,main,footer { width:min(100% - 28px,1240px); } .site-header { height:64px; } .header-actions .quiet-button { display:none; } .hero { padding:48px 0 64px; gap:36px; } h1 { font-size:clamp(41px,13vw,58px); } .hero-actions { align-items:stretch; flex-direction:column; } .hero-actions a { justify-content:center; } .hero-facts { grid-template-columns:1fr; } .hero-facts div { display:grid; } .hero-facts div + div { border-left:0; border-top:1px solid var(--line); } .task-grid,.skills-grid,.prompt-library-grid { grid-template-columns:1fr; } .catalog-heading,.library-topline,.locked-state { display:grid; align-items:start; } .private-actions { align-items:stretch; flex-direction:column; width:100%; } .skill-card,.prompt-card { min-height:0; } .guide-steps article { grid-template-columns:60px 1fr; } .token-create,.review-columns,.add-choice-grid { grid-template-columns:1fr; } .review-actions { flex-direction:column-reverse; } footer { display:block; } footer > a { display:inline-block; margin-top:18px; } }
+@media (max-width:700px) { .site-header,main,footer { width:min(100% - 28px,1240px); } .site-header { height:64px; } #themeButton { display:none; } .header-actions { gap:5px; } .header-actions .quiet-button,.header-actions .primary-button { padding-inline:10px; font-size:12px; } .hero { padding:48px 0 64px; gap:36px; } h1 { font-size:clamp(41px,13vw,58px); } .hero-actions { align-items:stretch; flex-direction:column; } .hero-actions a { justify-content:center; } .hero-facts { grid-template-columns:1fr; } .hero-facts div { display:grid; } .hero-facts div + div { border-left:0; border-top:1px solid var(--line); } .task-grid,.skills-grid,.prompt-library-grid { grid-template-columns:1fr; } .catalog-heading,.library-topline,.locked-state { display:grid; align-items:start; } .private-actions { align-items:stretch; flex-direction:column; width:100%; } .skill-card,.prompt-card { min-height:0; } .guide-steps article { grid-template-columns:60px 1fr; } .token-create,.review-columns,.add-choice-grid,.share-create,.share-access-form { grid-template-columns:1fr; } .review-actions { flex-direction:column-reverse; } .shared-downloads { justify-content:flex-start; margin:12px 0 20px; } .shared-topline { align-items:flex-start; } footer { display:block; } footer > a { display:inline-block; margin-top:18px; } }
 @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } *,*::before,*::after { transition-duration:.01ms !important; } }

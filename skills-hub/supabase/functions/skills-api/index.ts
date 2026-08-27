@@ -15,7 +15,7 @@ const CATEGORIES = new Set(["项目发现", "BP 初筛", "行业研究", "商业
 const cors = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, content-type, apikey, x-client-info",
-  "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
 };
 
 type User = { id: string; username: string; role: string; force_password_change: boolean; created_at: string };
@@ -248,6 +248,28 @@ async function requireAuth(request: Request, mutation = false) {
   return auth;
 }
 
+async function sharedOwner(request: Request, explicitCode = "") {
+  const header = request.headers.get("Authorization") ?? "";
+  const raw = explicitCode || (header.startsWith("Bearer ") ? header.slice(7).trim() : "");
+  if (!raw.startsWith("share_") || raw.length < 30) return null;
+  const { data } = await db.from("skill_share_codes").select("id,owner_id,expires_at").eq("code_hash", await sha256(raw)).is("revoked_at", null).maybeSingle();
+  if (!data || (data.expires_at && new Date(data.expires_at).getTime() <= Date.now())) return null;
+  const { data: owner } = await db.from("skill_users").select("id,username").eq("id", data.owner_id).maybeSingle();
+  if (!owner) return null;
+  await db.from("skill_share_codes").update({ last_used_at:new Date().toISOString() }).eq("id", data.id);
+  return { id:data.id, owner_id:data.owner_id, username:owner.username };
+}
+
+async function sharedRepository(ownerId: string) {
+  const [skills, prompts] = await Promise.all([
+    db.from("private_skills").select("id,slug,name,title,description,category,package_sha256,file_count,created_at,updated_at").eq("owner_id", ownerId).order("updated_at", { ascending:false }),
+    db.from("private_prompts").select("id,slug,name,description,category,body,task_types,triggers,inputs,outputs,language,version,status,created_at,updated_at").eq("owner_id", ownerId).neq("status", "archived").order("updated_at", { ascending:false }),
+  ]);
+  if (skills.error) throw skills.error;
+  if (prompts.error) throw prompts.error;
+  return { skills:skills.data ?? [], prompts:prompts.data ?? [] };
+}
+
 function frontmatter(markdown: string, key: string) {
   if (!markdown.startsWith("---")) return "";
   const end = markdown.indexOf("\n---", 3);
@@ -461,11 +483,72 @@ Deno.serve(async request => {
       return data ? textFile(promptMarkdown(data), `${data.slug}.md`) : json({ ok:false, error:"prompt_not_found" }, 404);
     }
     const promptMatch = path.match(/^\/api\/prompts\/([a-f0-9-]+)$/);
+    if (request.method === "PUT" && promptMatch) {
+      const auth = await requireAuth(request, true);
+      if ("response" in auth) return auth.response;
+      const input = await requestBody(request);
+      const { data:existing } = await db.from("private_prompts").select("id,slug,name,description,category,body,task_types,triggers,inputs,outputs,language,version,status,created_at,updated_at").eq("id", promptMatch[1]).eq("owner_id", auth.user.id).maybeSingle();
+      if (!existing) return json({ ok:false, error:"prompt_not_found" }, 404);
+      const body = promptBody(input.body);
+      const name = cleanText(input.name, 80, "Prompt 名称");
+      const description = cleanText(input.description, 600, "Prompt 说明");
+      const category = String(input.category ?? "其他");
+      if (!CATEGORIES.has(category)) throw new HttpError("无效的 Prompt 分类");
+      const { error:historyError } = await db.from("private_prompt_versions").upsert({ prompt_id:existing.id, owner_id:auth.user.id, version:existing.version, snapshot:existing }, { onConflict:"prompt_id,version", ignoreDuplicates:true });
+      if (historyError) throw historyError;
+      const update = { name, description, category, body, task_types:stringList(input.task_types), triggers:stringList(input.triggers), inputs:stringList(input.inputs), outputs:stringList(input.outputs), language:String(input.language ?? existing.language).slice(0, 8), version:existing.version + 1, status:"active", updated_at:new Date().toISOString() };
+      const { data, error } = await db.from("private_prompts").update(update).eq("id", existing.id).eq("owner_id", auth.user.id).select("id,slug,name,description,category,body,task_types,triggers,inputs,outputs,language,version,status,created_at,updated_at").single();
+      if (error || !data) throw error;
+      return json({ ok:true, prompt:data });
+    }
     if (request.method === "DELETE" && promptMatch) {
       const auth = await requireAuth(request, true);
       if ("response" in auth) return auth.response;
       const { data } = await db.from("private_prompts").delete().eq("id", promptMatch[1]).eq("owner_id", auth.user.id).select("id").maybeSingle();
       return data ? json({ ok:true }) : json({ ok:false, error:"prompt_not_found" }, 404);
+    }
+    if (request.method === "POST" && path === "/api/share/open") {
+      const input = await requestBody(request);
+      const share = await sharedOwner(request, String(input.code ?? "").trim());
+      if (!share) return json({ ok:false, error:"invalid_share_code" }, 401);
+      return json({ ok:true, owner:{ username:share.username }, ...await sharedRepository(share.owner_id) });
+    }
+    if (request.method === "GET" && path === "/api/share") {
+      const share = await sharedOwner(request);
+      if (!share) return json({ ok:false, error:"invalid_share_code" }, 401);
+      return json({ ok:true, owner:{ username:share.username }, ...await sharedRepository(share.owner_id) });
+    }
+    const sharedSkillMatch = path.match(/^\/api\/share\/skills\/([a-f0-9-]+)\/content$/);
+    if (request.method === "GET" && sharedSkillMatch) {
+      const share = await sharedOwner(request);
+      if (!share) return json({ ok:false, error:"invalid_share_code" }, 401);
+      const { data:row } = await db.from("private_skills").select("slug,object_path").eq("id", sharedSkillMatch[1]).eq("owner_id", share.owner_id).maybeSingle();
+      if (!row) return json({ ok:false, error:"skill_not_found" }, 404);
+      const { data, error } = await db.storage.from(BUCKET).download(row.object_path);
+      if (error || !data) throw error;
+      return binary(new Uint8Array(await data.arrayBuffer()), `${row.slug}.zip`);
+    }
+    const sharedPromptMatch = path.match(/^\/api\/share\/prompts\/([a-f0-9-]+)\/download$/);
+    if (request.method === "GET" && sharedPromptMatch) {
+      const share = await sharedOwner(request);
+      if (!share) return json({ ok:false, error:"invalid_share_code" }, 401);
+      const { data } = await db.from("private_prompts").select("slug,name,description,body,task_types,triggers,inputs,outputs,language,version,status").eq("id", sharedPromptMatch[1]).eq("owner_id", share.owner_id).maybeSingle();
+      return data ? textFile(promptMarkdown(data), `${data.slug}.md`) : json({ ok:false, error:"prompt_not_found" }, 404);
+    }
+    if (request.method === "GET" && path === "/api/share/skills/bundle") {
+      const share = await sharedOwner(request);
+      if (!share) return json({ ok:false, error:"invalid_share_code" }, 401);
+      const result = await bundle(share.owner_id);
+      return binary(result.bytes, `${share.username}-shared-skills-${result.count}.zip`);
+    }
+    if (request.method === "GET" && path === "/api/share/prompts/bundle") {
+      const share = await sharedOwner(request);
+      if (!share) return json({ ok:false, error:"invalid_share_code" }, 401);
+      const { prompts } = await sharedRepository(share.owner_id);
+      if (!prompts.length) throw new HttpError("这个共享仓库中还没有 Prompt", 404);
+      const zip = new JSZip();
+      for (const row of prompts) zip.file(`${row.slug}.md`, promptMarkdown(row));
+      return binary(await zip.generateAsync({ type:"uint8array", compression:"DEFLATE" }), `${share.username}-shared-prompts-${prompts.length}.zip`);
     }
     const contentMatch = path.match(/^\/api\/skills\/([a-f0-9-]+)\/content$/);
     if (request.method === "GET" && contentMatch) {
@@ -516,6 +599,34 @@ Deno.serve(async request => {
       if ("response" in auth) return auth.response;
       const { data } = await db.from("skill_access_tokens").update({ revoked_at: new Date().toISOString() }).eq("id", tokenMatch[1]).eq("owner_id", auth.user.id).is("revoked_at", null).select("id").maybeSingle();
       return data ? json({ ok: true }) : json({ ok: false, error: "token_not_found" }, 404);
+    }
+    if (request.method === "GET" && path === "/api/shares") {
+      const auth = await requireAuth(request);
+      if ("response" in auth) return auth.response;
+      const { data, error } = await db.from("skill_share_codes").select("id,label,created_at,expires_at,last_used_at,revoked_at").eq("owner_id", auth.user.id).order("created_at", { ascending:false });
+      if (error) throw error;
+      return json({ ok:true, shares:data ?? [] });
+    }
+    if (request.method === "POST" && path === "/api/shares") {
+      const auth = await requireAuth(request, true);
+      if ("response" in auth) return auth.response;
+      const input = await requestBody(request);
+      const label = String(input.label ?? "共享访问").trim().slice(0, 80) || "共享访问";
+      const days = Number(input.expires_days);
+      const allowedDays = new Set([1, 7, 30, 90, 0]);
+      if (!allowedDays.has(days)) throw new HttpError("授权期限无效");
+      const code = randomToken("share_", 24);
+      const expiresAt = days ? new Date(Date.now() + days * 86400000).toISOString() : null;
+      const { data, error } = await db.from("skill_share_codes").insert({ owner_id:auth.user.id, label, code_hash:await sha256(code), expires_at:expiresAt }).select("id,label,created_at,expires_at").single();
+      if (error || !data) throw error;
+      return json({ ok:true, code, share:data }, 201);
+    }
+    const shareManageMatch = path.match(/^\/api\/shares\/([a-f0-9-]+)$/);
+    if (request.method === "DELETE" && shareManageMatch) {
+      const auth = await requireAuth(request, true);
+      if ("response" in auth) return auth.response;
+      const { data } = await db.from("skill_share_codes").update({ revoked_at:new Date().toISOString() }).eq("id", shareManageMatch[1]).eq("owner_id", auth.user.id).is("revoked_at", null).select("id").maybeSingle();
+      return data ? json({ ok:true }) : json({ ok:false, error:"share_not_found" }, 404);
     }
     return json({ ok: false, error: "not_found" }, 404);
   } catch (error) {
