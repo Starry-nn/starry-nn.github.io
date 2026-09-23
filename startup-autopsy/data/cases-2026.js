@@ -76,7 +76,13 @@
     item({id:"verses-ai",name:"VERSES AI",founded:"2020",eventDate:"2026-06-18",sector:"ai-infra",region:"global",outcome:"pivot",location:"温哥华，加拿大",causeTags:["limited capital","commercialization timeline","strategic pivot"],sources:[report("Discontinuation of AI Operations","VERSES AI / SEC","2026-06","https://www.sec.gov/Archives/edgar/data/1879001/000149315226029568/ex99-1.htm",true)],en:{sectorLabel:"AI research",statusLabel:"AI operations discontinued",summary:"The listed company stopped AI research and development and began evaluating other business opportunities.",cause:"Its board cited limited capital, market conditions, product maturity, and time to commercialization.",lesson:"Research ambition must be financed for the full distance to revenue, not only to the next technical milestone.",timeline:[{year:"June 18",title:"Strategic review concludes",body:"The board approves a pivot away from AI."},{year:"June",title:"R&D spending stops",body:"AI-related research, development, and expenses are discontinued."}],findings:[{type:"fact",title:"The company named four constraints",body:"Capital, public markets, development state, and commercialization timing drove the decision."},{type:"inference",title:"The financing model did not match the research horizon",body:"A long technical road became untenable under short capital-market cycles."}]},zh:{sectorLabel:"AI 研发",statusLabel:"停止 AI 业务",summary:"这家上市公司停止人工智能研发，并转向评估其他业务机会。",cause:"董事会列出的原因包括资金有限、资本市场环境、产品成熟度和商业化所需时间。",lesson:"研究型公司的融资安排必须覆盖从技术到收入的完整距离，而不能只够跑到下一个里程碑。",timeline:[{year:"6 月 18 日",title:"完成战略评估",body:"董事会决定退出 AI 研发。"},{year:"6 月",title:"停止相关投入",body:"公司终止 AI 研究、开发及相关支出。"}],findings:[{type:"fact",title:"公司明确列出四项约束",body:"资金、市场、研发状态和商业化周期共同影响决策。"},{type:"inference",title:"融资模型与研发周期错配",body:"技术周期很长，而公开市场对现金和进展的要求更短。"}]}}),
     item({id:"openai-sora",name:"OpenAI Sora",founded:"2024",eventDate:"2026-04-26",sector:"ai-app",region:"global",outcome:"product-sunset",location:"旧金山，美国",causeTags:["compute cost","portfolio focus","safety"],sources:[report("What to know about the Sora discontinuation","OpenAI Help Center","2026-04","https://help.openai.com/en/articles/20001152-what-to-know-about-the-sora-discontinuation",true),report("Sora is here","OpenAI","2026-04","https://openai.com/index/sora-is-here/",true)],en:{sectorLabel:"AI video",statusLabel:"Product discontinued",summary:"OpenAI discontinued Sora's web and app experiences and scheduled the API to follow in September.",cause:"OpenAI did not publish a full postmortem; reporting points to compute intensity and a shift toward core agents and robotics.",lesson:"A breakthrough demo can still lose internally when its cost curve and strategic fit do not support sustained distribution.",timeline:[{year:"March 24",title:"Shutdown announced",body:"OpenAI says it will end the consumer product."},{year:"April 26",title:"Web and app close",body:"Users move into a final export period."}],findings:[{type:"fact",title:"The API had a separate deadline",body:"Developer access was scheduled to end on September 24."},{type:"inference",title:"Internal capital allocation was decisive",body:"The product competed for chips and engineering with higher-priority programs."}]},zh:{sectorLabel:"AI 视频",statusLabel:"产品停止运营",summary:"OpenAI 关闭 Sora 网页和 App，并计划在 9 月停止 API。",cause:"官方没有发布完整复盘；媒体报道指向高算力成本，以及资源向核心 Agent 和机器人方向集中。",lesson:"突破性的演示不等于可持续产品。成本曲线和战略位置不足时，它同样会在内部资源竞争中落败。",timeline:[{year:"3 月 24 日",title:"宣布关闭",body:"OpenAI 确认将结束消费端产品。"},{year:"4 月 26 日",title:"网页与 App 停止",body:"用户进入最后的数据导出阶段。"}],findings:[{type:"fact",title:"API 有单独期限",body:"开发者接口计划于 9 月 24 日停止。"},{type:"inference",title:"内部资源分配是关键",body:"这款产品必须与更高优先级项目争夺芯片和工程资源。"}]}}),
     item({id:"chatgpt-atlas",name:"ChatGPT Atlas",founded:"2025",eventDate:"2026-08-09",sector:"ai-app",region:"global",outcome:"product-sunset",location:"旧金山，美国",causeTags:["feature consolidation","distribution","product strategy"],sources:[report("将 Atlas 演进为 ChatGPT","OpenAI Help Center","2026-08","https://help.openai.com/zh-hans-cn/articles/20001371-evolving-atlas-into-chatgpt-for-browser-based-agentic-work",true),report("Introducing ChatGPT Atlas","OpenAI","2025-10","https://openai.com/index/introducing-chatgpt-atlas/",true)],en:{sectorLabel:"AI browser",statusLabel:"Standalone product discontinued",summary:"OpenAI ended the standalone browser after 292 days and moved browser-based agent work into ChatGPT.",cause:"The company consolidated overlapping surfaces instead of maintaining a separate browser destination.",lesson:"A feature can be strategically valuable while the standalone product around it is unnecessary.",timeline:[{year:"October 2025",title:"Atlas launches",body:"OpenAI introduces a browser centered on ChatGPT."},{year:"August 9",title:"Browser stops",body:"The standalone product is retired and workflows move into ChatGPT."}],findings:[{type:"fact",title:"The capability did not disappear",body:"Browser-based agent work was folded into the broader desktop product."},{type:"inference",title:"The destination thesis failed",body:"Users wanted browser capabilities inside their AI workflow more than a new browser identity."}]},zh:{sectorLabel:"AI 浏览器",statusLabel:"独立产品下线",summary:"Atlas 运行 292 天后停止，基于浏览器的 Agent 能力被收回 ChatGPT。",cause:"OpenAI 选择合并重叠入口，而不是继续维护一款独立浏览器。",lesson:"某项能力具有战略价值，并不代表围绕它单独做一款产品也有必要。",timeline:[{year:"2025 年 10 月",title:"Atlas 上线",body:"OpenAI 推出以 ChatGPT 为核心的浏览器。"},{year:"8 月 9 日",title:"独立浏览器停止",body:"相关工作流并入 ChatGPT 桌面产品。"}],findings:[{type:"fact",title:"能力没有完全消失",body:"浏览器 Agent 被合并到更大的桌面入口。"},{type:"inference",title:"失败的是独立入口假设",body:"用户需要的是工作流中的浏览能力，而不是再建立一套浏览器身份。"}]}}),
-    item({id:"notion-mail",name:"Notion Mail",founded:"2024",eventDate:"2026-06-25",sector:"productivity",region:"global",outcome:"product-sunset",location:"旧金山，美国",causeTags:["agent substitution","feature consolidation","behavior shift"],sources:[report("Notion Mail shuts down amid agent takeover","TechCrunch","2026-06","https://techcrunch.com/2026/06/25/notion-mail-shuts-down-amid-agent-takeover/")],en:{sectorLabel:"AI productivity",statusLabel:"Product sunset announced",summary:"Notion announced the inbox would close in September as more users delegated email work to agents.",cause:"The user behavior the product enabled eventually removed the need to open the product itself.",lesson:"Automation can cannibalize its own interface; measure completed outcomes, not screen engagement.",timeline:[{year:"April 2025",title:"Mail becomes available",body:"Notion launches the inbox more broadly."},{year:"June 25",title:"September sunset announced",body:"Users are told to export drafts, schedules, and reusable snippets."}],findings:[{type:"fact",title:"More than half bypassed the inbox",body:"Notion said most Mail users managed email without opening it."},{type:"inference",title:"Success killed the surface",body:"The agent became the product while the inbox became redundant."}]},zh:{sectorLabel:"AI 效率工具",statusLabel:"宣布停止产品",summary:"Notion 宣布 9 月关闭邮箱界面，因为越来越多用户已经把邮件工作直接交给 Agent。",cause:"产品推动的自动化行为，最终让用户不再需要打开产品本身。",lesson:"自动化会吞掉自己的界面。衡量标准应该是任务是否完成，而不是用户打开了多少次页面。",timeline:[{year:"2025 年 4 月",title:"产品开放",body:"Notion Mail 面向更多用户推出。"},{year:"6 月 25 日",title:"宣布 9 月下线",body:"官方提醒用户导出草稿、定时邮件和常用片段。"}],findings:[{type:"fact",title:"过半用户不再打开邮箱",body:"Notion 称多数用户已经通过 Agent 管理邮件。"},{type:"inference",title:"功能成功反而让界面多余",body:"Agent 成了真正的产品，传统收件箱因此失去存在理由。"}]}}),
+    item({
+      id: "notion-mail", name: "Notion Mail", founded: "2024", eventDate: "2026-06-25",
+      sector: "productivity", region: "global", outcome: "product-sunset", location: "旧金山，美国", causeTags: ["agent substitution", "feature consolidation", "behavior shift"],
+      sources: [report("Notion Mail shuts down amid agent takeover", "TechCrunch", "2026-06", "https://techcrunch.com/2026/06/25/notion-mail-shuts-down-amid-agent-takeover/")],
+      en: {sectorLabel:"AI productivity",statusLabel:"Product discontinued",summary:"Notion closed the inbox on September 22 after more users delegated email work to agents instead of opening the product.",cause:"The user behavior the product enabled eventually removed the need to open the product itself.",lesson:"Automation can cannibalize its own interface; measure completed outcomes, not screen engagement.",timeline:[{year:"April 2025",title:"Mail becomes available",body:"Notion launches the inbox more broadly."},{year:"June 25",title:"September sunset announced",body:"Users are told to export drafts, schedules, and reusable snippets."},{year:"September 22",title:"Inbox closes",body:"The standalone mail interface reaches its final day of service."}],findings:[{type:"fact",title:"More than half bypassed the inbox",body:"Notion said most Mail users managed email without opening it."},{type:"inference",title:"Success killed the surface",body:"The agent became the product while the inbox became redundant."}]},
+      zh: {sectorLabel:"AI 效率工具",statusLabel:"产品停止运营",summary:"Notion Mail 于 9 月 22 日正式关闭，因为越来越多用户已经把邮件工作直接交给 Agent，而不再打开产品。",cause:"产品推动的自动化行为，最终让用户不再需要打开产品本身。",lesson:"自动化会吞掉自己的界面。衡量标准应该是任务是否完成，而不是用户打开了多少次页面。",timeline:[{year:"2025 年 4 月",title:"产品开放",body:"Notion Mail 面向更多用户推出。"},{year:"6 月 25 日",title:"宣布 9 月下线",body:"官方提醒用户导出草稿、定时邮件和常用片段。"},{year:"9 月 22 日",title:"邮箱界面关闭",body:"独立邮件产品迎来最后服务日。"}],findings:[{type:"fact",title:"过半用户不再打开邮箱",body:"Notion 称多数用户已经通过 Agent 管理邮件。"},{type:"inference",title:"功能成功反而让界面多余",body:"Agent 成了真正的产品，传统收件箱因此失去存在理由。"}]}
+    }),
     item({
       id: "minimus", name: "Minimus", founded: "2022", eventDate: "2026-08-24",
       sector: "cybersecurity", region: "global", outcome: "shutdown", location: "特拉维夫，以色列", capital: "$51M raised", causeTags: ["commercial traction", "competition", "capital discipline"],
@@ -162,6 +168,120 @@
         lesson: "第三方客户端可以拥有界面，却未必拥有供给。平台访问、法律暴露以及联邦化或数据导出方案，都应该进入产品的生存模型。",
         timeline: [{year:"2024 年",title:"服务上线",body:"XCancel 提供无需登录即可查看 X 公开内容的替代前端。"},{year:"8 月 24 日",title:"收到停止侵权函",body:"X Corp. 要求运营者停止相关服务。"},{year:"8 月 25 日",title:"公众访问中止",body:"主页确认服务暂停，运营者开始寻求法律意见。"}],
         findings: [{type:"fact",title:"停服紧随法律要求",body:"运营者公告明确提到来自 X Corp. 的停止侵权函。"},{type:"fact",title:"目前还不是永久结论",body:"公告用语是暂停直至另行通知。"},{type:"inference",title:"上游平台掌握最终开关",body:"即使前端开源，只要数据供给依赖敌对平台，服务依旧非常脆弱。"}]
+      }
+    }),
+    item({
+      id: "bside-olivia-lin", name: "BSide: Olivia Lin", founded: "2026", eventDate: "2026-08-31",
+      sector: "ai-companion", region: "china", outcome: "product-sunset", location: "上海，中国", causeTags: ["early validation", "online cost", "product strategy"],
+      sources: [report("《BSide: Olivia Lin》停止运营公告", "BSide / Steam", "2026-08", "https://store.steampowered.com/news/posts/?enddate=1786431890&feed=steam_community_announcements", true)],
+      en: {
+        sectorLabel: "AI companion", statusLabel: "Online service discontinued", summary: "MiHoYo ended BSide's online service less than two months after Early Access, while preserving piano performances and wallpapers in an offline build.",
+        cause: "The company cited product-stage planning rather than a specific failure. The unusually short test suggests the online companion experience did not justify continued service and data obligations.",
+        lesson: "When an experimental AI relationship product closes, a local fallback can preserve utility without pretending that cloud memory and interaction will survive.",
+        timeline: [{year:"July 13",title:"Early Access begins",body:"The AI desktop companion launches on Steam."},{year:"August 27",title:"Offline build released",body:"Letter writing, MIDI uploads, and other online-dependent functions stop."},{year:"August 31",title:"Servers close",body:"The product leaves Steam and online data becomes unavailable."}],
+        findings: [{type:"fact",title:"The online life lasted under two months",body:"Early Access started July 13 and servers closed August 31."},{type:"fact",title:"Some utility survived locally",body:"The offline version retained piano playback and dynamic wallpaper functions."},{type:"inference",title:"The experiment ended before full launch",body:"The short interval indicates an early portfolio decision rather than a mature product reaching natural end of life."}]
+      },
+      zh: {
+        sectorLabel: "AI 陪伴", statusLabel: "线上服务停止", summary: "米哈游旗下 BSide 开启抢先体验不足两个月便关闭线上服务，同时用离线版保留钢琴演奏和动态壁纸。",
+        cause: "官方只说明是产品阶段性规划与后续安排，并未披露单一失败原因。异常短的测试周期说明，线上陪伴体验尚不足以支撑持续服务和数据责任。",
+        lesson: "实验型 AI 关系产品退出时，离线兜底可以保留一部分使用价值，但不能假装云端记忆和互动仍然存在。",
+        timeline: [{year:"7 月 13 日",title:"开启抢先体验",body:"AI 桌面陪伴产品在 Steam 上线。"},{year:"8 月 27 日",title:"发布离线版本",body:"写信、上传 MIDI 等依赖在线服务的功能停止。"},{year:"8 月 31 日",title:"服务器关闭",body:"产品从 Steam 下架，线上数据不再可访问。"}],
+        findings: [{type:"fact",title:"线上生命周期不足两个月",body:"7 月 13 日开启抢先体验，8 月 31 日即关闭服务器。"},{type:"fact",title:"部分功能被本地保存",body:"离线版保留钢琴演奏和动态桌面功能。"},{type:"inference",title:"实验在正式成型前结束",body:"如此短的周期更像一次早期产品组合决策，而不是成熟产品自然退场。"}]
+      }
+    }),
+    item({
+      id: "ruijie-zhiying-ai", name: "锐捷智鹰 AI", founded: "2025", eventDate: "2026-09-10",
+      sector: "ai-education", region: "china", outcome: "product-sunset", location: "福州，中国", causeTags: ["zero sales", "product market fit", "strategic withdrawal"],
+      sources: [report("锐捷网络智鹰 AI（RG-AiEdu 系列）产品退市公告", "锐捷网络", "2026-09", "https://www.ruijie.com.cn/fw/xw/931193/", true)],
+      en: {
+        sectorLabel: "AI education platform", statusLabel: "Product line retired", summary: "Ruijie retired all 12 RG-AiEdu models on the same day it announced the exit, stating that the product had recorded zero sales and would receive no replacement.",
+        cause: "The official notice is unusually explicit: no customers, no sales, and a business-unit decision to abandon the line.",
+        lesson: "Enterprise AI products should earn design-partner commitment before a full product family is created. A catalog is not evidence of demand.",
+        timeline: [{year:"September 2025",title:"Version 1.0 released",body:"The AI teaching and training platform reaches its first public version."},{year:"September 10",title:"Sales and service stop",body:"Orders, maintenance, contracts, renewals, and support all end immediately."}],
+        findings: [{type:"fact",title:"Official sales count: zero",body:"Ruijie's own notice says the product had no customers and no sales."},{type:"fact",title:"No successor was planned",body:"The business unit marked the line as strategically abandoned without a replacement."},{type:"inference",title:"Productization came before demand",body:"Twelve listed models were created without first securing a repeatable buying signal."}]
+      },
+      zh: {
+        sectorLabel: "AI 教育实训平台", statusLabel: "整条产品线退市", summary: "锐捷一次性退市 RG-AiEdu 全部 12 个型号，官方明确写明产品销量为零、没有客户，也没有替代产品。",
+        cause: "这份公告罕见地把死因写得很直接：没有客户、没有销售，事业部战略放弃。",
+        lesson: "企业级 AI 产品应该先获得设计伙伴的真实承诺，再扩成完整产品线。型号数量从来不是需求证据。",
+        timeline: [{year:"2025 年 9 月",title:"发布 1.0 版本",body:"AI 实验与实训平台推出首个公开版本。"},{year:"9 月 10 日",title:"销售与服务同时停止",body:"订单、维护、新签合同、续约和支持在公告当日全部结束。"}],
+        findings: [{type:"fact",title:"官方销量为零",body:"锐捷公告明确记录该产品没有客户使用、销量为零。"},{type:"fact",title:"没有规划继任产品",body:"事业部将产品标记为战略放弃，不提供替代方案。"},{type:"inference",title:"产品化跑在需求前面",body:"在没有形成可重复购买信号之前，团队已经扩出了 12 个上市型号。"}]
+      }
+    }),
+    item({
+      id: "flowise", name: "Flowise", founded: "2023", eventDate: "2026-08-31",
+      sector: "ai-devtools", region: "global", outcome: "shutdown", location: "开源项目", causeTags: ["coding agents", "low-code limits", "workflow shift"],
+      sources: [report("The Future of Flowise", "FlowiseAI / GitHub", "2026-08", "https://github.com/FlowiseAI/Flowise/discussions/6727", true)],
+      en: {
+        sectorLabel: "Visual AI workflow builder", statusLabel: "Project reached end of life", summary: "Flowise froze development, archived its repository, and ended official community support while leaving the Apache-licensed code available to fork.",
+        cause: "The team said developers were moving from rigid low-code graphs toward coding agents that could handle more complex work.",
+        lesson: "Open source can outlive its maintainer, but code availability is not the same as security patches, package releases, governance, or a migration owner.",
+        timeline: [{year:"July 29",title:"Development freezes",body:"Feature work and pull-request review stop."},{year:"August 13",title:"Repository archived",body:"Issues and pull requests become read-only; packages are deprecated."},{year:"August 31",title:"Official support ends",body:"The core team leaves GitHub and Discord operations."}],
+        findings: [{type:"fact",title:"The source remains usable",body:"The Apache 2.0 repository stays public and can be forked."},{type:"fact",title:"The maintainer layer ended",body:"No official team remains to review issues, publish packages, or coordinate releases."},{type:"inference",title:"The abstraction lost its advantage",body:"As coding agents improved, a fixed visual graph became less attractive for complex workflows."}]
+      },
+      zh: {
+        sectorLabel: "可视化 AI 工作流", statusLabel: "项目生命周期结束", summary: "Flowise 冻结开发、归档代码仓库并结束官方社区支持，但 Apache 协议代码仍可被用户自行分叉。",
+        cause: "团队认为开发者正从刚性的低代码流程图转向能处理复杂任务的编程 Agent。",
+        lesson: "开源代码可以活得比维护团队久，但代码可见不等于还有安全补丁、包发布、治理机制和迁移负责人。",
+        timeline: [{year:"7 月 29 日",title:"冻结开发",body:"停止新增功能，也不再审阅新的 Pull Request。"},{year:"8 月 13 日",title:"仓库归档",body:"Issue 和 PR 变为只读，软件包被标记为弃用。"},{year:"8 月 31 日",title:"官方支持结束",body:"核心团队结束 GitHub 与 Discord 的运营。"}],
+        findings: [{type:"fact",title:"源代码仍然可用",body:"Apache 2.0 仓库继续公开，用户可以自行 Fork。"},{type:"fact",title:"维护者层已经消失",body:"不再有官方团队处理问题、发布软件包或协调版本。"},{type:"inference",title:"原有抽象方式失去优势",body:"当编程 Agent 能处理更复杂的任务，固定流程图的吸引力随之下降。"}]
+      }
+    }),
+    item({
+      id: "trucksmarter", name: "TruckSmarter", founded: "2021", eventDate: "2026-09-04",
+      sector: "logistics", region: "global", outcome: "acqui-hire", location: "旧金山，美国", confidence: "Medium", causeTags: ["acquisition", "product closure", "customer transition"],
+      sources: [report("TruckSmarter Shutting Down", "FreightWaves", "2026-09", "https://www.freightwaves.com/news/trucksmarter-shutting-down")],
+      en: {
+        sectorLabel: "Freight marketplace", statusLabel: "App shut down after acquisition", summary: "TruckSmarter closed its load-board and AI dispatch app after an undisclosed acquisition, affecting a platform used by more than 500,000 carriers.",
+        cause: "The buyer and transaction rationale were not disclosed. The public record confirms a product shutdown, not whether the underlying cause was weak economics, strategy, or a talent acquisition.",
+        lesson: "An acquisition is not continuity. Customers need to know which product, contracts, invoices, and operational data survive the transaction.",
+        timeline: [{year:"2021",title:"Platform launches",body:"TruckSmarter builds load discovery, dispatch, banking, and factoring tools for carriers."},{year:"September 1",title:"Acquisition disclosed",body:"Users receive a short notice that the remaining app will close."},{year:"September 4",title:"App shuts down",body:"Subscriptions are canceled and recent invoices enter a refund process."}],
+        findings: [{type:"fact",title:"The product had significant reach",body:"More than 500,000 carriers had used the platform."},{type:"fact",title:"The buyer was not named",body:"Public notices did not identify who acquired the remaining company."},{type:"inference",title:"The transaction valued something other than continuity",body:"Immediate product closure suggests the buyer did not acquire the app to keep serving its users."}]
+      },
+      zh: {
+        sectorLabel: "货运交易与调度", statusLabel: "被收购后 App 关闭", summary: "TruckSmarter 在一笔未披露买方的收购后关闭货运撮合与 AI 调度 App；该平台曾被超过 50 万家承运商使用。",
+        cause: "买方和交易逻辑都没有公开。现有证据只能确认产品关闭，不能确定根因究竟是单位经济、战略转向还是人才收购。",
+        lesson: "被收购不等于业务延续。用户需要明确知道，交易完成后哪些产品、合同、账单和运营数据仍会存在。",
+        timeline: [{year:"2021 年",title:"平台上线",body:"公司为承运商提供找货、调度、银行与保理工具。"},{year:"9 月 1 日",title:"披露收购",body:"用户收到短期通知，得知剩余 App 即将关闭。"},{year:"9 月 4 日",title:"App 停止",body:"订阅被取消，近期账单进入退款流程。"}],
+        findings: [{type:"fact",title:"产品曾有较大覆盖面",body:"超过 50 万家承运商使用过该平台。"},{type:"fact",title:"收购方没有公开",body:"公告和公开报道都没有说明谁收购了剩余业务。"},{type:"inference",title:"交易目标不是延续产品",body:"收购后立即关停，说明买方看中的很可能不是继续服务原有用户。"}]
+      }
+    }),
+    item({
+      id: "router-protocol", name: "Router Protocol", founded: "2020", eventDate: "2026-09-06",
+      sector: "crypto", region: "global", outcome: "shutdown", location: "新加坡", causeTags: ["commercialization", "competition", "security incidents"],
+      sources: [report("Coinbase-backed Router Protocol to shut down", "The Block", "2026-09", "https://www.theblock.co/news/defi/2026-09-06-coinbase-backed-router-protocol-to-shut-down-burn-303-million-route-tokens-413618")],
+      en: {
+        sectorLabel: "Cross-chain infrastructure", statusLabel: "Operations winding down", summary: "Router Protocol will stop all operations on September 30 after commercialization, licensing, and acquisition efforts failed to create a sustainable business.",
+        cause: "The team could not differentiate enough in a crowded bridge market, while prior security incidents and infrastructure costs narrowed the remaining options.",
+        lesson: "Protocol usage and token activity do not prove a durable company. Infrastructure needs a buyer, pricing power, and a security budget that survives market cycles.",
+        timeline: [{year:"2020",title:"Project begins",body:"Router builds cross-chain communication and bridge infrastructure."},{year:"2025",title:"Standalone chain winds down",body:"The team retreats from its own chain to focus on interoperability products."},{year:"September 30",title:"All operations end",body:"The company closes after licensing and acquisition searches fail."}],
+        findings: [{type:"fact",title:"Multiple rescue paths were attempted",body:"The team explored commercialization, licensing, and a sale for roughly a year."},{type:"fact",title:"Token supply is being reduced",body:"The wind-down includes burning 303 million ROUTE tokens."},{type:"inference",title:"Technical utility never became company economics",body:"The product could connect networks without generating enough durable value for the operating entity."}]
+      },
+      zh: {
+        sectorLabel: "跨链基础设施", statusLabel: "全部业务进入关闭期", summary: "Router Protocol 将于 9 月 30 日停止全部运营；商业化、技术授权和寻找买方均未形成可持续业务。",
+        cause: "项目未能在拥挤的跨链市场中形成足够差异，过去的安全事件和基础设施成本又进一步压缩了选择空间。",
+        lesson: "协议使用量和代币活跃度都不等于公司能够长期生存。基础设施仍需要付费客户、定价权和穿越周期的安全预算。",
+        timeline: [{year:"2020 年",title:"项目启动",body:"团队开发跨链通信和桥接基础设施。"},{year:"2025 年",title:"退出独立公链",body:"团队停止自有链，把资源集中到互操作产品。"},{year:"9 月 30 日",title:"全部运营结束",body:"授权与收购谈判未果后，公司进入最终关闭。"}],
+        findings: [{type:"fact",title:"尝试过多条自救路径",body:"团队用约一年时间探索商业化、技术授权和出售。"},{type:"fact",title:"关闭伴随代币销毁",body:"项目计划销毁 3.03 亿枚 ROUTE。"},{type:"inference",title:"技术效用没有转化为公司经济",body:"协议可以连接网络，却没有为运营主体创造足够持久的价值。"}]
+      }
+    }),
+    item({
+      id: "pulley", name: "Pulley", founded: "2020", eventDate: "2026-09-16",
+      sector: "fintech", region: "global", outcome: "shutdown", location: "旧金山，美国", capital: "$50M+ raised", confidence: "Medium", causeTags: ["competition", "workflow substitution", "strategic transfer"],
+      sources: [report("Pulley, a Carta rival, is shutting down", "TechCrunch", "2026-09", "https://techcrunch.com/2026/09/16/pulley-a-carta-rival-is-shutting-down/")],
+      en: {
+        sectorLabel: "Cap-table management", statusLabel: "Shutdown announced", capitalLabel: "More than $50M raised", summary: "Pulley will end operations on December 8 and is directing customers and new prospects to its larger rival Carta.",
+        cause: "The company disclosed no cause. Competition from Carta is confirmed; claims that spreadsheets or AI eliminated the need remain outside speculation.",
+        lesson: "When the category leader becomes the migration partner, the exit plan should make portability, historical records, and pricing continuity explicit rather than treating referral as continuity.",
+        timeline: [{year:"2020",title:"Company launches",body:"Pulley enters cap-table software as a startup-focused Carta alternative."},{year:"September 16",title:"Shutdown announced",body:"The website directs customers toward Carta."},{year:"December 8",title:"Final service day",body:"Operations and product access are scheduled to end."}],
+        findings: [{type:"fact",title:"Customers are being handed to a rival",body:"Pulley partnered with Carta for customer transition and new leads."},{type:"fact",title:"No official cause was given",body:"The company did not publish a financial or product postmortem."},{type:"inference",title:"The independent position became untenable",body:"Choosing the category leader as the exit path suggests Pulley no longer saw a defensible standalone route."}]
+      },
+      zh: {
+        sectorLabel: "股权与期权管理", statusLabel: "宣布停止运营", capitalLabel: "融资超过 5000 万美元", summary: "Pulley 将于 12 月 8 日结束运营，并把现有客户和新增线索导向更大的竞争对手 Carta。",
+        cause: "公司没有披露关闭原因。与 Carta 的竞争是已确认事实；电子表格或 AI 取代产品需求，目前仍只是外部猜测。",
+        lesson: "当品类龙头成为迁移合作方时，退出方案必须明确数据可携带、历史记录和价格延续，而不能把一次推荐当成业务连续性。",
+        timeline: [{year:"2020 年",title:"公司成立",body:"Pulley 以面向初创公司的 Carta 替代方案进入股权管理市场。"},{year:"9 月 16 日",title:"宣布关闭",body:"官网开始把客户导向 Carta。"},{year:"12 月 8 日",title:"计划结束服务",body:"公司运营和产品访问将在这一天停止。"}],
+        findings: [{type:"fact",title:"客户被交给直接竞争对手",body:"Pulley 与 Carta 合作处理客户迁移和新增线索。"},{type:"fact",title:"官方没有说明死因",body:"公司没有公布财务或产品复盘。"},{type:"inference",title:"独立生存位置已经失守",body:"把品类龙头作为最终出口，说明团队不再相信自己拥有可防守的独立路径。"}]
       }
     })
   ];
