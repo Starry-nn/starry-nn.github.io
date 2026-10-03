@@ -266,6 +266,44 @@
       }
     }),
     item({
+      id: "tencent-hunyuan-platform", name: "腾讯混元大模型旧平台", eventDate: "2026-09-30",
+      sector: "ai-infra", region: "china", outcome: "product-sunset", location: "深圳，中国", causeTags: ["platform migration", "feature consolidation", "portfolio focus"],
+      sources: [report("腾讯云大模型旧平台下线及 TokenHub 迁移公告", "腾讯云", "2026-06", "https://cloud.tencent.com/announce/detail/2287", true), report("关于腾讯混元大模型部分接口下线及服务调整通知", "腾讯云", "2026-08", "https://cloud.tencent.com/announce/detail/2405", true)],
+      en: {
+        sectorLabel: "AI model platform", statusLabel: "Legacy platform shut down", summary: "Tencent Cloud fully shut down the legacy Hunyuan model platform on September 30 and moved model access, API keys, billing, and new models into TokenHub.",
+        cause: "Tencent consolidated its model portfolio and control plane into TokenHub. Several legacy image, video, 3D, and text interfaces were retired alongside the old platform.",
+        lesson: "A model API can die even when the underlying models survive. Platform identity, credentials, billing, and endpoint compatibility are separate migration risks that need their own runway.",
+        timeline: [{year:"June 30",title:"New sales stop",body:"The old platform closes new purchases, resource creation, and API-key creation."},{year:"September 30",title:"Legacy platform shuts down",body:"The console and APIs stop accepting normal access and calls."},{year:"After migration",title:"TokenHub becomes the entry point",body:"Users move to a unified platform for newer models, usage, and billing."}],
+        findings: [{type:"fact",title:"The shutdown was broader than a model retirement",body:"Tencent ended the old console and platform APIs, not only individual model versions."},{type:"fact",title:"A named migration destination existed",body:"TokenHub offered replacement models, API-key management, and migration credits."},{type:"inference",title:"The control plane became the product",body:"Once access, billing, and model choice moved into one platform, maintaining a separate legacy surface no longer justified its operational cost."}]
+      },
+      zh: {
+        sectorLabel: "AI 大模型平台", statusLabel: "旧平台全面停服", summary: "腾讯云于 9 月 30 日全面关闭原腾讯混元大模型平台，把模型接入、API Key、计费和新模型统一迁移到 TokenHub。",
+        cause: "腾讯将大模型产品矩阵和控制台统一到 TokenHub，旧平台上的生图、视频、3D、文本等部分历史接口也同步下线。",
+        lesson: "模型本身还在，不等于 API 平台不会消失。控制台、凭证、计费和接口兼容性都是独立的迁移风险，必须分别留出准备时间。",
+        timeline: [{year:"6 月 30 日",title:"停止新购",body:"旧平台停止新增购买、资源创建和 API Key 创建。"},{year:"9 月 30 日",title:"旧平台停服",body:"控制台和 API 接口全面关停，平台不再提供正常调用。"},{year:"迁移后",title:"统一进入 TokenHub",body:"新版模型、用量和费用管理转由 TokenHub 承接。"}],
+        findings: [{type:"fact",title:"关闭范围不只是模型版本",body:"腾讯关闭的是旧控制台和平台 API，而不只是下线某几个模型。"},{type:"fact",title:"官方提供了迁移目的地",body:"TokenHub 提供替代模型、API Key 管理和迁移体验额度。"},{type:"inference",title:"控制平面本身成了产品",body:"当接入、计费和模型选择都能被统一管理，继续维护旧入口的运营价值就变低了。"}]
+      }
+    }),
+    item({
+      id: "aws-app-mesh", name: "AWS App Mesh", founded: "2019", eventDate: "2026-09-30",
+      sector: "ai-infra", region: "global", outcome: "product-sunset", location: "西雅图，美国", causeTags: ["platform consolidation", "managed replacement", "migration cost"],
+      sources: [report("Migrating from AWS App Mesh to Amazon ECS Service Connect", "AWS Containers Blog", "2024-09", "https://aws.amazon.com/blogs/containers/migrating-from-aws-app-mesh-to-amazon-ecs-service-connect/", true), report("AWS App Mesh service meshes", "AWS Documentation", "2026-09", "https://docs.aws.amazon.com/app-mesh/latest/userguide/meshes.html", true)],
+      en: {
+        sectorLabel: "Cloud infrastructure", statusLabel: "Managed service discontinued", summary: "AWS discontinued App Mesh on September 30, ending access to its console and resources and directing ECS users to Service Connect and EKS users to VPC Lattice.",
+        cause: "AWS chose a more managed networking path: Service Connect removes much of the sidecar-proxy work for ECS, while VPC Lattice is the recommended direction for EKS.",
+        lesson: "A managed cloud product can be technically sound and still lose to a more integrated successor. The migration surface includes architecture, account boundaries, security, and traffic cutover—not just an API rename.",
+        timeline: [{year:"September 24, 2024",title:"New customer onboarding stops",body:"AWS blocks new customers from starting with App Mesh."},{year:"September 30, 2026",title:"Service access ends",body:"The App Mesh console and resources become unavailable."},{year:"Migration",title:"Successors take over",body:"AWS points ECS customers to Service Connect and EKS customers to VPC Lattice."}],
+        findings: [{type:"fact",title:"The replacement differed by runtime",body:"AWS recommended Service Connect for ECS and VPC Lattice for EKS, rather than one universal replacement."},{type:"fact",title:"Migration required resource recreation",body:"AWS notes that an ECS service cannot simultaneously belong to an App Mesh mesh and a Service Connect namespace."},{type:"inference",title:"Integration beat standalone flexibility",body:"A managed successor with tighter control-plane integration can win even when the incumbent offers broader, lower-level primitives."}]
+      },
+      zh: {
+        sectorLabel: "云基础设施", statusLabel: "托管服务停止", summary: "AWS 于 9 月 30 日停止 App Mesh，控制台和资源不再可访问；ECS 用户迁移到 Service Connect，EKS 用户则转向 VPC Lattice。",
+        cause: "AWS 选择更深度托管的网络路径：Service Connect 减少 ECS 场景下维护 sidecar 代理的工作，EKS 场景则由 VPC Lattice 承接。",
+        lesson: "托管云产品即使技术上没有明显故障，也可能输给集成度更高的继任者。真正的迁移范围包括架构、账户边界、安全策略和流量切换，而不只是改一个 API 名称。",
+        timeline: [{year:"2024 年 9 月 24 日",title:"停止新客户接入",body:"AWS 不再允许新客户开始使用 App Mesh。"},{year:"2026 年 9 月 30 日",title:"服务访问结束",body:"App Mesh 控制台和资源不再可访问。"},{year:"迁移阶段",title:"继任产品承接",body:"ECS 用户迁移到 Service Connect，EKS 用户迁移到 VPC Lattice。"}],
+        findings: [{type:"fact",title:"不同运行环境对应不同替代品",body:"AWS 没有给出一个统一替代方案，而是按 ECS 和 EKS 分流。"},{type:"fact",title:"迁移需要重建资源",body:"AWS 明确指出，ECS 服务不能同时属于 App Mesh mesh 和 Service Connect namespace。"},{type:"inference",title:"集成度战胜了独立灵活性",body:"当继任产品与控制平面结合得更紧，原产品提供的底层自由度也可能不再足以支撑独立存在。"}]
+      }
+    }),
+    item({
       id: "tencent-qclaw", name: "腾讯 QClaw", founded: "2026", eventDate: "2026-09-24",
       sector: "ai-app", region: "china", outcome: "product-sunset", location: "深圳，中国", causeTags: ["feature consolidation", "portfolio focus", "data migration"],
       sources: [report("腾讯 QClaw 宣布停止服务", "IT之家", "2026-09", "https://www.ithome.com/1/006/528.htm"), report("腾讯回应 QClaw 停运", "澎湃新闻", "2026-09", "https://www.thepaper.cn/newsDetail_forward_34140067")],
@@ -285,7 +323,7 @@
       }
     }),
     item({
-      id: "switchboard-oracle", name: "Switchboard Oracle", founded: "2021", eventDate: "2026-09-19",
+      id: "switchboard-oracle", name: "Switchboard Oracle", founded: "2021", eventDate: "2026-09-25",
       sector: "crypto", region: "global", outcome: "shutdown", location: "美国", capital: "$11.2M raised", causeTags: ["commoditization", "market contraction", "direct data"],
       sources: [report("Switchboard Oracle shuts down", "Solana Compass", "2026-09", "https://solanacompass.com/news/switchboard-oracle-protocol-shuts-down-giving-solana-defi-six-days-to-migrate")],
       en: {
@@ -304,18 +342,18 @@
       }
     }),
     item({
-      id: "reve-ai", name: "Reve Creative", founded: "2023", eventDate: "2026-09-18",
+      id: "reve-ai", name: "Reve Creative", founded: "2023", eventDate: "2026-09-27",
       sector: "ai-app", region: "global", outcome: "product-sunset", location: "美国", causeTags: ["strategic transition", "team transfer", "portfolio focus"],
       sources: [report("Downloading Your Reve Assets", "Reve Help Center", "2026-09", "https://help.reve.com/hc/en-us/articles/53569023228180-Downloading-Your-Reve-Assets", true), report("A New Chapter for Reve", "Reve", "2026-07", "https://blog.reve.com/posts/a-new-chapter-for-reve/", true)],
       en: {
-        sectorLabel: "AI creative tools", statusLabel: "Generation product sunset", summary: "Reve will stop image generation on September 27 and keep asset downloads open through October 31 as members of its research team move to OpenAI.",
+        sectorLabel: "AI creative tools", statusLabel: "Generation product ended", summary: "Reve stopped image generation on September 27 and will keep asset downloads open through October 31 as members of its research team move to OpenAI.",
         cause: "The company remains independent, but an OpenAI investment and research-team transition prompted a move away from the existing generation product toward other creative workflows.",
         lesson: "Team and company survival do not guarantee product continuity. Strategic investment can redirect a roadmap as decisively as financial failure.",
         timeline: [{year:"July 27",title:"Strategic transition disclosed",body:"Reve announces OpenAI's investment and the transfer of research-team members."},{year:"September 27",title:"Generation ends",body:"Users can no longer create new assets."},{year:"October 31",title:"Export window closes",body:"Reve ends access to download stored assets."}],
         findings: [{type:"fact",title:"This is a product death, not a company death",body:"Reve says it will continue independently with a different product direction."},{type:"fact",title:"Users receive a separate export window",body:"Downloads remain available for more than a month after generation stops."},{type:"inference",title:"Talent movement reset the roadmap",body:"The research team's transfer made the existing generation surface less central to the remaining company."}]
       },
       zh: {
-        sectorLabel: "AI 创意工具", statusLabel: "生成产品停止服务", summary: "Reve 将于 9 月 27 日停止图片生成，历史素材可下载至 10 月 31 日；与此同时，部分研究团队成员转入 OpenAI。",
+        sectorLabel: "AI 创意工具", statusLabel: "生成产品已停止", summary: "Reve 已于 9 月 27 日停止图片生成，历史素材可下载至 10 月 31 日；与此同时，部分研究团队成员转入 OpenAI。",
         cause: "公司并未注销，但 OpenAI 投资及研究团队流动后，Reve 决定退出现有生成产品，转向其他创意工作流。",
         lesson: "团队和公司继续存在，也不代表原产品会继续。战略投资对路线图的改写，有时和资金耗尽一样彻底。",
         timeline: [{year:"7 月 27 日",title:"披露战略调整",body:"Reve 公布 OpenAI 投资，以及部分研究团队成员的去向。"},{year:"9 月 27 日",title:"停止生成",body:"用户将无法继续创建新素材。"},{year:"10 月 31 日",title:"导出窗口关闭",body:"平台停止提供历史素材下载。"}],
