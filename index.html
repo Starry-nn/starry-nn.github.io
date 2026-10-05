@@ -303,7 +303,7 @@ body.gate-active { overflow: hidden; height: 100vh; }
 .contact-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; padding-bottom: 11px; border-bottom: 2px solid var(--ink); }
 .contact-panel-label { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
 .base-line { color: var(--ink-muted); font-family: var(--mono); font-size: 10px; letter-spacing: .05em; text-transform: uppercase; text-align: right; }
-.contact-strip { padding: 0; border: 0; gap: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.contact-strip { padding: 0; border: 0; gap: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .contact-strip a { min-height: 56px; padding: 13px 14px 13px 0; border: 0; border-bottom: 1px solid var(--rule); justify-content: space-between; }
 .contact-strip a { min-width: 0; gap: 6px; }
 .contact-strip a + a { border-left: 1px solid var(--rule); padding-left: 14px; }
@@ -696,8 +696,6 @@ function render() {
               <a href="tel:${t.phone.replace(/\s+/g, '')}"><span class="contact-value">${t.phone}</span><span class="contact-arrow">↗</span></a>
               <a href="${t.linkedin}" target="_blank"><span class="contact-value">LinkedIn</span><span class="contact-arrow">↗</span></a>
               <a href="https://github.com/Starry-nn" target="_blank" rel="noopener noreferrer"><span class="contact-value">GitHub</span><span class="contact-arrow">↗</span></a>
-              <a href="${RESUME_EN}" target="_blank"><span class="contact-value">${t.cvEn}</span><span class="contact-arrow">↓</span></a>
-              <a href="${RESUME_CN}" target="_blank"><span class="contact-value">${t.cvZh}</span><span class="contact-arrow">↓</span></a>
             </div>
           </div>
         </div>
