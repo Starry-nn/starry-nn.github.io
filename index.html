@@ -389,8 +389,8 @@ body.gate-active { overflow: hidden; height: 100vh; }
 </dialog>
 
 <script>
-const RESUME_EN = "Nan_Yao_Resume_EN.pdf";
-const RESUME_CN = "Nan_Yao_Resume_CN.pdf";
+const RESUME_EN = "Nan_Yao_Resume_EN.pdf?v=20261005";
+const RESUME_CN = "Nan_Yao_Resume_CN.pdf?v=20261005";
 const PORTRAIT = "profile.JPG";
 let lang = "en";
 
@@ -424,7 +424,7 @@ const D = {
     expDesc: "Investment operations, AI media, venture platform, and growth work — from research through delivery.",
     workTitle: "Selected Work",
     workNum: "02",
-    workDesc: "Four cases spanning AI product design, partner programs, and overseas market research.",
+    workDesc: "Five projects spanning AI products, creator discovery, partner programs, and overseas market research.",
     focusTitle: "Lenses of Thought",
     focusNum: "03",
     focusDesc: "How I approach unfamiliar markets, product questions, and multi-party work.",
@@ -460,6 +460,8 @@ const D = {
        ["Helped grow the Xiaohongshu channel from early operations to 10,000+ followers; the top post reached 400,000+ views and 3,000+ engagements.", "Planned and produced content on AI startups, VC deal flow, financing news, and founder stories for a technology and finance audience.", "Reviewed comments, saves, engagement, and post performance to identify audience interests and repeatable topic directions.", "Built SOPs and tracking sheets for planning, publishing, retrospectives, and account analytics, shortening production cycles and making handoffs clearer."]]
     ],
     projects: [
+      ["Orbit", "Google Hackathon · Project Lead", "Built a mobile-first creator marketing platform that combines swipe-based discovery with Gemini-powered video analysis to help brands find and evaluate creators.",
+       ["Designed and built a mobile-first platform with dating-app-inspired swipe discovery and concise creator profiles, helping marketers compare candidates during short browsing sessions.", "Consolidated fragmented creator information into profiles that make it easier to compare candidates against campaign needs.", "Used Gemini multimodal analysis to generate match scores backed by timestamped video evidence, so users can inspect the basis for each recommendation.", "Connected creator selection with AI-generated campaign briefs and personalized outreach, with human approval at key steps."], "https://starry-nn.github.io/orbit-creator-match-demo/", "Sep 2026 — Present"],
       ["Adaptive Sync", "AI Product Design", "Designed an AI collaboration layer for teams losing tasks, status updates, and risk context across Slack, Jira, and Asana.",
        ["Mapped four recurring problems: fragmented updates, status drift, duplicated communication, and late risk detection across PM, team-lead, and cross-functional workflows.", "Designed a flow that detects tasks, owners, due dates, blockers, comments, and status changes in Slack, then creates or updates the relevant Asana records.", "Added risk reasoning for repeated blockers and schedule slippage so teams could surface issues before weekly status reviews.", "Set the product principle of 'no new tools, no new habits' and used it to guide onboarding, permissions, audit logs, user review, and fallback behavior.", "Developed the concept from problem framing through user flows, feature scope, trust controls, and adoption considerations."], "https://starry-nn.github.io/asana-adaptive-sync/", "Feb 2026 — May 2026"],
       ["Agent Boundaries", "AI Workflow Design", "Created a practical decision framework for where enterprise agents should automate work, request review, escalate, or stop.",
@@ -517,7 +519,7 @@ const D = {
     expDesc: "做过投资运营、AI 媒体、创投平台和内容增长，也参与过从研究到交付的完整项目。",
     workTitle: "代表作品",
     workNum: "02",
-    workDesc: "从 AI 产品方案到跨机构合作，下面是四个我实际参与或独立完成的项目。",
+    workDesc: "五个项目，涵盖 AI 产品、创作者匹配、机构合作与海外市场研究。",
     focusTitle: "工作方法",
     focusNum: "03",
     focusDesc: "面对陌生行业、产品问题和多人协作时，我通常这样开始工作。",
@@ -553,6 +555,8 @@ const D = {
        ["参与小红书账号从早期运营到 10,000+ 粉丝的增长；最高单篇获得 40 万+ 浏览和 3,000+ 互动。","围绕 AI 创业公司、VC 项目、融资动态和创始人故事策划并制作内容。","查看评论、收藏、互动率和单篇表现，判断读者更关心哪些公司、人物和话题。","建立选题、发布、复盘和账号数据管理 SOP，缩短制作周期，也让不同成员接手时更顺畅。"]]
     ],
     projects: [
+      ["Orbit", "Google Hackathon · 项目负责人", "搭建移动端创作者营销平台，结合滑动筛选与 Gemini 视频分析，帮助品牌更快找到并评估合适的创作者。",
+       ["借鉴 dating app 的滑动筛选与精简卡片，让品牌方能在碎片时间内快速浏览和比较创作者。", "将分散的创作者信息整理为统一档案，方便根据营销需求筛选候选人。", "使用 Gemini 分析创作者视频，生成附时间戳依据的匹配评分，让用户可以查看推荐依据，而不只看到一个分数。", "衔接营销需求简报生成与个性化邀约，关键环节由用户确认，保留人工判断。"], "https://starry-nn.github.io/orbit-creator-match-demo/", "2026.09 — 至今"],
       ["Adaptive Sync", "AI 产品设计", "针对 Slack、Jira 和 Asana 之间任务与进度不同步的问题，设计一套自动识别任务并回写项目状态的 AI 协作功能。",
        ["通过用户场景梳理出四类主要问题：信息分散、状态不同步、重复沟通和风险发现太晚，并区分 PM、团队负责人和跨职能成员的需求。","设计从 Slack 识别任务、负责人、截止时间、评论和阻塞项，再生成或更新 Asana 项目的完整流程。","加入延期和重复阻塞识别，让团队不必等到周会才发现项目风险。","以“不增加新工具、不要求用户改变习惯”为原则，补充新手引导、权限分级、审计记录、人工确认和失败处理。","完整产出问题定义、用户流程、功能范围，以及权限和人工确认方案。"], "https://starry-nn.github.io/asana-adaptive-sync/", "2026.02 — 2026.05"],
       ["Agent Boundaries", "Agent 工作流设计", "针对企业项目交付场景，判断哪些任务可以交给 Agent，哪些操作必须由人确认，以及出现问题时如何接管。",
@@ -876,7 +880,7 @@ function openProject(i) {
     <ul class="dialog-list">
       ${p[3].map(x => `<li>${esc(x)}</li>`).join("")}
     </ul>
-    ${p[4] ? `<div class="dialog-actions"><a class="dialog-link" href="${esc(p[4])}" target="_blank" rel="noopener noreferrer">${esc(p[4].includes("/asana-adaptive-sync/") ? t.demoLink : t.projectLink)} <span>↗</span></a></div>` : ""}
+    ${p[4] ? `<div class="dialog-actions"><a class="dialog-link" href="${esc(p[4])}" target="_blank" rel="noopener noreferrer">${esc(["/asana-adaptive-sync/", "/orbit-creator-match-demo/"].some(path => p[4].includes(path)) ? t.demoLink : t.projectLink)} <span>↗</span></a></div>` : ""}
   `;
   dlg.showModal();
 }
