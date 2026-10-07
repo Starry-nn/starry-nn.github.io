@@ -171,6 +171,12 @@ body.gate-active { overflow: hidden; height: 100vh; }
 
 .work-section { background: var(--paper-alt); padding: 88px 0 100px; border-bottom: 1px solid var(--rule); overflow: visible; }
 .work-header-wrap { margin-bottom: 40px; position: relative; display: flex; align-items: baseline; gap: 24px; }
+.work-heading { display: flex; align-items: baseline; gap: 16px; flex-shrink: 0; }
+.work-heading .work-section-index { flex-shrink: 0; }
+.work-heading-label { display: block; }
+@media (max-width: 480px) {
+  .work-heading { flex-direction: column; gap: 12px; }
+}
 .work-section-index { font-family: var(--index); color: var(--chapter-gray); font-size: 36px; font-weight: 600; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: lining-nums; }
 
 .hz-scroll-wrap {
@@ -507,7 +513,7 @@ const D = {
     place: "纽约 / 北京 / 深圳",
     status: "关注创投、产品、投资运营及生态岗位机会",
     deck: "我关注 AI 创业，也喜欢了解新产品和做产品的人。",
-    about: "我目前在纽约大学读项目管理硕士，做过创投、AI 媒体和产品相关的实习与项目。在砺思资本，我研究早期 AI 公司，寻找项目和技术人才，也为团队搭建了日常使用的研究工具。工作之外，我也会自己动手做产品，最近在做创作者匹配平台 Orbit。我喜欢和创始人、用户及合作伙伴交流，把实际需求弄清楚，再和团队一起把事情做出来。",
+    about: "我目前在纽约大学读项目管理硕士，做过创投、AI 媒体和产品相关的实习与项目。在 Monolith，我研究早期 AI 公司，寻找项目和技术人才，也为团队搭建了日常使用的研究工具。工作之外，我也会自己动手做产品，最近在做创作者匹配平台 Orbit。我喜欢和创始人、用户及合作伙伴交流，把实际需求弄清楚，再和团队一起把事情做出来。",
     baseLabel: "主要工作地点",
     baseValue: "纽约 · 北京 · 深圳",
     profileAxes: [
@@ -539,8 +545,8 @@ const D = {
     lifeNum: "06",
     lifeDesc: "喜欢运动、户外活动，也养了一只萨摩耶。",
     lifeKicker: "生活 / 兴趣",
-    lifeLead: "离开电脑以后，我更愿意去运动或者到户外走走。",
-    lifeCopy: "我平时喜欢跳舞、攀岩、网球和徒步。家里还有一只萨摩耶，照片里就是它。",
+    lifeLead: "工作之外，也有很多值得热爱的事。",
+    lifeCopy: "我喜欢跳舞、攀岩和网球，也喜欢去户外走走，亲近自然，尝试没做过的事。运动和探索让我认识更大的世界，也找到工作之外的乐趣。生活里还有一只可爱的萨摩耶，陪我一起度过平常的日子。",
     interests: ["跳舞", "攀岩", "网球", "徒步", "户外运动"],
     dogCaption: "我的萨摩耶",
     readMore: "查看详情",
@@ -736,9 +742,9 @@ function render() {
     <!-- Selected Work (Section 02) -->
     <section class="work-section" id="s1">
       <div class="container work-header-wrap reveal">
-         <h2 class="section-title" style="margin-bottom:8px;">
+         <h2 class="section-title work-heading" style="margin-bottom:8px;">
             <span class="work-section-index">${t.workNum} — </span>
-            ${t.workTitle}
+            <span class="work-heading-label">${t.workTitle}</span>
          </h2>
          <p class="section-desc" style="color:var(--ink-muted); text-transform:none; font-family:var(--sans); font-size:15px; margin-left: auto;">${t.workDesc}</p>
       </div>
