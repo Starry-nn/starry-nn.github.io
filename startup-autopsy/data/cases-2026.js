@@ -266,6 +266,25 @@
       }
     }),
     item({
+      id: "tomorrow-labs", name: "Tomorrow Labs", founded: "2026", eventDate: "2026-10-04",
+      sector: "crypto", region: "global", outcome: "shutdown", location: "圣莫尼卡，美国", capital: "机构投资支持，金额未披露", causeTags: ["product-market fit", "behavior change", "market timing"],
+      sources: [report("Crypto wallet start-up Tomorrow Labs to shut down", "FinTech Futures", "2026-10", "https://www.fintechfutures.com/blockchain-crypto-digital-assets/crypto-wallet-start-up-tomorrow-labs-to-shut-down"), report("Tomorrow Labs company profile", "LinkedIn", "2026-10", "https://www.linkedin.com/company/onchainestate", true)],
+      en: {
+        sectorLabel: "Crypto inheritance wallet", statusLabel: "Company shutting down", capitalLabel: "Institutional backing; amount undisclosed", summary: "Tomorrow Labs is winding down its self-custodial crypto wallet with succession features after early interest failed to turn into enough user action; customers were asked to move assets by October 9.",
+        cause: "Founder Johnny Reinsch said people understood the importance of digital-asset succession but rarely acted without a triggering event, so the market did not grow fast enough to sustain the business.",
+        lesson: "A painful problem can still be a weak activation problem. When value depends on a rare future event, education and stated interest are not substitutes for a repeatable reason to act today.",
+        timeline: [{year:"Early 2026",title:"Wallet launches",body:"The team builds a self-custodial wallet with beneficiaries and succession rules."},{year:"October 4",title:"Shutdown announced",body:"The founder confirms the company will wind down and says parts of the business may be sold."},{year:"October 9",title:"Asset transfer deadline",body:"Customers are told to move holdings to another wallet or service."}],
+        findings: [{type:"fact",title:"The product solved a real but infrequent job",body:"Users could predefine beneficiaries and succession behavior for digital assets."},{type:"fact",title:"Institutional backing did not remove adoption risk",body:"Draper Associates and other institutional investors backed the venture, but the company still closed after only months."},{type:"inference",title:"Awareness did not become activation",body:"The gap between agreeing that inheritance matters and setting up a wallet was the decisive funnel break."}]
+      },
+      zh: {
+        sectorLabel: "加密资产继承钱包", statusLabel: "公司停止运营", capitalLabel: "获机构投资，金额未披露", summary: "Tomorrow Labs 关闭带有数字资产继承功能的自托管加密钱包。创始人称早期关注没有转化为足够多的实际行动，用户需在 10 月 9 日前迁移资产。",
+        cause: "创始人 Johnny Reinsch 表示，用户理解数字资产继承的重要性，却很少在没有现实触发事件时主动设置，因此市场增长速度不足以支撑业务继续。",
+        lesson: "痛点真实，不等于今天就会发生转化。当价值要到多年后的低频事件才兑现时，教育和口头兴趣都不能替代持续、具体的行动理由。",
+        timeline: [{year:"2026 年初",title:"钱包上线",body:"团队推出支持受益人和继承规则的自托管钱包。"},{year:"10 月 4 日",title:"宣布停止运营",body:"创始人确认公司进入关闭流程，并表示正在讨论出售部分业务。"},{year:"10 月 9 日",title:"资产迁移截止",body:"用户被要求把持仓转移到其他钱包或服务。"}],
+        findings: [{type:"fact",title:"产品解决的是低频但真实的任务",body:"用户可以提前设置受益人和数字资产继承规则。"},{type:"fact",title:"机构投资没有消除采纳风险",body:"Draper Associates 等机构曾参与支持，但公司成立数月后仍然停止运营。"},{type:"inference",title:"认同没有转化为激活",body:"用户承认继承重要，却没有完成钱包设置，这个漏斗断点最终决定了产品无法持续。"}]
+      }
+    }),
+    item({
       id: "tencent-hunyuan-platform", name: "腾讯混元大模型旧平台", eventDate: "2026-09-30",
       sector: "ai-infra", region: "china", outcome: "product-sunset", location: "深圳，中国", causeTags: ["platform migration", "feature consolidation", "portfolio focus"],
       sources: [report("腾讯云大模型旧平台下线及 TokenHub 迁移公告", "腾讯云", "2026-06", "https://cloud.tencent.com/announce/detail/2287", true), report("关于腾讯混元大模型部分接口下线及服务调整通知", "腾讯云", "2026-08", "https://cloud.tencent.com/announce/detail/2405", true)],
