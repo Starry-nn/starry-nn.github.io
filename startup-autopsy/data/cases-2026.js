@@ -285,6 +285,101 @@
       }
     }),
     item({
+      id: "tencent-yuanqi", name: "腾讯元器", founded: "2024", eventDate: "2026-10-08",
+      sector: "ai-infra", region: "china", outcome: "product-sunset", location: "深圳，中国", causeTags: ["business adjustment", "platform consolidation", "data migration"],
+      sources: [report("腾讯元器将于 11 月 9 日停止服务", "IT之家（转引官方公告）", "2026-10", "https://www.ithome.com/1/011/530.htm")],
+      en: {
+        sectorLabel: "AI agent platform", statusLabel: "Platform shutdown announced", summary: "Tencent Yuanqi will stop its agent-building and distribution platform on November 9, with a temporary export-only window before stored data is deleted.",
+        cause: "Tencent cited a business adjustment. The notice confirms a platform-level closure and data migration burden, but does not disclose whether a single successor product will absorb every agent.",
+        lesson: "An agent platform is more than a model endpoint: prompts, memory, keys, distribution channels, and user data all need an exit path that is usable before the console disappears.",
+        timeline: [{year:"October 8",title:"Shutdown notice published",body:"Tencent announces that Yuanqi will stop providing platform services because of a business adjustment."},{year:"October 29",title:"Creation and key issuance stop",body:"New agent creation and API-key distribution are disabled while existing agents continue temporarily."},{year:"November 9",title:"Platform access ends",body:"The console, APIs, data operations, and agent responses stop; export-only access begins."},{year:"January 9, 2027",title:"Data deletion scheduled",body:"The export window closes and remaining data is deleted except legally retained logs."}],
+        findings: [{type:"fact",title:"This is a platform death",body:"The notice covers the console, APIs, data read/write, and agents distributed through other channels—not just one model version."},{type:"fact",title:"Export is time-limited",body:"Users receive a defined export window, after which platform data is scheduled for deletion."},{type:"inference",title:"Standalone agent distribution became redundant",body:"A broad platform shutdown suggests Tencent no longer wants to carry a separate agent-building control plane, although the replacement architecture is not public."}]
+      },
+      zh: {
+        sectorLabel: "AI 智能体平台", statusLabel: "平台宣布停服", summary: "腾讯元器将于 11 月 9 日停止智能体创建与分发服务，之后仅保留一段时间的数据导出窗口，最终清除平台数据。",
+        cause: "腾讯公告给出的原因是业务调整。可以确认的是整个平台和数据控制台关闭；至于是否由某一款继任产品完整承接，官方没有说明。",
+        lesson: "智能体平台不只是一个模型接口。提示词、记忆、密钥、分发渠道和用户数据，都要在控制台消失前拥有可执行的退出路径。",
+        timeline: [{year:"10 月 8 日",title:"发布停服通知",body:"腾讯以业务调整为由，宣布元器停止提供平台服务。"},{year:"10 月 29 日",title:"停止创建与发放密钥",body:"平台停止创建新智能体和发放 API Key，但已有智能体暂时还能使用。"},{year:"11 月 9 日",title:"平台全面关闭",body:"控制台、API、数据读写和智能体响应全部停止，转为仅可导出的状态。"},{year:"2027 年 1 月 9 日",title:"计划删除数据",body:"导出窗口结束后，除依法留存的日志外，平台数据将被删除。"}],
+        findings: [{type:"fact",title:"死亡的是整个平台",body:"公告覆盖控制台、API、数据读写，以及分发到其他渠道的智能体，不只是某个模型版本。"},{type:"fact",title:"导出窗口有明确期限",body:"用户有固定时间导出数据，窗口结束后平台数据将按计划清除。"},{type:"inference",title:"独立的智能体分发层失去必要性",body:"平台级关停说明腾讯不再继续维护单独的智能体控制平面，但新的承接架构尚未公开。"}]
+      }
+    }),
+    item({
+      id: "partykit-hosted", name: "PartyKit Hosted Platform", founded: "2021", eventDate: "2026-10-09",
+      sector: "productivity", region: "global", outcome: "product-sunset", location: "美国", causeTags: ["acquisition integration", "platform consolidation", "migration cost"],
+      sources: [report("The hosted PartyKit platform is shutting down", "PartyKit Blog", "2026-10", "https://blog.partykit.io/posts/hosted-platform-shutdown", true)],
+      en: {
+        sectorLabel: "Realtime developer platform", statusLabel: "Hosted service shutdown", summary: "PartyKit is closing its hosted platform after joining Cloudflare, while the open-source PartyServer direction and Workers already deployed in customers' own accounts continue.",
+        cause: "The team is concentrating on PartyServer and Cloudflare's own account model. The hosted control plane and its room data could not justify a separate migration and operating burden.",
+        lesson: "An acquisition can preserve a technology while killing the hosted product users actually depend on. Data export, deployment ownership, and the difference between a codebase and a service must be explicit.",
+        timeline: [{year:"October 9",title:"Hosted shutdown announced",body:"New projects and preview environments stop; existing redeploys continue briefly."},{year:"October 12",title:"Inactive projects removed",body:"Projects without recent activity are deleted from the hosted platform."},{year:"October 16",title:"Final deploy day",body:"Deploys to PartyKit's hosted environment end and users are asked to export data."},{year:"October 23",title:"Hosted service closes",body:"Remaining projects and room data are deleted; users move to PartyServer or their own Cloudflare account."}],
+        findings: [{type:"fact",title:"The underlying technology survives",body:"PartyServer and Workers already running in customer-owned Cloudflare accounts are not the target of this shutdown."},{type:"fact",title:"Room data needs a manual export",body:"The hosted service does not automatically migrate room data into the new deployment model."},{type:"inference",title:"Integration beat hosted convenience",body:"After the Cloudflare relationship, maintaining a separate hosted control plane no longer fit the team's product focus."}]
+      },
+      zh: {
+        sectorLabel: "实时开发者平台", statusLabel: "托管服务关闭", summary: "PartyKit 在加入 Cloudflare 后关闭托管平台，团队转向 PartyServer；已经部署在用户自有 Cloudflare 账户中的 Workers 不受影响。",
+        cause: "团队把资源集中到 PartyServer 和 Cloudflare 自有账户模式。独立托管控制平面及其房间数据，已经不足以覆盖额外的迁移和运维成本。",
+        lesson: "被收购可以保住技术，却不一定保住用户依赖的托管服务。数据导出、部署归属，以及代码和在线服务的差别，都必须提前讲清楚。",
+        timeline: [{year:"10 月 9 日",title:"宣布关闭托管平台",body:"停止创建新项目和预览环境，已有项目暂时还能重新部署。"},{year:"10 月 12 日",title:"删除不活跃项目",body:"平台开始清理近期没有活动的项目。"},{year:"10 月 16 日",title:"最后部署日",body:"停止向 PartyKit 托管环境部署，并要求用户导出数据。"},{year:"10 月 23 日",title:"托管服务关闭",body:"剩余项目和房间数据被删除，用户迁移到 PartyServer 或自己的 Cloudflare 账户。"}],
+        findings: [{type:"fact",title:"底层技术仍然存在",body:"PartyServer 以及已经运行在用户自有 Cloudflare 账户中的 Workers，不在本次关闭范围内。"},{type:"fact",title:"房间数据需要手动导出",body:"托管服务不会把房间数据自动迁移到新的部署模式。"},{type:"inference",title:"平台整合胜过托管便利",body:"与 Cloudflare 的关系变化后，继续维护独立托管控制平面已经不再符合团队的产品重点。"}]
+      }
+    }),
+    item({
+      id: "nikon-image-space", name: "NIKON IMAGE SPACE", founded: "2013", eventDate: "2026-10-15",
+      sector: "productivity", region: "global", outcome: "product-sunset", location: "东京，日本", causeTags: ["platform consolidation", "storage economics", "migration cost"],
+      sources: [report("NIKON IMAGE SPACE サービス終了のお知らせ", "Nikon", "2026-08", "https://nij.nikon.com/news/products/2026/0825.html", true)],
+      en: {
+        sectorLabel: "Photo storage service", statusLabel: "Cloud service retired", summary: "Nikon ended NIKON IMAGE SPACE on October 15 and is leaving users a six-month bulk-download window before all remaining images and data are deleted.",
+        cause: "Nikon did not publish a detailed commercial postmortem. The official notice makes the operating decision clear and directs customers to download rather than expect automatic migration.",
+        lesson: "A photo library is a long-lived promise. If a storage product closes, the export format, deadline, and deletion date matter more than the announcement headline.",
+        timeline: [{year:"August 25",title:"Retirement announced",body:"Nikon announces the end of NIKON IMAGE SPACE and tells users to prepare downloads."},{year:"October 15",title:"Service ends",body:"Uploads and normal access stop; bulk download remains available."},{year:"April 15, 2027",title:"Permanent deletion",body:"All remaining images and account data are scheduled for deletion."}],
+        findings: [{type:"fact",title:"There is no automatic move",body:"Nikon explicitly tells users to download their own images; the library does not migrate automatically to Nikon Imaging Cloud."},{type:"fact",title:"The deletion date is fixed",body:"A six-month retrieval window separates service closure from permanent deletion."},{type:"inference",title:"Storage economics likely drove consolidation",body:"The official notice does not name a cause, but retiring a standalone library in favor of a newer cloud portfolio reduces duplicated storage obligations."}]
+      },
+      zh: {
+        sectorLabel: "照片云存储", statusLabel: "云服务退役", summary: "尼康于 10 月 15 日结束 NIKON IMAGE SPACE，之后提供约六个月的批量下载期，并计划删除所有剩余图片和账号数据。",
+        cause: "尼康没有公开完整的商业复盘，但官方通知确认了停止运营的决定，并明确要求用户自行下载，而不是等待自动迁移。",
+        lesson: "照片库是一项长期承诺。云存储关闭时，真正重要的是导出格式、截止日期和最终删除时间，而不是公告标题有多体面。",
+        timeline: [{year:"8 月 25 日",title:"宣布结束服务",body:"尼康公布 NIKON IMAGE SPACE 终止安排，并提醒用户提前下载。"},{year:"10 月 15 日",title:"服务停止",body:"上传和正常访问结束，但仍可批量下载。"},{year:"2027 年 4 月 15 日",title:"永久删除",body:"平台计划删除剩余图片和账户数据。"}],
+        findings: [{type:"fact",title:"不会自动迁移",body:"尼康明确要求用户自行下载图片，照片库不会自动转入 Nikon Imaging Cloud。"},{type:"fact",title:"删除日期已经确定",body:"服务停止和永久删除之间有约六个月的找回窗口。"},{type:"inference",title:"可能是存储组合整合",body:"官方没有公布具体死因，但关闭独立照片库、转向新的云产品组合，可以减少重复的存储和运维负担。"}]
+      }
+    }),
+    item({
+      id: "microsoft-whiteboard-standalone", name: "Microsoft Whiteboard Standalone Apps", founded: "2016", eventDate: "2026-10-16",
+      sector: "productivity", region: "global", outcome: "product-sunset", location: "雷德蒙德，美国", causeTags: ["feature consolidation", "platform integration", "account segmentation"],
+      sources: [report("Retirement of standalone Microsoft Whiteboard apps", "Microsoft Support", "2026-10", "https://support.microsoft.com/en-us/whiteboard/retirement-standalone-microsoft-whiteboard-apps", true), report("独立版 Microsoft Whiteboard 应用退役", "Microsoft 支持", "2026-10", "https://support.microsoft.com/zh-cn/whiteboard/retirement-standalone-microsoft-whiteboard-apps", true)],
+      en: {
+        sectorLabel: "Collaboration whiteboard", statusLabel: "Standalone apps retired", summary: "Microsoft retired the standalone Whiteboard apps for Windows, iOS, and Android on October 16; Whiteboard remains available on the web and in Teams for work and school accounts.",
+        cause: "Microsoft is consolidating Whiteboard around web and Teams experiences and separating personal-account support from the work-and-school product surface.",
+        lesson: "A familiar brand can survive while a distribution surface dies. Teams should document which account types, clients, storage locations, and embedded workflows remain supported.",
+        timeline: [{year:"October 16",title:"Standalone clients retire",body:"The Windows, iOS, and Android standalone apps move to a retirement experience."},{year:"After retirement",title:"Web and Teams continue",body:"Work and school users can keep using Whiteboard through the web and Teams; OneDrive-backed boards remain available for those accounts."}],
+        findings: [{type:"fact",title:"This is not the death of Whiteboard",body:"The web and Teams versions continue for work and school customers."},{type:"fact",title:"Personal access changes materially",body:"Standalone personal-account access ends with the retired apps, so users need to verify where their boards are stored."},{type:"inference",title:"The client surface became redundant",body:"Microsoft can reduce maintenance by concentrating collaboration, identity, and storage inside the web and Teams control planes."}]
+      },
+      zh: {
+        sectorLabel: "协作白板", statusLabel: "独立应用退役", summary: "微软于 10 月 16 日停止 Windows、iOS 和 Android 独立版 Whiteboard 应用；工作或学校账号仍可通过网页版和 Teams 使用 Whiteboard。",
+        cause: "微软把 Whiteboard 的体验集中到网页版和 Teams，同时把个人账号与工作/学校账号的支持范围分开。",
+        lesson: "熟悉的品牌还在，不代表每个入口都会继续。团队需要逐一确认账号类型、客户端、存储位置和嵌入式工作流是否仍受支持。",
+        timeline: [{year:"10 月 16 日",title:"独立客户端退役",body:"Windows、iOS 和 Android 独立应用进入退役体验。"},{year:"退役后",title:"网页版与 Teams 继续",body:"工作和学校用户仍可通过网页版和 Teams 使用；这些账号的 OneDrive 白板继续保留。"}],
+        findings: [{type:"fact",title:"Whiteboard 并没有整体消失",body:"工作和学校用户仍可使用网页版和 Teams 版本。"},{type:"fact",title:"个人账号影响更大",body:"独立应用退役后，个人用户需要确认白板存储位置和是否还能访问。"},{type:"inference",title:"独立客户端变得多余",body:"把协作、身份和存储都放进网页版与 Teams 控制平面，可以减少重复维护成本。"}]
+      }
+    }),
+    item({
+      id: "ronin-waypoint", name: "Ronin Waypoint", founded: "2024", eventDate: "2026-10-16",
+      sector: "crypto", region: "global", outcome: "product-sunset", location: "新加坡", causeTags: ["platform migration", "legacy infrastructure", "ecosystem consolidation"],
+      sources: [report("Migrate Your Waypoint Assets Before October 16", "Axie Infinity / Ronin", "2026-10", "https://blog.axieinfinity.com/p/migrate-your-waypoint-assets-before", true), report("Ronin Waypoint to shut down on October 31 after final grace period", "TokenPost", "2026-10", "https://www.tokenpost.com/news/technology/33420")],
+      en: {
+        sectorLabel: "Crypto wallet", statusLabel: "Legacy wallet sunset", summary: "Ronin ended the main migration window for Waypoint on October 16 and granted a final grace period through October 31 before the legacy wallet becomes inaccessible.",
+        cause: "Ronin is replacing Waypoint with Ronin Stash and a seed-phrase wallet path. The team describes the move as an ecosystem and legacy-infrastructure consolidation rather than a shutdown of Ronin itself.",
+        lesson: "Wallet migrations are not ordinary account moves: users must control keys, deadlines, and asset recovery. A grace period helps, but it does not remove the burden from the product team.",
+        timeline: [{year:"June 2026",title:"Replacement announced",body:"Ronin introduces Ronin Stash and asks Waypoint users to migrate manually."},{year:"October 2",title:"Final migration reminder",body:"Ronin warns that assets left in Waypoint may become inaccessible after the October 16 deadline."},{year:"October 16",title:"Main deadline passes",body:"The final grace period begins for users who have not moved assets."},{year:"October 31",title:"Legacy wallet scheduled to close",body:"Waypoint is scheduled to shut down after the grace period."}],
+        findings: [{type:"fact",title:"The chain is not shutting down",body:"This case concerns one legacy wallet product; Ronin and the destination wallet continue."},{type:"fact",title:"Users must move assets themselves",body:"The official migration path requires users to transfer to Ronin Stash or control their seed phrase before the deadline."},{type:"inference",title:"Legacy wallet maintenance lost its place",body:"Replacing Waypoint with a newer wallet and custody flow suggests Ronin is reducing duplicated wallet infrastructure and support paths."}]
+      },
+      zh: {
+        sectorLabel: "加密钱包", statusLabel: "旧钱包退役", summary: "Ronin 于 10 月 16 日结束 Waypoint 的主要迁移窗口，并把最终宽限期延长到 10 月 31 日；之后旧钱包可能无法访问。",
+        cause: "Ronin 用 Ronin Stash 和助记词钱包路径替代 Waypoint。官方叙事是生态整合与旧基础设施收缩，不是 Ronin 整条链停止运营。",
+        lesson: "钱包迁移不是普通的账号搬家：用户要自己掌握密钥、截止日期和资产找回路径。宽限期可以缓冲风险，却不能替产品团队承担迁移责任。",
+        timeline: [{year:"2026 年 6 月",title:"公布替代方案",body:"Ronin 推出 Ronin Stash，并要求 Waypoint 用户手动迁移。"},{year:"10 月 2 日",title:"发布最终提醒",body:"官方警告，10 月 16 日后仍留在 Waypoint 的资产可能无法访问。"},{year:"10 月 16 日",title:"主要迁移截止",body:"未完成迁移的用户进入最后宽限期。"},{year:"10 月 31 日",title:"计划关闭旧钱包",body:"Waypoint 计划在宽限期结束后停止服务。"}],
+        findings: [{type:"fact",title:"关闭的不是整条 Ronin 链",body:"本案只涉及一个旧钱包产品，Ronin 网络和目标钱包仍然继续。"},{type:"fact",title:"资产需要用户自行迁移",body:"官方要求用户在截止日前转入 Ronin Stash，或确保自己掌握助记词。"},{type:"inference",title:"旧钱包维护不再值得",body:"用新钱包和新的托管流程替代 Waypoint，说明 Ronin 正在减少重复的钱包基础设施与支持路径。"}]
+      }
+    }),
+    item({
       id: "tencent-hunyuan-platform", name: "腾讯混元大模型旧平台", eventDate: "2026-09-30",
       sector: "ai-infra", region: "china", outcome: "product-sunset", location: "深圳，中国", causeTags: ["platform migration", "feature consolidation", "portfolio focus"],
       sources: [report("腾讯云大模型旧平台下线及 TokenHub 迁移公告", "腾讯云", "2026-06", "https://cloud.tencent.com/announce/detail/2287", true), report("关于腾讯混元大模型部分接口下线及服务调整通知", "腾讯云", "2026-08", "https://cloud.tencent.com/announce/detail/2405", true)],
