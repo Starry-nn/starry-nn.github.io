@@ -491,7 +491,7 @@ const D = {
     ],
     edu: [
       ["2025 — Present", "New York University", "M.S. Project Management · CGPA 4.0/4.0"],
-      ["2021 — 2025", "BNBU", "B.A. Public Relations & Advertising · Diamond Award"],
+      ["2021 — 2025", "Hong Kong Baptist University", "B.A. Public Relations & Advertising · Diamond Award"],
       ["Summer 2024", "University of Hong Kong", "Media Summer School · Ranked #1 in class"],
       ["Summer 2023", "University of Edinburgh", "Business Communication and Social Media Summer School"]
     ],
@@ -586,7 +586,7 @@ const D = {
     ],
     edu: [
       ["2025 — 至今", "纽约大学 (NYU)", "项目管理硕士 · CGPA 4.0/4.0"],
-      ["2021 — 2025", "北师香港浸会大学", "公共关系与广告学士 · 钻石奖章"],
+      ["2021 — 2025", "香港浸会", "公共关系与广告学士 · 钻石奖章"],
       ["2024 夏", "香港大学 (HKU)", "新闻传媒暑期学校 · 专业排名第一"],
       ["2023 夏", "爱丁堡大学", "商务传播与社交媒体暑期课程"]
     ],
@@ -609,7 +609,6 @@ function jobRow(j, i) {
         <h3 class="exp-company">${esc(j[2])}</h3>
         <div class="exp-meta">
           <span class="small-caps">${esc(j[0])}</span>
-          <span class="small-caps">${esc(j[1])}</span>
         </div>
       </div>
       <span class="exp-role">${esc(j[3])}</span>
@@ -866,7 +865,7 @@ function openJob(i) {
     <div class="dialog-header">
       <div>
         <h2 class="dialog-title">${esc(j[2])}</h2>
-        <p class="dialog-meta">${esc(j[3])} &nbsp;&nbsp;|&nbsp;&nbsp; ${esc(j[0])} &nbsp;&nbsp;|&nbsp;&nbsp; ${esc(j[1])}</p>
+        <p class="dialog-meta">${esc(j[3])} &nbsp;&nbsp;|&nbsp;&nbsp; ${esc(j[0])}</p>
       </div>
       <button class="btn-close" onclick="dialog.close()">${t.close} ✕</button>
     </div>
