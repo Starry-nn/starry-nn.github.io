@@ -304,6 +304,101 @@
       }
     }),
     item({
+      id: "zeabur-platform", name: "Zeabur", founded: "2023", eventDate: "2026-10-17",
+      sector: "ai-infra", region: "china", outcome: "product-sunset", location: "台北，中国台湾", causeTags: ["security incidents", "operational complexity", "growth plateau", "migration cost"],
+      sources: [report("Zeabur 停止运营公告及服务迁移安排", "Zeabur", "2026-10", "https://zeabur.cn/zh-CN/blogs/zeabur-is-shutting-down", true)],
+      en: {
+        sectorLabel: "Cloud deployment platform", statusLabel: "Platform wind-down announced", summary: "Zeabur will gradually stop operating after a second security incident exposed the limits of its fast-grown infrastructure; all dedicated servers and shared clusters are scheduled to close by December 31.",
+        cause: "The founder connects the decision to repeated security incidents, accumulated architectural complexity, rising maintenance cost, and a growth plateau as AI lowers the barrier to deployment.",
+        lesson: "A hosting product sells reliability, not only compute. When the operator cannot restore trust, the migration plan and honest deadline become part of the product's last obligation.",
+        timeline: [{year:"October 14",title:"Second security incident",body:"An external attacker reaches internal systems and some customer services; the investigation remains open."},{year:"October 17",title:"Wind-down announced",body:"Zeabur stops new dedicated-server and domain purchases and opens refund and migration support."},{year:"December 1",title:"Service pauses begin",body:"Dedicated servers stop renewing and shared clusters pause running services, with a manual backup window."},{year:"December 31",title:"Platform closes",body:"All dedicated servers and shared clusters are scheduled to stop; data-deletion and support deadlines are to follow."}],
+        findings: [{type:"fact",title:"The founder names a systemic cause",body:"The notice links the shutdown to two security incidents, accumulated complexity, and the team's ability to carry the operational responsibility."},{type:"fact",title:"The service does not disappear overnight",body:"Different products stop on different dates, leaving customers a migration and backup window."},{type:"inference",title:"Trust became the irrecoverable dependency",body:"For a deployment platform, a second breach can make rebuilding the control plane more expensive than responsibly closing it."}]
+      },
+      zh: {
+        sectorLabel: "云部署平台", statusLabel: "平台宣布逐步停运", summary: "Zeabur 在第二次安全事件后宣布逐步停止运营；独立服务器和共享集群计划在 12 月 31 日前全部关闭。",
+        cause: "创始人把决定归因于反复发生的安全事件、快速增长后积累的架构复杂度和维护成本，以及 AI 降低部署门槛后出现的增长瓶颈。",
+        lesson: "托管平台卖的不只是算力，而是可靠性。当运营方无法修复信任，迁移方案和明确的截止日期就成了产品最后必须履行的责任。",
+        timeline: [{year:"10 月 14 日",title:"发生第二次安全事件",body:"外部攻击者入侵内部系统和部分客户服务，调查仍在继续。"},{year:"10 月 17 日",title:"宣布停止运营",body:"停止购买新的独立服务器和域名，并开放退款与迁移支持。"},{year:"12 月 1 日",title:"服务开始暂停",body:"独立服务器停止续费，共享集群暂停运行中的服务，同时保留手动备份窗口。"},{year:"12 月 31 日",title:"平台关闭",body:"所有独立服务器和共享集群计划停止，数据删除及支持截止日期另行公布。"}],
+        findings: [{type:"fact",title:"创始人披露了系统性原因",body:"公告把停运与两次安全事件、系统复杂度和团队能否继续承担运维责任直接联系起来。"},{type:"fact",title:"不是一夜之间断电",body:"不同产品按不同日期停止，客户仍有迁移和备份窗口。"},{type:"inference",title:"信任成了无法修复的依赖",body:"对部署平台来说，第二次入侵后重建控制平面，可能已经比负责任地关闭更昂贵。"}]
+      }
+    }),
+    item({
+      id: "cobo-wallet-app", name: "Cobo Wallet App", founded: "2017", eventDate: "2026-10-17",
+      sector: "crypto", region: "global", outcome: "product-sunset", location: "新加坡", causeTags: ["business adjustment", "institutional focus", "custody transition"],
+      sources: [report("Cobo Wallet App（个人版钱包）停服安排", "Cobo", "2026-10", "https://www.cobo.com/announcements?Announ_page=2", true), report("Digital asset custody firm Cobo to discontinue its Wallet app on Dec. 1", "Crypto Briefing", "2026-10", "https://cryptobriefing.com/cobo-wallet-app-shutdown-december-1/")],
+      en: {
+        sectorLabel: "Consumer crypto wallet", statusLabel: "Consumer app shutdown announced", summary: "Cobo will close its consumer Wallet App at 00:00 UTC+8 on December 1, while its institutional custody and wallet-infrastructure businesses continue.",
+        cause: "Cobo describes the move as a business-strategy adjustment and a shift toward institutional services. The consumer app had already stopped accepting new registrations in 2021.",
+        lesson: "A wallet shutdown is also an address-management incident. Users need a hard transfer deadline, warnings about inbound addresses, and a clear policy for assets left behind.",
+        timeline: [{year:"2021",title:"New consumer registrations stop",body:"Cobo closes new sign-ups as it concentrates on institutional custody and wallet infrastructure."},{year:"October 17",title:"Shutdown notice published",body:"Cobo announces the consumer app will close and asks users to update or remove saved receiving addresses."},{year:"November 30",title:"Last transfer day",body:"Users must withdraw or transfer assets before 23:59 UTC+8."},{year:"December 1",title:"Consumer wallet closes",body:"The app shuts down; remaining balances are subject to a 2% monthly management fee with a $100-equivalent minimum."}],
+        findings: [{type:"fact",title:"The company survives the product",body:"Cobo's institutional and enterprise wallet businesses are explicitly outside the shutdown."},{type:"fact",title:"The exit has a financial tail",body:"Assets left after closure incur a recurring management fee, not an automatic recovery promise."},{type:"inference",title:"Retail support lost the portfolio fight",body:"A five-year gap between stopping sign-ups and closing the app suggests Cobo kept a legacy consumer surface after its strategic center had moved elsewhere."}]
+      },
+      zh: {
+        sectorLabel: "面向个人的加密钱包", statusLabel: "个人 App 宣布停服", summary: "Cobo 个人版 Wallet App 将于 12 月 1 日 00:00（UTC+8）关闭，但机构托管和钱包基础设施业务继续运营。",
+        cause: "Cobo 将此次调整解释为业务战略变化，并把重点转向机构服务。个人钱包早在 2021 年就已停止接受新注册。",
+        lesson: "钱包停服也是地址管理事故。用户需要明确的转账截止日、对外部平台收款地址的提醒，以及资产留存后的处理规则。",
+        timeline: [{year:"2021 年",title:"停止个人新注册",body:"Cobo 在转向机构托管和钱包基础设施后关闭个人钱包新注册。"},{year:"10 月 17 日",title:"发布停服安排",body:"Cobo 宣布关闭个人 App，并要求用户更新或删除外部平台保存的收款地址。"},{year:"11 月 30 日",title:"最后转账日",body:"用户必须在 UTC+8 23:59 前提走或转移资产。"},{year:"12 月 1 日",title:"个人钱包关闭",body:"App 停止服务；留存资产按月收取 2% 管理费，最低按 100 美元等值计收。"}],
+        findings: [{type:"fact",title:"公司主体并未消失",body:"公告明确把机构和企业钱包业务排除在停服范围外。"},{type:"fact",title:"退出之后仍有财务后果",body:"关闭后留存的资产会产生持续管理费，不能假设平台会自动替用户找回。"},{type:"inference",title:"零售支持输掉了组合竞争",body:"停止新注册到真正关闭相隔五年，说明 Cobo 长期保留了一个战略重心已经转移的个人产品。"}]
+      }
+    }),
+    item({
+      id: "mealime", name: "Mealime", founded: "2016", eventDate: "2026-10-21",
+      sector: "productivity", region: "global", outcome: "product-sunset", location: "美国", causeTags: ["acquisition integration", "platform consolidation", "data deletion"],
+      sources: [report("Mealime closing notice", "Mealime", "2026-10", "https://www.mealime.com/closing", true), report("Mealime Meal Plans & Recipes App", "Apple App Store", "2026-10", "https://apps.apple.com/us/app/mealime-meal-plans-recipes/id1079999103", true)],
+      en: {
+        sectorLabel: "Meal planning app", statusLabel: "Acquired app discontinued", summary: "Mealime shut down on October 21 after Albertsons moved its recipe and meal-planning experience into Meals Hub across its grocery apps.",
+        cause: "Albertsons acquired Mealime in 2021 and chose one integrated grocery platform instead of maintaining a standalone consumer app. The recipe library survives, but personal data and saved plans do not.",
+        lesson: "An acquisition can preserve the content while deleting the user's context. Favorites, preferences, meal plans, and export tools should be treated as first-class assets in a product migration.",
+        timeline: [{year:"2021",title:"Acquired by Albertsons",body:"Mealime's recipe and meal-planning technology joins Albertsons Companies."},{year:"September 2",title:"Closure notice appears",body:"Mealime tells users Pro will become free and subscriptions will not renew."},{year:"October 21",title:"App discontinued",body:"The standalone app and account experience stop; personal data is scheduled for deletion."},{year:"After shutdown",title:"Meals Hub continues",body:"Mealime's recipe library and planning features move into Albertsons, Safeway, Vons, and Jewel-Osco apps."}],
+        findings: [{type:"fact",title:"The recipe library survives",body:"Albertsons keeps Mealime recipes available through Meals Hub and related grocery apps."},{type:"fact",title:"Personal context does not",body:"The closing notice does not promise a full transfer of saved favorites, preferences, or meal plans."},{type:"inference",title:"The standalone relationship was the expendable layer",body:"The acquisition preserved content and distribution while removing a separate identity, app, and data responsibility."}]
+      },
+      zh: {
+        sectorLabel: "膳食规划应用", statusLabel: "被收购应用终止", summary: "Mealime 于 10 月 21 日关闭。Albertsons 将食谱和膳食规划能力整合进旗下超市 App 的 Meals Hub。",
+        cause: "Albertsons 在 2021 年收购 Mealime 后，选择把体验统一到购物平台，而不是继续维护独立消费者 App。食谱库保留，但个人数据和历史计划不会完整保留。",
+        lesson: "收购可以保住内容，却删除用户的上下文。收藏、偏好、饮食计划和导出能力，都应该被当成迁移中的一等资产。",
+        timeline: [{year:"2021 年",title:"被 Albertsons 收购",body:"Mealime 的食谱与膳食规划技术加入 Albertsons Companies。"},{year:"9 月 2 日",title:"出现关闭通知",body:"Mealime 告知用户 Pro 免费开放，现有订阅不会续费。"},{year:"10 月 21 日",title:"应用停止运营",body:"独立 App 和账号体验结束，个人数据按通知计划删除。"},{year:"停运后",title:"Meals Hub 继续承接",body:"食谱库和规划能力进入 Albertsons、Safeway、Vons、Jewel-Osco 等 App。"}],
+        findings: [{type:"fact",title:"食谱库被保留下来",body:"Albertsons 通过 Meals Hub 和旗下超市 App 继续提供 Mealime 食谱。"},{type:"fact",title:"个人上下文没有被完整迁移",body:"关闭通知没有承诺收藏、偏好和历史计划会全部转入新平台。"},{type:"inference",title:"被牺牲的是独立关系层",body:"收购保住了内容与分发，却移除了独立的账号、App 和数据责任。"}]
+      }
+    }),
+    item({
+      id: "arc-browser", name: "Arc", founded: "2019", eventDate: "2026-10-22",
+      sector: "productivity", region: "global", outcome: "product-sunset", location: "纽约，美国", causeTags: ["security burden", "strategic pivot", "platform consolidation", "acquisition integration"],
+      sources: [report("A farewell to Arc", "Arc / The Browser Company", "2026-10", "https://arc.net/", true), report("Arc browser sunsets December 22 as The Browser Company doubles down on Dia", "TechCrunch", "2026-10", "https://techcrunch.com/2026/10/22/arc-browser-sunsets-december-22-as-the-browser-company-doubles-down-on-dia/")],
+      en: {
+        sectorLabel: "Web browser", statusLabel: "Browser sunset announced", summary: "The Browser Company is retiring Arc in stages and moving users to Dia: new accounts closed October 22, mobile AI features end November 23, and desktop Arc stops working December 22.",
+        cause: "The company says keeping a browser secure requires constant dedicated work, so engineering and security effort will concentrate on Dia, the newer browser built by the same team.",
+        lesson: "A beloved interface is not a moat against maintenance. When security becomes the product's dominant operating cost, migration quality determines whether loyalty turns into trust or resentment.",
+        timeline: [{year:"October 22",title:"New accounts close",body:"Existing users can keep using Arc while the latest release adds export and Dia-import paths."},{year:"November 23",title:"Mobile AI and sync end",body:"Arc Search keeps basic browsing, but sign-in and tab sync stop on iOS and Android."},{year:"December 22",title:"Desktop browser ends",body:"Arc stops working on macOS and Windows; accounts deactivate and personal data is deleted within 30 days."}],
+        findings: [{type:"fact",title:"The replacement is built by the same team",body:"Dia carries over passwords, bookmarks, extensions, history, spaces, and tabs through an import flow."},{type:"fact",title:"The shutdown is staged",body:"Users receive separate deadlines for account creation, mobile features, sync, and desktop access."},{type:"inference",title:"Security burden beat product affection",body:"The company judged that maintaining two browsers safely was less valuable than concentrating its security team on Dia."}]
+      },
+      zh: {
+        sectorLabel: "网页浏览器", statusLabel: "浏览器宣布退役", summary: "The Browser Company 将分阶段终止 Arc，并把用户迁往 Dia：10 月 22 日停止新建账号，11 月 23 日关闭移动端 AI 与同步，12 月 22 日桌面端停止运行。",
+        cause: "公司解释称，浏览器安全需要持续、专门的投入，因此工程和安全团队将集中维护同团队打造的 Dia。",
+        lesson: "再受喜爱的界面，也抵不过持续维护成本。当安全成为产品最大的运营负担，迁移质量决定用户最终感受到的是信任还是被迫离开。",
+        timeline: [{year:"10 月 22 日",title:"停止新建账号",body:"老用户暂时不受影响，新版本增加导出和导入 Dia 的路径。"},{year:"11 月 23 日",title:"移动 AI 与同步结束",body:"Arc Search 仍可作为基础浏览器使用，但 iOS 和 Android 将停止登录与标签同步。"},{year:"12 月 22 日",title:"桌面浏览器停止",body:"Arc 在 macOS 和 Windows 上停止运行，账号停用，个人数据在 30 天内删除。"}],
+        findings: [{type:"fact",title:"继任产品由同一团队打造",body:"Dia 支持迁移密码、书签、扩展、历史记录、Spaces 和标签。"},{type:"fact",title:"关闭是分阶段进行的",body:"账号创建、移动功能、同步和桌面访问分别有不同截止日期。"},{type:"inference",title:"安全负担战胜了产品情怀",body:"公司判断，与其同时安全维护两个浏览器，不如把安全团队集中到 Dia。"}]
+      }
+    }),
+    item({
+      id: "chroma-cloud", name: "Chroma Cloud", founded: "2022", eventDate: "2026-10-23",
+      sector: "ai-infra", region: "global", outcome: "product-sunset", location: "旧金山，美国", causeTags: ["acquisition integration", "cloud economics", "portfolio focus"],
+      sources: [report("Chroma is joining Replit", "Chroma", "2026-10", "https://www.trychroma.com/blog/chroma-joins-replit", true), report("Chroma Cloud wind-down timeline", "Chroma", "2026-10", "https://www.trychroma.com/cloud-wind-down", true)],
+      en: {
+        sectorLabel: "AI data infrastructure", statusLabel: "Hosted cloud service winding down", summary: "Chroma is joining Replit and winding down its hosted Chroma Cloud over 60 days, while open-source ChromaDB continues under the new owner.",
+        cause: "The company is concentrating on enterprise context and Replit's agent platform. The hosted cloud is the surface being retired; the open-source database and core technology are explicitly continuing.",
+        lesson: "Open source can survive an acquisition while a paid control plane dies. Customers need to distinguish the code, hosted data, credentials, and operational guarantees they are actually buying.",
+        timeline: [{year:"October 23",title:"Replit combination announced",body:"Chroma signs an agreement to join Replit and says the teams will build an enterprise context layer."},{year:"November 22",title:"Writes disabled",body:"Chroma Cloud becomes read-only; applications can no longer create, update, or delete data."},{year:"December 22",title:"Reads disabled",body:"The hosted service stops serving read requests and customers must complete exports and migration."}],
+        findings: [{type:"fact",title:"Open-source ChromaDB continues",body:"The Apache-licensed project remains available and Replit commits to continuing contributions."},{type:"fact",title:"Cloud customers have fixed deadlines",body:"The 30-day and 60-day milestones separate write access from final read access."},{type:"inference",title:"Hosted economics lost to strategic integration",body:"The transaction preserves the technology and team while removing a standalone cloud obligation that no longer fits the new enterprise focus."}]
+      },
+      zh: {
+        sectorLabel: "AI 数据基础设施", statusLabel: "托管云服务进入关闭期", summary: "Chroma 加入 Replit，并在 60 天内逐步关闭托管的 Chroma Cloud；开源 ChromaDB 将由新东家继续维护。",
+        cause: "公司把重点转向企业级上下文和 Replit 的智能体平台。被终止的是托管云服务，开源数据库和底层技术则明确会继续。",
+        lesson: "开源项目可以在收购后存活，付费控制平面却可能消失。客户必须区分自己购买的到底是代码、托管数据、凭证，还是运营保障。",
+        timeline: [{year:"10 月 23 日",title:"宣布加入 Replit",body:"Chroma 签署加入 Replit 的协议，双方将共同建设企业上下文层。"},{year:"11 月 22 日",title:"停止写入",body:"Chroma Cloud 变为只读，应用不能再创建、更新或删除数据。"},{year:"12 月 22 日",title:"停止读取",body:"托管服务停止响应读取请求，客户必须完成导出和迁移。"}],
+        findings: [{type:"fact",title:"开源 ChromaDB 继续存在",body:"Apache 许可的项目仍然可用，Replit 承诺继续向项目贡献代码。"},{type:"fact",title:"云客户有明确的双阶段截止日",body:"写入和最终读取分别在 30 天与 60 天节点结束。"},{type:"inference",title:"托管经济性输给了战略整合",body:"交易保留了技术与团队，却去掉了不再适合新企业战略的独立云服务负担。"}]
+      }
+    }),
+    item({
       id: "partykit-hosted", name: "PartyKit Hosted Platform", founded: "2021", eventDate: "2026-10-09",
       sector: "productivity", region: "global", outcome: "product-sunset", location: "美国", causeTags: ["acquisition integration", "platform consolidation", "migration cost"],
       sources: [report("The hosted PartyKit platform is shutting down", "PartyKit Blog", "2026-10", "https://blog.partykit.io/posts/hosted-platform-shutdown", true)],
