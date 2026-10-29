@@ -1,6 +1,8 @@
-import { templates, resources, makeDocument, makeHeader, makeSkills, makeTemplateSample, normalizeState, defaults, escapeHtml, getUsername, getSources } from './core.js';
-import { exportMarkdown, makeCommand, makePrompt, makePacket, previewVariables, manualExport } from './handoff.js';
-import { markdownToHTML, sanitizeHTML } from './markdown.js';
+import { templates, resources, makeDocument, makeHeader, makeSkills, makeTemplateSample, normalizeState, defaults, escapeHtml, getUsername, getSources } from './core.js?v=5';
+import { exportMarkdown, makeCommand, makePrompt, makePacket, previewVariables, manualExport } from './handoff.js?v=5';
+import { markdownToHTML, sanitizeHTML } from './markdown.js?v=5';
+import { setupCollections } from './collections.js?v=5';
+import { setupCommunity } from './community.js?v=5';
 
 const $ = selector => document.querySelector(selector);
 let state=structuredClone(defaults);
@@ -12,8 +14,10 @@ const fieldKeys=['username','name','tagline','bio','working','skills','website']
 function persist(){try{localStorage.setItem('profile-studio-v3',JSON.stringify(state));$('#save-state').textContent='内容已保存在本机';}catch{$('#save-state').textContent='当前会话 · 未保存';}}
 function toast(message){$('#toast').textContent=message;$('#toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),2600);}
 function pin(key){if(!state.lockedFields.includes(key))state.lockedFields.push(key);}
+const renderCollections=setupCollections({getState:()=>state,changed:key=>{pin(key);renderPreview();if(state.freeMode)toast('资料已保存。自由编辑以源码为准，请在源码中同步新增内容。');},toast});
 function renderIdentity(){
   $('#auto-fill').checked=state.autoFill;
+  if(!state.autoFill)$('#basic-details').open=true;
   const count=state.lockedFields.length;
   $('#identity-note').textContent=state.autoFill?`发布时自动补全真实信息${count?`；保留 ${count} 项手动修改。`:'，可直接跳过填写。'}`:'使用你填写的信息；发布时会核对当前 GitHub 账号。';
   $('#mode-note').textContent=state.autoFill?`${state.profileLoaded?'已导入公开资料':'示例预览'} · Agent 补全未指定信息${count?`，保留 ${count} 项手动修改`:'；你可以直接选择模板'}。`:'手动填写模式 · 当前文字与项目将交给 Agent 原样保留。';
@@ -50,7 +54,7 @@ function populate(){
   for(const key of fieldKeys)$('#'+key).value=state[key];
   $('#header-style').value=state.header;$('#skill-style').value=state.skillStyle;$('#project-layout').value=state.projectLayout;
   $('#swatches').innerHTML=[['蓝','#3155d9'],['绿','#28745e'],['红','#aa473e'],['灰','#475569']].map(([n,c])=>`<button type="button" class="swatch ${state.color===c?'active':''}" data-color="${c}" style="background:${c}" aria-label="${n}色" aria-pressed="${state.color===c}"></button>`).join('');
-  $('#project-editors').innerHTML=state.projects.map((p,i)=>`<div class="project-editor">${[['name','项目名称'],['repo','仓库名称'],['description','项目介绍']].map(([key,label])=>`<label>${label}<input data-project="${i}" data-key="${key}" value="${escapeHtml(p[key])}" maxlength="180"></label>`).join('')}</div>`).join('');
+  renderCollections();
   renderModules();renderTemplates();renderIdentity();
 }
 function saveDraft(){if(state.freeMode)state.drafts[state.template]=state.customMarkdown;}
@@ -91,7 +95,7 @@ async function copyText(source,message){try{await navigator.clipboard.writeText(
 
 document.addEventListener('click',event=>{
   const t=event.target.closest('[data-template]');
-  if(t){saveDraft();const recipe=templates.find(r=>r.id===t.dataset.template);for(const key of ['header','skillStyle','alignment','projectLayout'])state[key]=recipe[key];state.aboutLayout=recipe.aboutLayout||'plain';state.template=recipe.id;state.freeMode=false;state.customMarkdown='';populate();setEditor(false);}
+  if(t){saveDraft();const recipe=templates.find(r=>r.id===t.dataset.template);for(const key of ['header','skillStyle','alignment','projectLayout'])state[key]=recipe[key];state.aboutLayout=recipe.aboutLayout||'plain';state.template=recipe.id;state.freeMode=false;state.customMarkdown='';state.templateSource='';populate();setEditor(false);}
   const color=event.target.closest('[data-color]');
   if(color){state.color=color.dataset.color;populate();renderPreview();if(state.freeMode)toast('自由编辑时，请在源码中调整已有 SVG 的颜色参数。');}
   const move=event.target.closest('[data-move]');
@@ -106,7 +110,6 @@ for(const key of fieldKeys)$('#'+key).addEventListener('input',event=>{state[key
 $('#auto-fill').onchange=event=>{state.autoFill=event.target.checked;renderPreview();};
 for(const [id,key] of [['header-style','header'],['skill-style','skillStyle'],['project-layout','projectLayout']])$('#'+id).onchange=event=>{state[key]=event.target.value;renderTemplates();renderPreview();if(state.freeMode)toast('当前是自由编辑，设置将在重新应用模板时生效。');};
 $('#modules').onchange=event=>{const m=state.modules.find(m=>m.id===event.target.dataset.module);if(m){m.enabled=event.target.checked;renderPreview();if(state.freeMode)toast('自由编辑时，可直接在源码中增删模块。');}};
-$('#project-editors').oninput=event=>{const i=event.target.dataset.project;if(i!==undefined){state.projects[Number(i)][event.target.dataset.key]=event.target.value;pin('projects');renderPreview();}};
 $('#free-source').oninput=event=>{state.customMarkdown=event.target.value;saveDraft();renderTemplates();renderPreview();};
 $('#free-source').onkeydown=event=>{if(event.key==='Tab'){event.preventDefault();event.target.setRangeText('  ',event.target.selectionStart,event.target.selectionEnd,'end');state.customMarkdown=event.target.value;saveDraft();renderPreview();}};
 $('#preview-tab').onclick=()=>setEditor(false);$('#markdown-tab').onclick=()=>setEditor(true);
@@ -137,6 +140,7 @@ $('#apply-profile-json').onclick=()=>{
   try{const raw=$('#profile-json').value.trim().replace(/^```(?:json)?\s*/,'').replace(/\s*```$/,'');if(raw.length>100000)throw new Error('资料超过 100 KB');const data=JSON.parse(raw);if(!data||typeof data!=='object'||Array.isArray(data))throw new Error('需要一个 JSON 对象');if(typeof data.username!=='string'||!/^[a-z0-9][a-z0-9-]{0,38}$/i.test(data.username))throw new Error('请包含有效的 GitHub username');for(const key of fieldKeys){if(!state.lockedFields.includes(key)&&typeof data[key]==='string')state[key]=data[key].slice(0,800);}if(!state.lockedFields.includes('projects')&&Array.isArray(data.projects))state.projects=normalizeState({projects:data.projects}).projects;state.profileLoaded=true;populate();renderPreview();$('#profile-import-dialog').close();toast('已填入公开资料；你的手动修改保持不变');}catch(e){error.textContent=`无法导入：${e.message}`;error.hidden=false;}
 };
 for(const id of ['library','help','copy','agent','profile-import']){$('#close-'+id).onclick=()=>$('#'+id+'-dialog').close();$('#'+id+'-dialog').addEventListener('click',event=>{if(event.target!==event.currentTarget)return;const r=event.currentTarget.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)event.currentTarget.close();});}
-$('#reset').onclick=()=>{state=structuredClone(defaults);populate();setEditor(false);persist();toast('已恢复示例内容和自动填写');};
+$('#reset').onclick=()=>{const library=state.savedTemplates;state=structuredClone(defaults);state.savedTemplates=library;renderCollections.resetUndo();populate();setEditor(false);persist();toast('已恢复示例资料；我的模板保持不变');};
 window.addEventListener('pagehide',persist);
+setupCommunity({getState:()=>state,apply:(source,origin)=>{saveDraft();state.customMarkdown=source;state.freeMode=true;state.templateSource=origin;setEditor(true);persist();},persist,toast});
 populate();setEditor(state.freeMode);

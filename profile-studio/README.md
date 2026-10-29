@@ -10,6 +10,10 @@ Open http://127.0.0.1:8787/. A static server is required for native ES modules. 
 
 ## Features
 
+- Public-facing fictional sample identity, with migration of untouched legacy demo fields while preserving explicit edits and imported real profiles.
+- Repeatable projects, work experience, education, custom sections, and social links (30 per collection), ordering, removal, and undo of the last removed entry. Empty optional sections are omitted.
+- LinkedIn, X, Google Scholar, Hugging Face, YouTube, website and custom-link presets; account-to-URL shortcuts where supported. Only safe HTTP(S) links are exported.
+- Community README import via public GitHub text URL, local UTF-8 file, or paste. Consent reminder, source metadata, sanitized free editing, and a browser-local ten-template library with remove/undo. No automatic public submission or Markdown-to-form conversion.
 - Persistent first-use banner, quick-start help, and a shareable [Chinese beginner guide](./guide.html) covering both publishing paths, free editing, account safety, and troubleshooting.
 - Fourteen original recipes, including simple, centered, wave, typing, badges, portfolio cards, compact, terminal, notebook, folded sections, banner showcase, live card, developer log, and quiet portfolio. Search templates by name or style.
 - Two explicit completion paths: copy/download a fully resolved README for manual installation, or hand an approved task to an Agent.

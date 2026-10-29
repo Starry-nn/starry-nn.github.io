@@ -3,12 +3,12 @@ import assert from 'node:assert/strict';
 import { defaults, templates, makeDocument, normalizeState, makeSkills, getSources } from '../core.js';
 
 test('every layout exports the preview body and its actual external URLs', () => {
-  const outputs = templates.map(t => makeDocument({...structuredClone(defaults), header:t.header, skillStyle:t.skillStyle, alignment:t.alignment, projectLayout:t.projectLayout, aboutLayout:t.aboutLayout||'plain', template:t.id}));
+  const outputs = templates.map(t => makeDocument({...structuredClone(defaults),username:'test-builder',projects:[{name:'My project',repo:'my-project',description:'Real user project'}], header:t.header, skillStyle:t.skillStyle, alignment:t.alignment, projectLayout:t.projectLayout, aboutLayout:t.aboutLayout||'plain', template:t.id}));
   assert.equal(new Set(outputs.map(o => o.html)).size, templates.length);
   outputs.forEach(o => {
     assert.ok(o.markdown.startsWith(o.html));
     assert.doesNotMatch(o.markdown, /<script|\sstyle="|<style/);
-    assert.match(o.markdown, /https:\/\/github.com\/Starry-nn\/startup-autopsy/);
+    assert.match(o.markdown, /https:\/\/github.com\/test-builder\/my-project/);
   });
   assert.match(outputs[2].markdown, /capsule-render.vercel.app\/api/);
   assert.match(outputs[3].markdown, /readme-typing-svg.demolab.com/);
@@ -46,7 +46,7 @@ test('migration repairs duplicate/unknown modules and invalid modes', () => {
   assert.equal(s.template,'simple');
   assert.equal(s.name,'Saved name');
   assert.equal(s.header,'plain');
-  assert.equal(s.modules.length,4);
+  assert.equal(s.modules.length,defaults.modules.length);
   assert.equal(s.modules[0].enabled,false);
   assert.equal(s.projects.length,1);
 });
