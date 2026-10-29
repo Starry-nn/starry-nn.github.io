@@ -10,6 +10,7 @@ Open http://127.0.0.1:8787/. A static server is required for native ES modules. 
 
 ## Features
 
+- Persistent first-use banner, quick-start help, and a shareable [Chinese beginner guide](./guide.html) covering both publishing paths, free editing, account safety, and troubleshooting.
 - Fourteen original recipes, including simple, centered, wave, typing, badges, portfolio cards, compact, terminal, notebook, folded sections, banner showcase, live card, developer log, and quiet portfolio. Search templates by name or style.
 - Two explicit completion paths: copy/download a fully resolved README for manual installation, or hand an approved task to an Agent.
 - Share a base template and accent color through a link without embedding personal data. Custom source remains local and can be shared as a `.md` file.
