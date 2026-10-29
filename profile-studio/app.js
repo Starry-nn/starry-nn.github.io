@@ -1,17 +1,21 @@
-import { templates, resources, makeDocument, makeHeader, makeSkills, makeTemplateSample, normalizeState, defaults, escapeHtml, getUsername, getSources } from './core.js?v=5';
-import { exportMarkdown, makeCommand, makePrompt, makePacket, previewVariables, manualExport } from './handoff.js?v=5';
-import { markdownToHTML, sanitizeHTML } from './markdown.js?v=5';
-import { setupCollections } from './collections.js?v=5';
-import { setupCommunity } from './community.js?v=5';
+import { templates, resources, makeDocument, makeHeader, makeSkills, makeTemplateSample, normalizeState, defaults, escapeHtml, getUsername, getSources } from './core.js?v=11';
+import { exportMarkdown, makeCommand, makePrompt, makePacket, previewVariables, manualExport } from './handoff.js?v=11';
+import { markdownToHTML, sanitizeHTML } from './markdown.js?v=11';
+import { setupCollections } from './collections.js?v=11';
+import { setupCommunity } from './community.js?v=11';
+import { setupGithub } from './github-import.js?v=11';
+import { templateState, githubState } from './import-data.js?v=11';
+import { setupLanguage, getLanguage, english } from './i18n.js?v=11';
 
 const $ = selector => document.querySelector(selector);
 let state=structuredClone(defaults);
 try { const saved=JSON.parse(localStorage.getItem('profile-studio-v3')||localStorage.getItem('profile-studio-v2')||localStorage.getItem('profile-studio-v1')||'null'); if(saved)state=normalizeState(saved); } catch {}
 let dark=false, saveTimer, toastTimer, imageEpoch=0;
+state.uiLanguage=getLanguage();
 const shared=new URLSearchParams(location.hash.slice(1));
 if(templates.some(t=>t.id===shared.get('layout'))){const t=templates.find(t=>t.id===shared.get('layout'));Object.assign(state,{template:t.id,header:t.header,skillStyle:t.skillStyle,alignment:t.alignment,projectLayout:t.projectLayout,aboutLayout:t.aboutLayout||'plain',freeMode:false});if(/^#[a-f\d]{6}$/i.test(shared.get('color')||''))state.color=shared.get('color');}
 const fieldKeys=['username','name','tagline','bio','working','skills','website'];
-function persist(){try{localStorage.setItem('profile-studio-v3',JSON.stringify(state));$('#save-state').textContent='内容已保存在本机';}catch{$('#save-state').textContent='当前会话 · 未保存';}}
+function persist(){try{localStorage.setItem('profile-studio-v3',JSON.stringify(state));$('#save-state').textContent='内容已保存在本机';$('#storage-warning').hidden=true;}catch{$('#save-state').textContent='当前会话 · 未保存';$('#storage-warning').hidden=false;}}
 function toast(message){$('#toast').textContent=message;$('#toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),2600);}
 function pin(key){if(!state.lockedFields.includes(key))state.lockedFields.push(key);}
 const renderCollections=setupCollections({getState:()=>state,changed:key=>{pin(key);renderPreview();if(state.freeMode)toast('资料已保存。自由编辑以源码为准，请在源码中同步新增内容。');},toast});
@@ -26,7 +30,7 @@ function renderTemplates(){
   const active=t=>!state.freeMode&&state.template===t.id&&['header','skillStyle','alignment','projectLayout'].every(k=>state[k]===t[k])&&state.aboutLayout===(t.aboutLayout||'plain');
   $('#template-status').textContent=state.freeMode?'自由编辑中':templates.some(active)?`${templates.length} 套排版`:'已自定义';
   const query=$('#template-search').value.trim().toLowerCase();
-  const visible=templates.filter(t=>`${t.name} ${t.tag} ${t.id}`.toLowerCase().includes(query));
+  const visible=templates.filter(t=>`${t.name} ${english(t.name)} ${t.tag} ${t.id}`.toLowerCase().includes(query));
   $('#templates').classList.toggle('searching',!!query);
   $('#templates').innerHTML=visible.map(t=>`<button class="template ${active(t)?'active':''} ${state.drafts[t.id]?'free-draft':''}" data-template="${t.id}" aria-pressed="${active(t)}" aria-label="使用${t.name}模板"><div class="thumb" aria-hidden="true"><div class="thumb-content">${makeTemplateSample(t.id)}</div></div><div class="thumb-caption">${t.name}<span>${active(t)?'✓':t.tag}</span></div></button>`).join('')||'<p>没有匹配的排版，试试「作品」或「动态」。</p>';
 }
@@ -74,7 +78,7 @@ function insertSource(fragment){
 function resourceVisual(r){if(r.id==='capsule'||r.id==='typing')return makeHeader({...state,header:r.id},true);if(r.id==='icons'||r.id==='badges')return makeSkills({...state,skillStyle:r.id});return `<span class="resource-symbol">${r.id==='awesome'?'&lt;profile /&gt;':'README.md →'}</span>`;}
 function renderResources(){
   const query=$('#resource-search').value.trim().toLowerCase();
-  const matches=resources.filter(r=>`${r.name} ${r.description} ${r.tags}`.toLowerCase().includes(query));
+  const matches=resources.filter(r=>`${r.name} ${r.description} ${english(r.description)} ${r.tags} ${r.apply?'components':'templates gallery generator'}`.toLowerCase().includes(query));
   $('#resource-list').innerHTML=matches.map(r=>`<article class="resource"><div class="resource-visual">${resourceVisual(r)}</div><div class="resource-body"><div class="resource-title"><strong>${r.name}</strong><span class="license">${r.license}</span></div><p>${r.description}</p><p class="community-meta">☆ ${r.stars.toLocaleString('en-US')} GitHub Stars · ${r.checkedAt} 核对</p><div class="resource-actions"><a href="${r.url}" target="_blank" rel="noopener noreferrer">${r.owner} ↗</a>${r.apply?`<button data-resource="${r.id}">${state.freeMode?'插入编辑区':'添加到主页'}</button>`:`<a href="${r.visit}" target="_blank" rel="noopener noreferrer">去原站使用 ↗</a>`}</div></div></article>`).join('')||'<p class="empty-resources">没有匹配资源，试试「图标」或「模板」。</p>';
 }
 function openLibrary(){renderResources();$('#library-dialog').showModal();}
@@ -124,7 +128,7 @@ $('#close-manual').onclick=()=>$('#manual-dialog').close();
 $('#manual-copy').onclick=()=>{const result=manualExport(state);if(!result.errors.length)copyText(result.readme,'已复制完整 README，粘贴到同名仓库即可');};
 $('#manual-download').onclick=()=>{const result=manualExport(state);if(!result.errors.length)downloadText(result.readme,'README.md','text/markdown;charset=utf-8');};
 $('#template-search').oninput=renderTemplates;
-$('#share-layout').onclick=()=>{if(state.freeMode){toast('自由编辑内容请通过下载 .md 分享，避免把个人资料放进链接。');return;}const params=new URLSearchParams({layout:state.template,color:state.color});copyText(`${location.origin}${location.pathname}#${params}`,'已复制基础模板与配色链接，不含个人资料或自定义模块设置');};
+$('#share-layout').onclick=()=>{if(state.freeMode){toast('自由编辑内容请通过下载 .md 分享，避免把个人资料放进链接。');return;}const params=new URLSearchParams({layout:state.template,color:state.color});copyText(`${location.origin}${location.pathname}?lang=${getLanguage()}#${params}`,'已复制基础模板与配色链接，不含个人资料或自定义模块设置');};
 $('#agent-choice').onchange=()=>updateHandoff(false);$('#shell-choice').onchange=()=>updateHandoff(false);
 $('#confirm-agent').onclick=()=>{updateHandoff(true);copyText($('#agent-command').value,'已确认并复制，粘贴到终端或 Agent 对话即可');};
 $('#copy-agent-prompt').onclick=()=>{updateHandoff(false);copyText(makePrompt(state,false),'已复制草稿指令；该指令只生成草稿，不会发布');};
@@ -134,13 +138,21 @@ $('#download').onclick=()=>{downloadText(exportMarkdown(state),'README.md','text
 $('#import-markdown').onclick=()=>$('#markdown-file').click();
 $('#markdown-file').onchange=async event=>{const file=event.target.files[0];if(!file)return;if(file.size>100000){toast('请导入小于 100 KB 的 README 文件');event.target.value='';return;}try{const source=await file.text();if(source.includes('\u0000'))throw new Error('invalid');setEditor(true);state.customMarkdown=source;$('#free-source').value=source;saveDraft();renderPreview();toast('已导入本地 README，可继续编辑');}catch{toast('文件无法读取，请选择 UTF-8 编码的 .md 文件');}event.target.value='';};
 $('#open-profile-import').onclick=()=>$('#profile-import-dialog').showModal();
-$('#copy-fill-prompt').onclick=()=>copyText('请只读查询你已授权的当前 GitHub 账号（gh auth status，gh api user 或等价 connector）。读取公开姓名、简介、网站、最多两个公开 pinned repo（没有则近期非 fork 项目）与其公开语言。返回一个 JSON 对象：{"username":"实际 login","name":"公开姓名或 login","bio":"公开简介或空字符串","tagline":"公开简介或空字符串","working":"","website":"公开网站或空字符串","skills":"仓库语言逗号分隔","projects":[{"name":"仓库名","repo":"仓库名","description":"公开描述"}]}。只提供可验证信息，不输出凭据，不创建仓库，不写任何远端内容。JSON 可另存为 profile-studio.profile.json 供我导入。','已复制只读资料获取指令');
+$('#copy-fill-prompt').onclick=()=>copyText(getLanguage()==='en'?"Read only: identify your currently authorized GitHub account using gh auth status and gh api user, or an authorized connector. Return one JSON object with username, name, bio, tagline, working (empty if unsupported), website, skills (public repository languages, comma-separated), and projects (up to two verified public repositories, each with name, repo as a full GitHub URL, and description). Use only public evidence. Do not expose credentials, invent employment or education, create repositories, commit, or publish. Return JSON only so I can import it into Profile Studio.":'请只读查询你已授权的当前 GitHub 账号（gh auth status，gh api user 或等价 connector）。读取公开姓名、简介、网站、最多两个公开 pinned repo（没有则近期非 fork 项目）与其公开语言。返回一个 JSON 对象：{"username":"实际 login","name":"公开姓名或 login","bio":"公开简介或空字符串","tagline":"公开简介或空字符串","working":"","website":"公开网站或空字符串","skills":"仓库语言逗号分隔","projects":[{"name":"仓库名","repo":"仓库名","description":"公开描述"}]}。只提供可验证信息，不输出凭据，不创建仓库，不写任何远端内容。JSON 可另存为 profile-studio.profile.json 供我导入。','已复制只读资料获取指令');
 $('#apply-profile-json').onclick=()=>{
   const error=$('#profile-import-error');error.hidden=true;
   try{const raw=$('#profile-json').value.trim().replace(/^```(?:json)?\s*/,'').replace(/\s*```$/,'');if(raw.length>100000)throw new Error('资料超过 100 KB');const data=JSON.parse(raw);if(!data||typeof data!=='object'||Array.isArray(data))throw new Error('需要一个 JSON 对象');if(typeof data.username!=='string'||!/^[a-z0-9][a-z0-9-]{0,38}$/i.test(data.username))throw new Error('请包含有效的 GitHub username');for(const key of fieldKeys){if(!state.lockedFields.includes(key)&&typeof data[key]==='string')state[key]=data[key].slice(0,800);}if(!state.lockedFields.includes('projects')&&Array.isArray(data.projects))state.projects=normalizeState({projects:data.projects}).projects;state.profileLoaded=true;populate();renderPreview();$('#profile-import-dialog').close();toast('已填入公开资料；你的手动修改保持不变');}catch(e){error.textContent=`无法导入：${e.message}`;error.hidden=false;}
 };
 for(const id of ['library','help','copy','agent','profile-import']){$('#close-'+id).onclick=()=>$('#'+id+'-dialog').close();$('#'+id+'-dialog').addEventListener('click',event=>{if(event.target!==event.currentTarget)return;const r=event.currentTarget.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)event.currentTarget.close();});}
-$('#reset').onclick=()=>{const library=state.savedTemplates;state=structuredClone(defaults);state.savedTemplates=library;renderCollections.resetUndo();populate();setEditor(false);persist();toast('已恢复示例资料；我的模板保持不变');};
+$('#reset').onclick=()=>{const library=state.savedTemplates;state=structuredClone(defaults);state.uiLanguage=getLanguage();state.savedTemplates=library;renderCollections.resetUndo();populate();setEditor(false);persist();toast('已恢复示例资料；我的模板保持不变');};
 window.addEventListener('pagehide',persist);
-setupCommunity({getState:()=>state,apply:(source,origin)=>{saveDraft();state.customMarkdown=source;state.freeMode=true;state.templateSource=origin;setEditor(true);persist();},persist,toast});
+setupCommunity({getState:()=>state,apply:(source,origin,options={})=>{
+  saveDraft();
+  if(options.form){state=templateState(state,options.parsed,{source,origin,identity:options.identity});state.uiLanguage=getLanguage();populate();setEditor(false);
+  }else{state.customMarkdown=source;state.freeMode=true;state.templateSource=origin;setEditor(true);}persist();
+},persist,toast});
+setupGithub({getState:()=>state,apply:({profile,projects,languages,includeProfile})=>{
+  state=githubState(state,{profile,projects,languages,includeProfile});state.uiLanguage=getLanguage();populate();renderPreview();persist();if(state.freeMode)toast('资料已导入；自由编辑以源码为准，请同步修改或重新应用模板。');
+},toast});
 populate();setEditor(state.freeMode);
+setupLanguage(lang=>{state.uiLanguage=lang;if($('#agent-dialog').open)updateHandoff(false);});

@@ -66,6 +66,8 @@ export function normalizeState(saved) {
   if (Array.isArray(saved.projects)) result.projects = saved.projects.slice(0,30).filter(p => p && typeof p.name === 'string').map(p => ({name:p.name.slice(0,300),repo:String(p.repo||'').slice(0,300),description:String(p.description||'').slice(0,3000)}));
   for(const [key,fields] of Object.entries({experiences:['title','organization','period','description'],educations:['title','organization','period','description'],sections:['title','description'],links:['platform','label','value']}))if(Array.isArray(saved[key]))result[key]=saved[key].filter(x=>x&&typeof x==='object').slice(0,30).map(x=>Object.fromEntries(fields.map(f=>[f,String(x[f]||'').slice(0,f==='description'?3000:300)])));
   result.templateSource=typeof saved.templateSource==='string'?saved.templateSource.slice(0,1000):'';
+  result.lockedFields=[...new Set(result.lockedFields)];
+  if(saved.importBackup&&typeof saved.importBackup.source==='string')result.importBackup={source:saved.importBackup.source.slice(0,100000),origin:String(saved.importBackup.origin||'').slice(0,1000)};
   result.savedTemplates=Array.isArray(saved.savedTemplates)?saved.savedTemplates.filter(t=>t&&typeof t.markdown==='string').slice(0,10).map(t=>({name:String(t.name||'Imported README').slice(0,80),source:String(t.source||'').slice(0,1000),markdown:t.markdown.slice(0,100000)})):[];
   // Retire untouched legacy demo data, without changing explicitly edited/imported fields.
   if(!result.profileLoaded){const old={username:'Starry-nn',name:'Nan Yao',website:'https://starry-nn.github.io',tagline:'Curious by default. Building with intention.',bio:'I work at the intersection of AI, venture, and product.',working:'Building useful tools and playful experiences.'};for(const [k,v] of Object.entries(old))if(result[k]===v&&!result.lockedFields.includes(k))result[k]=defaults[k];if(!result.lockedFields.includes('projects')&&result.projects.some(p=>['startup-autopsy','prompt-task-router'].includes(p.repo)))result.projects=structuredClone(defaults.projects);}
@@ -76,13 +78,13 @@ export const platforms=[{id:'linkedin',name:'LinkedIn',base:'https://www.linkedi
 export function safeURL(value){try{const u=new URL(value);return ['https:','http:'].includes(u.protocol)&&!u.username&&!u.password?u.href:'';}catch{return '';}}
 export function socialURL(link){const value=String(link.value||'').trim();if(!value)return '';if(/^https?:\/\//i.test(value))return safeURL(value);const p=platforms.find(p=>p.id===link.platform);if(!p?.base||!/^[\w.-]+$/.test(value.replace(/^@/,'')))return '';return p.base+encodeURIComponent(value.replace(/^@/,''));}
 export const getUsername = state => state.usePlaceholders&&state.username==='{{GITHUB_LOGIN}}'?'{{GITHUB_LOGIN}}':state.username.replace(/[^a-zA-Z0-9-]/g, '').slice(0,39) || 'your-username';
-export function safeWebsite(state) { if(state.usePlaceholders&&state.website==='{{WEBSITE_URL}}')return state.website;try { const u=new URL(state.website); return ['https:','http:'].includes(u.protocol)?u.href:''; } catch { return ''; } }
+export function safeWebsite(state) { if(state.usePlaceholders&&state.website==='{{WEBSITE_URL}}')return state.website;return safeURL(state.website); }
 const text = value => escapeHtml(value).replace(/\r?\n/g, '<br>');
 const color = state => /^#[0-9a-f]{6}$/i.test(state.color) ? state.color.slice(1) : '3155d9';
 const image = (url, alt, width) => `<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}"${width ? ` width="${width}"` : ''}>`;
 const remoteURL = (base, values) => `${base}?${new URLSearchParams(values).toString()}`;
 export function makeHeader(state, compact=false) {
-  if (state.header === 'capsule') return `<p align="center">${image(remoteURL('https://capsule-render.vercel.app/api',{type:'waving',color:color(state),height:'190',section:'header',text:state.name||'Hello there',fontSize:'42',fontColor:'ffffff',fontAlignY:'35',desc:state.tagline,descSize:'14',descAlignY:'57'}), 'Capsule Render 横幅', compact ? '300' : '100%')}</p>`;
+  if (state.header === 'capsule') return `<p align="center">${image(remoteURL('https://capsule-render.vercel.app/api',{type:'waving',color:color(state),height:'190',section:'header',text:state.name||'Hello there',fontSize:'42',fontColor:'ffffff',fontAlignY:'35',desc:state.tagline,descSize:'14',descAlignY:'57'}), 'Capsule Render banner', compact ? '300' : '100%')}</p>`;
   const heading = `<h1 align="${state.alignment}">Hi, I’m ${text(state.name||'Your name')}</h1>`;
   if(state.header==='compact')return `<h3>${text(state.name||'Your name')} · @${text(getUsername(state))}</h3>\n\n<p>${text(state.tagline)}</p>`;
   if(state.header==='terminal')return `<pre><code>${escapeHtml(JSON.stringify({name:state.name,github:getUsername(state),about:state.tagline},null,2))}</code></pre>`;
@@ -100,7 +102,7 @@ export function makeSkills(state) {
   if (state.skillStyle === 'icons') {
     const ids = [...new Set(skills.map(s => knownSkills[s.toLowerCase()]?.[0]).filter(Boolean))];
     const other = skills.filter(s => !knownSkills[s.toLowerCase()]);
-    return (ids.length ? `<p align="${state.alignment}"><a href="https://skillicons.dev">${image(`https://skillicons.dev/icons?i=${ids.join(',')}&theme=light&perline=8`, 'Skill Icons 技能图标')}</a></p>` : '') + (other.length?`\n\n<p align="${state.alignment}">${other.map(s=>`<code>${text(s)}</code>`).join(' · ')}</p>`:'');
+    return (ids.length ? `<p align="${state.alignment}"><a href="https://skillicons.dev">${image(`https://skillicons.dev/icons?i=${ids.join(',')}&theme=light&perline=8`, 'Skill Icons skill icons')}</a></p>` : '') + (other.length?`\n\n<p align="${state.alignment}">${other.map(s=>`<code>${text(s)}</code>`).join(' · ')}</p>`:'');
   }
   if (state.skillStyle === 'badges') return `<p align="${state.alignment}">${skills.map(s=>{
     const known=knownSkills[s.toLowerCase()];

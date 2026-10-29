@@ -1,4 +1,4 @@
-import {escapeHtml as esc,platforms,socialURL} from './core.js?v=5';
+import {escapeHtml as esc,platforms,socialURL} from './core.js?v=11';
 
 const schemas={
   projects:{name:'项目',fields:[['name','项目名称'],['repo','仓库名或项目完整链接（选填）'],['description','项目介绍（选填）','textarea']]},

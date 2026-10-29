@@ -6,11 +6,12 @@ const guide=readFileSync(new URL('guide.html',root),'utf8');
 const editor=readFileSync(new URL('index.html',root),'utf8');
 
 test('tutorial has working internal anchors and local assets',()=>{
-  const ids=new Set([...guide.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]));
-  for(const [,hash] of guide.matchAll(/href="#([^"]+)"/g))assert.ok(ids.has(hash),`missing ${hash}`);
-  for(const [,path] of guide.matchAll(/(?:href|src)="(\.\/[^"]+)"/g))assert.ok(existsSync(new URL(path,root)),`missing ${path}`);
-  assert.ok(ids.has('agent')&&ids.has('manual')&&ids.has('free-edit')&&ids.has('questions'));
-  assert.doesNotMatch(guide,/<script\b/i);
+  for(const name of ['guide.html','guide.en.html']){const page=readFileSync(new URL(name,root),'utf8');const ids=new Set([...page.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]));
+    for(const [,hash] of page.matchAll(/href="#([^"]+)"/g))assert.ok(ids.has(hash),`missing ${hash} in ${name}`);
+    for(const [,path] of page.matchAll(/(?:href|src)="(\.\/[^"]+)"/g))assert.ok(existsSync(new URL(path,root)),`missing ${path}`);
+    assert.ok(ids.has('agent')&&ids.has('manual')&&ids.has('free-edit')&&ids.has('questions')&&ids.has('github')&&ids.has('public-use'));
+    assert.doesNotMatch(page,/<script\b/i);
+  }
 });
 test('editor offers a visible entry and quick help without breaking handoff target',()=>{
   assert.match(editor,/class="getting-started" aria-label="第一次使用"/);

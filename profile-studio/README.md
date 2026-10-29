@@ -13,7 +13,9 @@ Open http://127.0.0.1:8787/. A static server is required for native ES modules. 
 - Public-facing fictional sample identity, with migration of untouched legacy demo fields while preserving explicit edits and imported real profiles.
 - Repeatable projects, work experience, education, custom sections, and social links (30 per collection), ordering, removal, and undo of the last removed entry. Empty optional sections are omitted.
 - LinkedIn, X, Google Scholar, Hugging Face, YouTube, website and custom-link presets; account-to-URL shortcuts where supported. Only safe HTTP(S) links are exported.
-- Community README import via public GitHub text URL, local UTF-8 file, or paste. Consent reminder, source metadata, sanitized free editing, and a browser-local ten-template library with remove/undo. No automatic public submission or Markdown-to-form conversion.
+- Community README import via public GitHub text URL, local UTF-8 file, or paste. Conservative local Markdown/HTML-to-form extraction with review, opt-in identity import, and original-source backup; a free-editing fallback preserves the original layout. Browser-local ten-template library, attribution reminders, and remove/undo. No automatic public submission.
+- Public GitHub profile and repository picker: search loaded repositories, paginate, select, and append projects with verified full repository URLs. Public API only; no token or private repository access. Manual URLs remain supported.
+- Chinese/English interface, help and Agent instructions; language persists and can be shared with `?lang=en`. Personal content and imported source are never translated automatically.
 - Persistent first-use banner, quick-start help, and a shareable [Chinese beginner guide](./guide.html) covering both publishing paths, free editing, account safety, and troubleshooting.
 - Fourteen original recipes, including simple, centered, wave, typing, badges, portfolio cards, compact, terminal, notebook, folded sections, banner showcase, live card, developer log, and quiet portfolio. Search templates by name or style.
 - Two explicit completion paths: copy/download a fully resolved README for manual installation, or hand an approved task to an Agent.
@@ -60,4 +62,8 @@ GitHub controls final typography, spacing, sanitization, and image caching. Prev
 
 `node --test profile-studio/tests/*.mjs` (Node 22+; from the parent workspace).
 
-No login, repository modification, or automatic publication occurs.
+The release has 35 automated checks covering all built-in exports, local assets and control bindings, repeatable collections, conservative extraction, atomic import limits, preservation of original source and manual fields, project URL safety, bilingual strings, and shell-quoted Agent handoffs.
+
+Browser QA also exercises real public GitHub reads, selection across search and pagination, an account-not-found response, both template editing paths, source sanitization, manual exports, language persistence and responsive widths. GitHub API availability and rate limits remain external constraints; manual project URLs are always supported. Complex README layouts may still require source editing.
+
+QA does not run the generated Agent command or modify a visitor's profile repository. Publishing the website is a separate, explicitly authorized workflow; the browser application itself performs only public reads and generates handoff instructions.
