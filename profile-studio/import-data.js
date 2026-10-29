@@ -1,4 +1,4 @@
-import {defaults,normalizeState,safeURL,splitSkills} from './core.js?v=11';
+import {defaults,normalizeState,safeURL,splitSkills} from './core.js?v=13';
 
 export function mergeRows(existing,incoming,key){
   const rows=[...existing],seen=new Set(rows.map(key));
@@ -14,7 +14,7 @@ export function projectKey(project,owner){
 const withoutExample=state=>JSON.stringify(state.projects)===JSON.stringify(defaults.projects)?[]:state.projects;
 export function templateState(current,parsed,{source,origin='',identity=false}){
   const next=structuredClone(current);let applied=0;
-  for(const key of ['projects','experiences','educations','sections','links']){
+  for(const key of ['projects','contributions','writings','sections','links']){
     const entries=parsed[key]||[];applied+=entries.length;
     next[key]=mergeRows(key==='projects'?withoutExample(next):next[key],entries,row=>key==='projects'?projectKey(row,next.username):key==='links'?row.value:JSON.stringify(row));
     if(entries.length)next.lockedFields.push(key);

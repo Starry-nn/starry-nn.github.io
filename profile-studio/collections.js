@@ -1,9 +1,9 @@
-import {escapeHtml as esc,platforms,socialURL} from './core.js?v=11';
+import {escapeHtml as esc,platforms,socialURL} from './core.js?v=13';
 
 const schemas={
-  projects:{name:'项目',fields:[['name','项目名称'],['repo','仓库名或项目完整链接（选填）'],['description','项目介绍（选填）','textarea']]},
-  experiences:{name:'工作经历',fields:[['title','职位 / 角色'],['organization','公司 / 团队（选填）'],['period','时间（选填）'],['description','做了什么、有什么成果（选填）','textarea']]},
-  educations:{name:'教育经历',fields:[['organization','学校 / 机构'],['title','学位 / 专业（选填）'],['period','时间（选填）'],['description','补充说明（选填）','textarea']]},
+  projects:{name:'项目',fields:[['name','项目名称'],['repo','仓库名或项目完整链接（选填）'],['source','源码链接（选填）'],['description','项目介绍（选填）','textarea']]},
+  contributions:{name:'开源贡献',fields:[['name','贡献名称'],['repo','仓库、Pull Request 或 Issue 链接'],['description','你的贡献（选填）','textarea']]},
+  writings:{name:'文章与资源',fields:[['name','文章或资源名称'],['repo','文章、教程或资源完整链接'],['description','一句话介绍（选填）','textarea']]},
   sections:{name:'自定义栏目',fields:[['title','栏目标题，如论文、奖项、开源贡献'],['description','内容','textarea']]},
   links:{name:'链接',fields:[]}
 };

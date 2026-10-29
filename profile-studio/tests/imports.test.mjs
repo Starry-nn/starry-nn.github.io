@@ -41,7 +41,7 @@ test('Markdown extraction recognizes links, ordered content and identity candida
 });
 test('HTML project cards preserve anchor URLs inside headings',()=>{
   const s={...structuredClone(defaults),username:'example',projects:[{name:'One',repo:'one',description:'First description'},{name:'Two',repo:'https://example.com/two',description:'Second description'}],projectLayout:'cards',experiences:[{title:'Engineer',organization:'Team',period:'2025',description:'Built a thing'}]};
-  const p=parseTemplate(makeDocument(s).html);assert.equal(p.projects.length,2);assert.equal(p.projects[0].repo,'https://github.com/example/one');assert.match(p.projects[0].description,/First description/);assert.equal(p.projects[1].repo,'https://example.com/two');assert.ok(p.experiences.some(e=>e.title.includes('Engineer')));
+  const p=parseTemplate(makeDocument(s).html);assert.equal(p.projects.length,2);assert.equal(p.projects[0].repo,'https://github.com/example/one');assert.match(p.projects[0].description,/First description/);assert.equal(p.projects[1].repo,'https://example.com/two');assert.equal(p.experiences.length,0);
 });
 test('HTML tables, skill icons and plain unlinked projects are handled conservatively',()=>{
   const p=parseTemplate('<h2>Projects</h2><table><tr><td><a href="https://github.com/u/r">Repo</a></td><td>A &amp; B</td></tr></table><h2>Skills</h2><img src="https://skillicons.dev/icons?i=ts,py,react&amp;theme=light" alt="Skills">');assert.equal(p.projects[0].description,'A & B');assert.equal(p.skills,'TypeScript, Python, React');

@@ -1,11 +1,12 @@
-import { templates, resources, makeDocument, makeHeader, makeSkills, makeTemplateSample, normalizeState, defaults, escapeHtml, getUsername, getSources } from './core.js?v=11';
-import { exportMarkdown, makeCommand, makePrompt, makePacket, previewVariables, manualExport } from './handoff.js?v=11';
-import { markdownToHTML, sanitizeHTML } from './markdown.js?v=11';
-import { setupCollections } from './collections.js?v=11';
-import { setupCommunity } from './community.js?v=11';
-import { setupGithub } from './github-import.js?v=11';
-import { templateState, githubState } from './import-data.js?v=11';
-import { setupLanguage, getLanguage, english } from './i18n.js?v=11';
+import { templates, resources, makeDocument, makeHeader, makeSkills, makeTemplateSample, normalizeState, defaults, escapeHtml, getUsername, getSources } from './core.js?v=13';
+import { exportMarkdown, makeCommand, makePrompt, makePacket, previewVariables, manualExport } from './handoff.js?v=13';
+import { markdownToHTML, sanitizeHTML } from './markdown.js?v=13';
+import { setupCollections } from './collections.js?v=13';
+import { setupCommunity } from './community.js?v=13';
+import { setupGithub } from './github-projects.js?v=13';
+import { setupSkills } from './skills.js?v=13';
+import { templateState, githubState } from './import-data.js?v=13';
+import { setupLanguage, getLanguage, english } from './i18n.js?v=13';
 
 const $ = selector => document.querySelector(selector);
 let state=structuredClone(defaults);
@@ -18,6 +19,7 @@ const fieldKeys=['username','name','tagline','bio','working','skills','website']
 function persist(){try{localStorage.setItem('profile-studio-v3',JSON.stringify(state));$('#save-state').textContent='内容已保存在本机';$('#storage-warning').hidden=true;}catch{$('#save-state').textContent='当前会话 · 未保存';$('#storage-warning').hidden=false;}}
 function toast(message){$('#toast').textContent=message;$('#toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),2600);}
 function pin(key){if(!state.lockedFields.includes(key))state.lockedFields.push(key);}
+const renderSkills=setupSkills({getState:()=>state,changed:()=>{pin('skills');renderPreview();}});
 const renderCollections=setupCollections({getState:()=>state,changed:key=>{pin(key);renderPreview();if(state.freeMode)toast('资料已保存。自由编辑以源码为准，请在源码中同步新增内容。');},toast});
 function renderIdentity(){
   $('#auto-fill').checked=state.autoFill;
@@ -56,6 +58,7 @@ function renderModules(){
 }
 function populate(){
   for(const key of fieldKeys)$('#'+key).value=state[key];
+  renderSkills();
   $('#header-style').value=state.header;$('#skill-style').value=state.skillStyle;$('#project-layout').value=state.projectLayout;
   $('#swatches').innerHTML=[['蓝','#3155d9'],['绿','#28745e'],['红','#aa473e'],['灰','#475569']].map(([n,c])=>`<button type="button" class="swatch ${state.color===c?'active':''}" data-color="${c}" style="background:${c}" aria-label="${n}色" aria-pressed="${state.color===c}"></button>`).join('');
   renderCollections();

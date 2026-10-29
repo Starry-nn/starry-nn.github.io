@@ -1,5 +1,5 @@
-import {escapeHtml as esc} from './core.js?v=11';
-import {parseTemplate} from './template-parser.js?v=11';
+import {escapeHtml as esc} from './core.js?v=13';
+import {parseTemplate} from './template-parser.js?v=13';
 
 export function githubRawURL(value){
   const u=new URL(value);
@@ -15,7 +15,7 @@ export function setupCommunity({getState,apply,persist,toast}){
   const $=s=>document.querySelector(s);
   const error=message=>{$('#community-error').hidden=!message;$('#community-error').textContent=message;};
   let undo=null,loadedIndex=-1;
-  function summarize(){const enabled=$('#community-parse').checked;$('#community-identity').disabled=!enabled;$('#parse-summary').hidden=!enabled;if(!enabled)return;const p=parseTemplate($('#community-source').value);$('#parse-summary').innerHTML=`<strong>解析预览</strong><p>项目 ${p.projects.length} · 工作经历 ${p.experiences.length} · 教育经历 ${p.educations.length} · 自定义栏目 ${p.sections.length} · 链接 ${p.links.length}</p><ul data-i18n-skip>${[...p.projects.map(x=>x.name),...p.experiences.map(x=>x.title),...p.sections.map(x=>x.title)].slice(0,5).map(x=>`<li>${esc(x)}</li>`).join('')}</ul><p>识别结果将追加到现有表单；请核对事实。复杂布局、图片和未知组件不保证转成表单，原文仍保存在我的模板中。取消自动解析可保留原排版。</p>`;}
+  function summarize(){const enabled=$('#community-parse').checked;$('#community-identity').disabled=!enabled;$('#parse-summary').hidden=!enabled;if(!enabled)return;const p=parseTemplate($('#community-source').value);$('#parse-summary').innerHTML=`<strong>解析预览</strong><p>项目 ${p.projects.length} · 开源贡献 ${p.contributions.length} · 文章与资源 ${p.writings.length} · 自定义栏目 ${p.sections.length} · 链接 ${p.links.length}</p><ul data-i18n-skip>${[...p.projects.map(x=>x.name),...p.contributions.map(x=>x.name),...p.writings.map(x=>x.name),...p.sections.map(x=>x.title)].slice(0,5).map(x=>`<li>${esc(x)}</li>`).join('')}</ul><p>识别结果将追加到现有表单；请核对事实。复杂布局、图片和未知组件不保证转成表单，原文仍保存在我的模板中。取消自动解析可保留原排版。</p>`;}
   $('#community-source').oninput=()=>{loadedIndex=-1;summarize();};$('#community-parse').onchange=summarize;
   function renderSaved(){const saved=getState().savedTemplates;$('#saved-templates').innerHTML=saved.length?saved.map((t,i)=>`<div class="saved-template"><span>${esc(t.name)}</span><div><button data-saved-use="${i}">使用</button><button data-saved-remove="${i}" aria-label="移出我的模板：${esc(t.name)}">移出</button></div></div>`).join(''):'<p class="library-note">还没有保存的模板。导入后会出现在这里，换设备不会同步。</p>';if(undo)$('#saved-templates').insertAdjacentHTML('beforeend','<button id="undo-template">撤销上次移出</button>');}
   $('#open-community').onclick=()=>{renderSaved();summarize();error('');$('#community-dialog').showModal();};

@@ -31,8 +31,8 @@ export const defaults = {
   username: 'your-username', name: 'Alex Builder', tagline: 'Small ideas. Useful things.',
   bio: 'A fictional builder exploring the web.', working: 'Learning, making, and sharing.',
   skills: 'TypeScript, Python, React, Figma', website: '',
-  modules: [{id:'about',name:'关于我',enabled:true},{id:'projects',name:'精选项目',enabled:true},{id:'experience',name:'工作经历',enabled:true},{id:'education',name:'教育经历',enabled:true},{id:'sections',name:'自定义栏目',enabled:true},{id:'skills',name:'技能',enabled:true},{id:'contact',name:'联系方式',enabled:true}],
-  experiences:[], educations:[], sections:[], links:[], templateSource:'', savedTemplates:[],
+  modules: [{id:'about',name:'关于我',enabled:true},{id:'projects',name:'精选项目',enabled:true},{id:'contributions',name:'开源贡献',enabled:true},{id:'writings',name:'文章与资源',enabled:true},{id:'sections',name:'自定义栏目',enabled:true},{id:'skills',name:'技能',enabled:true},{id:'contact',name:'联系方式',enabled:true}],
+  contributions:[], writings:[], experiences:[], educations:[], sections:[], links:[], templateSource:'', savedTemplates:[],
   projects: [{name:'Example project',repo:'',description:'A fictional project. Replace this with something you built.'}]
 };
 export function normalizeState(saved) {
@@ -48,7 +48,7 @@ export function normalizeState(saved) {
   if (['table','list','cards'].includes(saved.projectLayout)) result.projectLayout = saved.projectLayout;
   if (['plain','quote','folded'].includes(saved.aboutLayout)) result.aboutLayout = saved.aboutLayout;
   result.autoFill=saved.autoFill!==false;
-  result.lockedFields=Array.isArray(saved.lockedFields)?saved.lockedFields.filter(k=>['username','name','tagline','bio','working','skills','website','projects','experiences','educations','sections','links'].includes(k)):[];
+  result.lockedFields=Array.isArray(saved.lockedFields)?saved.lockedFields.filter(k=>['username','name','tagline','bio','working','skills','website','projects','contributions','writings','experiences','educations','sections','links'].includes(k)):[];
   result.freeMode=saved.freeMode===true;
   result.profileLoaded=saved.profileLoaded===true;
   result.customMarkdown=typeof saved.customMarkdown==='string'?saved.customMarkdown.slice(0,100000):'';
@@ -63,7 +63,7 @@ export function normalizeState(saved) {
     });
     for (const m of defaults.modules) if (!seen.has(m.id)) result.modules.push({...m});
   }
-  if (Array.isArray(saved.projects)) result.projects = saved.projects.slice(0,30).filter(p => p && typeof p.name === 'string').map(p => ({name:p.name.slice(0,300),repo:String(p.repo||'').slice(0,300),description:String(p.description||'').slice(0,3000)}));
+  for(const key of ['projects','contributions','writings'])if(Array.isArray(saved[key]))result[key]=saved[key].slice(0,30).filter(p=>p&&typeof p.name==='string').map(p=>({name:p.name.slice(0,300),repo:String(p.repo||'').slice(0,1000),...(p.source?{source:safeURL(p.source)}:{}),description:String(p.description||'').slice(0,3000)}));
   for(const [key,fields] of Object.entries({experiences:['title','organization','period','description'],educations:['title','organization','period','description'],sections:['title','description'],links:['platform','label','value']}))if(Array.isArray(saved[key]))result[key]=saved[key].filter(x=>x&&typeof x==='object').slice(0,30).map(x=>Object.fromEntries(fields.map(f=>[f,String(x[f]||'').slice(0,f==='description'?3000:300)])));
   result.templateSource=typeof saved.templateSource==='string'?saved.templateSource.slice(0,1000):'';
   result.lockedFields=[...new Set(result.lockedFields)];
@@ -112,11 +112,11 @@ export function makeSkills(state) {
   }).join('\n')}</p>`;
   return `<p align="${state.alignment}">${skills.map(s=>`<code>${text(s)}</code>`).join(' · ')}</p>`;
 }
-function makeProjects(state) {
-  const projects = state.projects.filter(p => p.name.trim());
+function makeProjects(state,key='projects') {
+  const projects = (state[key]||[]).filter(p => p.name.trim());
   if (!projects.length) return '';
   const link = p => /^https?:\/\//i.test(p.repo)?safeURL(p.repo):p.repo?`https://github.com/${getUsername(state)}/${encodeURIComponent(p.repo)}`:'';
-  const projectName=p=>link(p)?`<a href="${escapeHtml(link(p))}">${text(p.name)}</a>`:text(p.name);
+  const projectName=p=>(link(p)?`<a href="${escapeHtml(link(p))}">${text(p.name)}</a>`:text(p.name))+(p.source&&safeURL(p.source)?` · <a href="${escapeHtml(safeURL(p.source))}">Source</a>`:'');
   if(state.projectLayout==='cards')return `<h2>Selected projects</h2>\n\n<table>\n<tbody>\n${Array.from({length:Math.ceil(projects.length/2)},(_,i)=>'<tr>'+projects.slice(i*2,i*2+2).map(p=>`<td width="50%"><h3>${projectName(p)}</h3><p>${text(p.description)}</p></td>`).join('')+'</tr>').join('\n')}\n</tbody>\n</table>`;
   if (state.projectLayout === 'table') return `<h2>Selected projects</h2>\n\n<table>\n<thead><tr><th>Project</th><th>What it does</th></tr></thead>\n<tbody>\n${projects.map(p=>`<tr><td>${projectName(p)}</td><td>${text(p.description)}</td></tr>`).join('\n')}\n</tbody>\n</table>`;
   return `<h2>Selected projects</h2>\n\n<ul>\n${projects.map(p=>`<li><strong>${projectName(p)}</strong> — ${text(p.description)}</li>`).join('\n')}\n</ul>`;
@@ -138,7 +138,8 @@ export function makeDocument(state) {
       if(about)blocks.push(state.aboutLayout==='quote'?`<blockquote>${about}</blockquote>`:state.aboutLayout==='folded'?`<details>\n<summary>More about me</summary>\n${about}\n</details>`:about);
     }
     if(m.id==='projects')blocks.push(makeProjects(state));
-    if(m.id==='experience'||m.id==='education'){const entries=(state[m.id==='experience'?'experiences':'educations']||[]).filter(e=>e.title||e.organization||e.description);if(entries.length)blocks.push(`<h2>${m.id==='experience'?'Experience':'Education'}</h2>\n`+entries.map(e=>`<h3>${text(e.title)}${e.organization?` · ${text(e.organization)}`:''}</h3>${e.period?`<p><em>${text(e.period)}</em></p>`:''}${e.description?`<p>${text(e.description)}</p>`:''}`).join('\n'));}
+    if(m.id==='contributions')blocks.push(makeProjects(state,'contributions').replace('<h2>Selected projects</h2>','<h2>Open-source contributions</h2>'));
+    if(m.id==='writings')blocks.push(makeProjects(state,'writings').replace('<h2>Selected projects</h2>','<h2>Writing & resources</h2>'));
     if(m.id==='sections')for(const section of state.sections||[])if(section.title||section.description)blocks.push(`<h2>${text(section.title||'More')}</h2><p>${text(section.description)}</p>`);
     if(m.id==='skills'&&splitSkills(state).length)blocks.push(`<h2>Tools &amp; technologies</h2>\n\n${makeSkills(state)}`);
     if(m.id==='contact')blocks.push(`<h2>Find me elsewhere</h2>\n\n<p><a href="https://github.com/${getUsername(state)}">GitHub</a>${safeWebsite(state)?` · <a href="${escapeHtml(safeWebsite(state))}">Website</a>`:''}${(state.links||[]).filter(l=>socialURL(l)).map(l=>` · <a href="${escapeHtml(socialURL(l))}">${text(l.label||platforms.find(p=>p.id===l.platform)?.name||'Link')}</a>`).join('')}</p>`);

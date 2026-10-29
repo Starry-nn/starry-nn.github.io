@@ -1,6 +1,6 @@
 # Profile Studio
 
-A buildless GitHub profile README composer. Choose a layout, edit your details, and copy a working README. Chinese interface; English example profile.
+A buildless GitHub profile README composer. Choose a layout, edit your details, and copy a working README. Chinese/English interface; English example profile.
 
 ## Run
 
@@ -11,10 +11,11 @@ Open http://127.0.0.1:8787/. A static server is required for native ES modules. 
 ## Features
 
 - Public-facing fictional sample identity, with migration of untouched legacy demo fields while preserving explicit edits and imported real profiles.
-- Repeatable projects, work experience, education, custom sections, and social links (30 per collection), ordering, removal, and undo of the last removed entry. Empty optional sections are omitted.
+- Repeatable projects, open-source contributions, writing & resources, custom sections, and social links (30 per collection), ordering, removal, and undo of the last removed entry. Empty optional sections are omitted.
 - LinkedIn, X, Google Scholar, Hugging Face, YouTube, website and custom-link presets; account-to-URL shortcuts where supported. Only safe HTTP(S) links are exported.
 - Community README import via public GitHub text URL, local UTF-8 file, or paste. Conservative local Markdown/HTML-to-form extraction with review, opt-in identity import, and original-source backup; a free-editing fallback preserves the original layout. Browser-local ten-template library, attribution reminders, and remove/undo. No automatic public submission.
-- Public GitHub profile and repository picker: search loaded repositories, paginate, select, and append projects with verified full repository URLs. Public API only; no token or private repository access. Manual URLs remain supported.
+- GitHub username/profile/repository URL import and GitHub Pages subdirectory website discovery: search loaded repositories, paginate, select, and append projects with verified full repository URLs. Public API only; no token or private repository access. Manual URLs remain supported.
+- Searchable skill-tag picker with topic/alias suggestions and custom tags (up to 15); document-inspired vector logo and matching favicon.
 - Chinese/English interface, help and Agent instructions; language persists and can be shared with `?lang=en`. Personal content and imported source are never translated automatically.
 - Persistent first-use banner, quick-start help, and a shareable [Chinese beginner guide](./guide.html) covering both publishing paths, free editing, account safety, and troubleshooting.
 - Fourteen original recipes, including simple, centered, wave, typing, badges, portfolio cards, compact, terminal, notebook, folded sections, banner showcase, live card, developer log, and quiet portfolio. Search templates by name or style.
@@ -62,7 +63,7 @@ GitHub controls final typography, spacing, sanitization, and image caching. Prev
 
 `node --test profile-studio/tests/*.mjs` (Node 22+; from the parent workspace).
 
-The release has 35 automated checks covering all built-in exports, local assets and control bindings, repeatable collections, conservative extraction, atomic import limits, preservation of original source and manual fields, project URL safety, bilingual strings, and shell-quoted Agent handoffs.
+The release has automated checks covering all built-in exports, local assets and control bindings, repeatable collections, conservative extraction, atomic import limits, preservation of original source and manual fields, project URL safety, bilingual strings, and shell-quoted Agent handoffs.
 
 Browser QA also exercises real public GitHub reads, selection across search and pagination, an account-not-found response, both template editing paths, source sanitization, manual exports, language persistence and responsive widths. GitHub API availability and rate limits remain external constraints; manual project URLs are always supported. Complex README layouts may still require source editing.
 

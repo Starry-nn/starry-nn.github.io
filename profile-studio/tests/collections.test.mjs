@@ -7,8 +7,8 @@ import {githubRawURL,checkTemplate} from '../community.js';
 test('repeated modules survive migration and export well beyond two projects',()=>{
   const s=normalizeState({...defaults,username:'test-builder',name:'Test Builder',autoFill:false,projects:Array.from({length:12},(_,i)=>({name:'Project '+i,repo:'project-'+i,description:'Description'})),experiences:[{title:'Engineer',organization:'A & B',period:'2023–2025',description:'Shipped tools\nHelped users'}],educations:[{organization:'Example University',title:'Computer science'}],sections:[{title:'Awards',description:'My award'}],links:[{platform:'x',value:'@builder'}]});
   const out=makeDocument(s).markdown;
-  assert.match(out,/Project 11/);assert.match(out,/Experience/);assert.match(out,/A &amp; B/);assert.match(out,/Example University/);assert.match(out,/Awards/);assert.match(out,/https:\/\/x.com\/builder/);
-  assert.equal(makePacket(s).userContent.experiences[0].title,'Engineer');
+  assert.match(out,/Project 11/);assert.doesNotMatch(out,/<h2>Experience|<h2>Education|Example University/);assert.match(out,/Awards/);assert.match(out,/https:\/\/x.com\/builder/);
+  assert.equal(s.experiences[0].title,'Engineer');assert.equal(makePacket(s).userContent.experiences,undefined);
   assert.deepEqual(manualExport(s).errors,[]);
   assert.equal(normalizeState({...s,projects:Array(31).fill(s.projects[0])}).projects.length,30);
 });

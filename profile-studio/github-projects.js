@@ -1,0 +1,36 @@
+import {escapeHtml as esc,safeURL} from './core.js?v=13';
+import {validLogin,repoProject} from './github-import.js?v=13';
+export function parseGithubInput(value){
+  let input=String(value).trim().replace(/^@/,'');
+  if(/^(?:www\.)?github\.com\//i.test(input))input='https://'+input;
+  if(validLogin(input))return {login:input,repo:''};
+  try{const u=new URL(input);if(u.protocol!=='https:'||!['github.com','www.github.com'].includes(u.hostname)||u.username||u.password||u.port)throw 0;const parts=u.pathname.split('/').filter(Boolean);if(!validLogin(parts[0]||'')||['settings','login','features','topics','orgs','marketplace','search'].includes(parts[0].toLowerCase()))throw 0;if(parts[1]&&!/^[\w.-]+$/.test(parts[1]))throw 0;return {login:parts[0],repo:(parts[1]||'').replace(/\.git$/,'')};}catch{throw new Error('请输入 GitHub 用户名、主页链接或仓库链接。');}
+}
+export function discoverSites(repo,tree){
+  if(!repo.name?.toLowerCase().endsWith('.github.io'))return [];
+  const blocked=/(^|\/)(?:node_modules|vendor|dist|build|assets|tests?|examples?|\.git|.*publish-sync)(\/|$)/i;
+  return (tree.tree||[]).filter(x=>x.type==='blob'&&/\/index\.html$/i.test(x.path)&&x.path.split('/').length<=3&&!blocked.test(x.path)).slice(0,60).map(x=>{
+    const folder=x.path.replace(/\/index\.html$/i,''),owner=repo.owner.login,parts=folder.split('/');
+    return {id:'site:'+repo.full_name+'/'+folder,name:parts.at(-1),html_url:`https://${owner.toLowerCase()}.github.io/${parts.map(encodeURIComponent).join('/')}/`,source:repo.html_url+'/tree/'+encodeURIComponent(repo.default_branch)+'/'+parts.map(encodeURIComponent).join('/'),description:`${repo.full_name} / ${folder}`,kind:'site'};
+  });
+}
+async function publicJSON(path){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),12000);try{const r=await fetch('https://api.github.com'+path,{credentials:'omit',referrerPolicy:'no-referrer',headers:{Accept:'application/vnd.github+json'},signal:controller.signal});if(!r.ok){if(r.status===403||r.status===429)throw new Error('GitHub 请求受限，请稍后再试；也可以手动添加项目完整链接。');if(r.status===404)throw new Error('没有找到这个公开账号或仓库，请检查链接。');throw new Error(`GitHub 请求失败（${r.status}），可手动添加链接。`);}return await r.json();}finally{clearTimeout(timer);}}
+export function setupGithub({getState,apply,toast}){
+  const $=s=>document.querySelector(s);let repos=[],sites=[],profile=null,selected=new Set(),page=0,hasMore=false,busy=false,owner='',inputKey='';
+  const error=message=>{$('#github-error').textContent=message;$('#github-error').hidden=!message;};
+  const currentKey=()=>{try{return JSON.stringify(parseGithubInput($('#github-login').value));}catch{return '';}};
+  function render(){const q=$('#github-search').value.trim().toLowerCase(),matches=[...repos,...sites].filter(r=>(r.name+' '+(r.description||'')).toLowerCase().includes(q));$('#github-repos').innerHTML=matches.map(r=>`<div class="repo-option"><label><input type="checkbox" data-repo="${esc(r.id)}" ${selected.has(String(r.id))?'checked':''}><span><strong>${esc(r.name)}</strong><small>${esc(r.description||'')}${r.fork?' · Fork':''}${r.archived?' · Archived':''}</small><em>${r.kind==='site'?'仓库内的网站作品':'公开仓库'}</em></span></label><a href="${esc(r.html_url)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(r.name)} ↗">↗</a></div>`).join('')||'<p class="library-note">没有匹配的项目。可加载更多，或手动添加链接。</p>';$('#github-count').textContent=`仓库 ${repos.length} · 网站作品 ${sites.length} · 已选 ${selected.size}`;
+    $('#github-more').hidden=!hasMore;$('#github-more').disabled=busy;$('#github-discover').disabled=busy||!profile||currentKey()!==inputKey;$('#github-apply').disabled=busy||!profile||currentKey()!==inputKey;}
+  async function scanSites(){let failures=0;for(const repo of repos.filter(r=>r.name.toLowerCase().endsWith('.github.io'))){try{const tree=await publicJSON('/repos/'+repo.full_name+'/git/trees/'+encodeURIComponent(repo.default_branch)+'?recursive=1');sites=[...new Map([...sites,...discoverSites(repo,tree)].map(r=>[r.id,r])).values()];if(tree.truncated)failures++;}catch{failures++;}}$('#github-coverage').textContent=failures?'部分网站作品未能读取，可重试扫描或手动添加链接。':'公开仓库与网站入口分别列出；网站由 index.html 路径识别，请检查在线链接。私有仓库、组织中的其他项目和未公开作品需手动添加。';}
+  $('#open-github').onclick=()=>{const login=getState().username;$('#github-login').value=login==='your-username'?'':login;error('');render();$('#github-dialog').showModal();};
+  $('#close-github').onclick=()=>$('#github-dialog').close();
+  $('#github-load').onclick=async()=>{let target;try{target=parseGithubInput($('#github-login').value);}catch(e){error(e.message);return;}if(busy)return;busy=true;profile=null;repos=[];sites=[];selected.clear();hasMore=false;owner='';inputKey='';$('#github-profile').textContent='';$('#github-coverage').textContent='';render();$('#github-login').disabled=true;$('#github-load').textContent='读取中…';$('#github-load').disabled=true;error('');try{
+    const [p,rs,linked]=await Promise.all([publicJSON('/users/'+target.login),publicJSON('/users/'+target.login+'/repos?type=owner&sort=updated&per_page=100&page=1'),target.repo?publicJSON('/repos/'+target.login+'/'+encodeURIComponent(target.repo)):null]);
+    if(!Array.isArray(rs)||!validLogin(String(p.login||'')))throw new Error('GitHub 返回格式异常。');profile=p;owner=p.login;inputKey=JSON.stringify(target);repos=[...new Map([...rs,...(linked?[linked]:[])].filter(r=>!r.private).map(r=>[r.id,r])).values()];page=1;hasMore=rs.length===100;$('#github-profile').textContent=`${p.name||p.login} · @${p.login}`;render();await scanSites();
+  }catch(e){profile=null;repos=[];sites=[];selected.clear();hasMore=false;render();error(e.name==='AbortError'?'请求超时，请稍后再试或手动添加链接。':e.message);}finally{busy=false;$('#github-login').disabled=false;$('#github-load').disabled=false;$('#github-load').textContent='读取资料与作品';render();}};
+  $('#github-more').onclick=async()=>{if(busy||!hasMore)return;busy=true;render();error('');try{const rs=await publicJSON('/users/'+owner+`/repos?type=owner&sort=updated&per_page=100&page=${page+1}`);if(!Array.isArray(rs))throw new Error('GitHub 返回格式异常。');repos=[...new Map([...repos,...rs.filter(r=>!r.private)].map(r=>[r.id,r])).values()];page++;hasMore=rs.length===100;await scanSites();}catch(e){error(e.message);}finally{busy=false;render();}};
+  $('#github-discover').onclick=async()=>{if(busy||!profile||currentKey()!==inputKey)return;busy=true;render();await scanSites();busy=false;render();};
+  $('#github-search').oninput=render;$('#github-login').oninput=render;
+  $('#github-repos').onchange=event=>{const id=event.target.dataset.repo;if(!id)return;if(event.target.checked)selected.add(id);else selected.delete(id);render();};
+  $('#github-apply').onclick=()=>{if(!profile||busy)return;try{if(currentKey()!==inputKey)throw new Error('用户名或链接已更改，请重新读取。');const chosen=[...repos,...sites].filter(r=>selected.has(String(r.id)));if(!chosen.length&&!$('#github-fill').checked)throw new Error('请至少选择一个仓库，或勾选导入公开资料。');apply({profile,projects:chosen.map(r=>r.kind==='site'?{name:r.name,repo:r.html_url,source:r.source,description:r.description}:repoProject(r)),languages:[...new Set(chosen.map(r=>r.language).filter(Boolean))],includeProfile:$('#github-fill').checked});$('#github-dialog').close();toast('已导入所选作品，项目与源码链接已保留。');}catch(e){error(e.message);}};
+}
