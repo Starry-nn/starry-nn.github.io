@@ -349,7 +349,10 @@ function eventType(item) {
   // a personnel or financing story that mentions a model or robot from being
   // filed under brain-computer or robotics because of broad source tags.
   const capitalSignal = value => /融资|投资|领投|跟投|募资|收购|并购|acqui(?:re|sition)|merger|funding|financing|investment|ipo|上市|估值|全股票交易|(?:天使|种子|pre.?a|a|b|c|d)轮/.test(value);
-  const peopleSignal = value => /人事|关键人物|人才流动|领导层|管理层|leadership|executive/.test(value) || /离职|离任|辞任|卸任|退出|离开|任命|担任|晋升|跳槽/.test(value) || /(?:加入|加盟|joins?|joined)\s*.{0,18}(?:公司|团队|实验室|任职|担任|出任|company|team|lab|as\b)/.test(value);
+  // "Team Agent" and similar product names are not personnel moves. Keep
+  // Chinese "加入团队" and explicit company/lab/role cues, but avoid a
+  // generic English "team" match.
+  const peopleSignal = value => /人事|关键人物|人才流动|领导层|管理层|leadership|executive/.test(value) || /离职|离任|辞任|卸任|退出|离开|任命|担任|晋升|跳槽/.test(value) || /(?:加入|加盟|joins?|joined)\s*.{0,18}(?:公司|团队|实验室|任职|担任|出任|company|lab|as\b)/.test(value);
   if (peopleSignal(headline) && !capitalSignal(headline)) return "people";
   if (capitalSignal(headline) || capitalSignal(text)) return "capital";
   if (peopleSignal(text)) return "people";
