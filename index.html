@@ -295,6 +295,9 @@ body.gate-active { overflow: hidden; height: 100vh; }
 .status-badge { margin-bottom: 28px; }
 .hero-deck { max-width: 650px; font-size: clamp(22px, 2.25vw, 31px); line-height: 1.32; margin-bottom: 20px; }
 .hero-body { max-width: 640px; margin-bottom: 28px; line-height: 1.75; }
+.town-link { display: inline-flex; align-items: center; justify-content: space-between; gap: 24px; max-width: 100%; padding: 15px 20px; border: 1px solid var(--ink); background: var(--ink); color: var(--paper); font-size: 15px; line-height: 1.5; transition: background .2s, color .2s; }
+.town-link:hover { background: var(--paper); color: var(--ink); }
+.town-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 .hero-media { transform: none; }
 .hero-media:hover { transform: translateY(-8px); }
 .hero-media-inner { aspect-ratio: 4 / 5; }
@@ -419,6 +422,7 @@ const D = {
     status: "Open to Venture, Product & Ecosystem Roles",
     deck: "I'm interested in how AI companies get started, what they build, and who builds them.",
     about: "I'm studying project management at NYU. My experience spans venture capital, AI media, and product projects: researching early-stage companies, sourcing founders and technical talent, and building tools for our team's research. I also enjoy trying ideas out myself, most recently with Orbit, a creator discovery platform. I like getting to know the people behind a project, understanding what users need, and working with others to get it built.",
+    townLink: "Take a stroll through my town",
     baseLabel: "Primarily based",
     baseValue: "New York · Beijing · Shenzhen",
     profileAxes: [
@@ -462,8 +466,8 @@ const D = {
       ["Dec 2025 — Present", "Beijing", "Monolith Capital", "Investment & Investment Operations Intern", "Deal & Talent Sourcing · AI Research · Investment Operations",
        "Supports AI investment work from thesis-led sourcing and first-pass screening through diligence preparation and reusable internal systems, with a focus on finding promising companies and the people behind them.",
        ["Translated investment themes across foundation models, AI agents, and AI-native applications into target sectors, company profiles, and practical screening criteria for proactive sourcing.", "Identified potential investments through databases, product launches, industry media, founder communities, events, and referrals, then maintained a structured pipeline with source context, priority, status, and next steps.", "Mapped founders, technical operators, repeat entrepreneurs, and domain experts by company, track record, product focus, and geography, turning fragmented people signals into reusable talent and relationship intelligence.", "Conducted first-pass screening across team, product, market, financing history, technical approach, competitive position, and commercial signals; distilled findings into company profiles, market maps, and concise memos for internal discussion.", "Supported diligence preparation by validating sources, comparing peers, tracing founder backgrounds, organizing key questions, and flagging information gaps or risks for further verification.", "Independently designed an internal AI startup and product tracking tool covering field structure, tagging logic, source records, update rules, and review states; it is now used for recurring team tracking and reused across projects.", "Documented sourcing, data collection, validation, and handoff SOPs to reduce duplicated research, missing fields, and context loss between projects."]],
-      ["2026", "", "Manus AI", "Campus Ambassador", "Campus Ambassador Program",
-       "Selected for the Manus AI Campus Ambassador Program.", []],
+      ["2026", "", "Manus AI", "Campus Ambassador & New York Fellow", "Campus Ambassador & Fellow Programs",
+       "Selected for the Manus AI Campus Ambassador Program and New York Fellow Program.", ["2026 · Selected for the Campus Ambassador Program.", "Nov 2026 · Selected for the New York Fellow Program."]],
       ["Apr 2025 — Sep 2025", "Shanghai", "Crossing Media", "Content Operations / Editorial Intern", "Editorial Operations · AI Media",
        "Researched AI companies and products, then developed the findings into clear editorial work for founders, investors, and product audiences.",
        ["Tracked global activity across foundation models, agents, and AI-native products, completing company research and topic briefs independently.", "Produced newsletters, long-form WeChat articles, podcast companion pieces, and product research notes from research through publication.", "Reworked topic selection, fact-checking, review, formatting, and publishing templates so ownership and quality checks were clear at every step.", "Increased team production efficiency by approximately 40% while reducing repeated edits and avoidable rework.", "Used reading data and audience feedback to adjust angles, headlines, and follow-up coverage rather than relying on one-off editorial intuition."]],
@@ -516,6 +520,7 @@ const D = {
     status: "关注创投、产品、投资运营及生态岗位机会",
     deck: "我关注 AI 创业，也喜欢了解新产品和做产品的人。",
     about: "我目前在纽约大学读项目管理硕士，做过创投、AI 媒体和产品相关的实习与项目。在 Monolith，我研究早期 AI 公司，寻找项目和技术人才，也为团队搭建了日常使用的研究工具。工作之外，我也会自己动手做产品，最近在做创作者匹配平台 Orbit。我喜欢和创始人、用户及合作伙伴交流，把实际需求弄清楚，再和团队一起把事情做出来。",
+    townLink: "逛逛我的小镇",
     baseLabel: "主要工作地点",
     baseValue: "纽约 · 北京 · 深圳",
     profileAxes: [
@@ -559,8 +564,8 @@ const D = {
       ["2025.12 — 至今", "北京", "Monolith 砺思资本", "投资 & 投资运营实习生", "项目与人才 Sourcing · AI 研究 · 投资运营",
        "围绕 AI 方向参与项目发现、初筛和尽调准备，同时负责团队的投资信息与跟踪系统；既从行业变化中寻找值得继续研究的公司，也围绕创始人、技术人才和行业专家建立持续更新的人才图谱。",
        ["根据基础模型、AI Agent 和 AI 原生应用等投资主题，拆解目标赛道、公司画像和筛选标准，为主动寻找项目提供清晰方向。","通过数据库、产品发布、行业媒体、创业者社区、活动和推荐等渠道发现潜在项目，并记录来源、优先级、当前进展和下一步动作，持续维护项目管线。","围绕创始人、技术负责人、连续创业者和行业专家建立人才图谱，按所在公司、过往经历、产品方向和地域整理信息，支持团队找人、判断团队和长期维护关系。","从团队、产品、市场、融资历史、技术路线、竞争位置和商业信号等维度完成项目初筛，并整理公司卡片、赛道图谱和简短研究 memo，支持内部讨论。","参与尽调准备，核验关键信息和来源，对比同类公司，梳理创始团队背景与重点问题，并标记仍需确认的信息缺口和潜在风险。","独立设计内部 AI 项目与产品跟踪工具，完成字段结构、标签规则、信息来源、更新要求和审核状态设计；目前已用于团队定期跟踪，并在不同项目中持续复用。","把项目 sourcing、资料收集、信息核验和交接要求整理成 SOP，减少重复查找、字段遗漏和跨项目的信息断层。"]],
-      ["2026", "", "Manus AI", "校园大使", "校园大使计划",
-       "入选 Manus AI 校园大使计划。", []],
+      ["2026", "", "Manus AI", "校园大使 / New York Fellow", "校园大使与 Fellow 计划",
+       "入选 Manus AI 校园大使计划及 New York Fellow Program。", ["2026 · 入选校园大使计划。", "2026.11 · 入选 New York Fellow Program。"]],
       ["2025.04 — 2025.09", "上海", "十字路口 Crossing", "内容运营 / 编辑实习生", "内容运营 · AI 媒体",
        "负责 AI 公司和产品选题，从前期研究、写作编辑到发布复盘全程参与。",
        ["持续跟踪基础模型、Agent 和 AI 原生产品，能够独立完成公司背景、产品功能和行业情况研究。","负责 Newsletter、公众号深度稿、播客配套文章和产品研究笔记，从资料整理一直做到发布。","重新梳理选题、事实核查、审稿、排版和发布模板，让每一步的负责人和检查标准更清楚。","通过审稿模板和协作流程调整，使团队内容生产效率提升约 40%，同时减少重复修改。","根据阅读量、读者反馈和评论调整后续选题、标题和内容角度，而不是只凭经验判断。"]],
@@ -685,6 +690,7 @@ function render() {
           <h1 class="hero-name">${esc(t.name)}</h1>
           <p class="hero-deck">${esc(t.deck)}</p>
           <p class="hero-body">${esc(t.about)}</p>
+          <a class="town-link" href="https://starry-nn.github.io/starry-town/" target="_blank" rel="noopener noreferrer"><span>${esc(t.townLink)}</span><span aria-hidden="true">↗</span></a>
 
           <div class="profile-axes">
             ${t.profileAxes.map(x => `
