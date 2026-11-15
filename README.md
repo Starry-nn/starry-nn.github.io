@@ -50,7 +50,6 @@ The website includes **Experience**, **Selected Work**, **Focus**, **Education**
 
 - **Email:** [yaonan1127@gmail.com](mailto:yaonan1127@gmail.com)
 - **LinkedIn:** [linkedin.com/in/yaonanstarry](https://www.linkedin.com/in/yaonanstarry)
-- **Phone:** +1 626 230 7307
 - **Main bases:** New York, Beijing, Shenzhen
 
 ## 中文
@@ -99,7 +98,6 @@ The website includes **Experience**, **Selected Work**, **Focus**, **Education**
 
 - **邮箱：** [yaonan1127@gmail.com](mailto:yaonan1127@gmail.com)
 - **LinkedIn：** [linkedin.com/in/yaonanstarry](https://www.linkedin.com/in/yaonanstarry)
-- **电话：** +86 189 2607 8654
 - **主要 Base：** 纽约、北京、深圳
 
 ## Local development
