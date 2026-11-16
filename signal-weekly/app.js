@@ -160,7 +160,7 @@ const resultLabel = document.querySelector("#resultLabel");
 const resultCount = document.querySelector("#resultCount");
 const dialog = document.querySelector("#detailDialog");
 const dialogContent = document.querySelector("#dialogContent");
-const eventDate = item => item.published_at ? new Date(item.published_at) : new Date(`2026-${item.date.replace(".", "-")}T12:00:00+08:00`);
+const eventDate = item => item.published_at ? new Date(item.published_at) : new Date(`2026-${item.date.replace(".", "-")}T12:00:00Z`);
 const sortNewest = (a,b) => eventDate(b) - eventDate(a) || Number(b.importance || b.taste_score || b.score || 0) - Number(a.importance || a.taste_score || a.score || 0);
 const isGithubSignal = item => /github/i.test(`${item.source_id || ""} ${item.source_type || ""} ${item.source || ""}`) || /^https?:\/\/(?:www\.)?github\.com\//i.test(String(item.url || ""));
 const isXSignal = item => item.channel === "x" || /(?:^|\b)(?:core-x|extended-x)\b/i.test(String(item.source_id || "")) || /(?:x\.com|twitter\.com)/i.test(String(item.url || "")) || /^x\s*\//i.test(String(item.source || ""));
@@ -193,7 +193,7 @@ const normalizedEvent = item => ({...item, signal_type:"verified", project:signa
 const normalizedRadar = item => ({...item, signal_type:"radar", project:signalProject(item), kind:signalKind(item)});
 const mondayKey = item => {
   const date = eventDate(item);
-  const parts = Object.fromEntries(new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Shanghai",year:"numeric",month:"numeric",day:"numeric"}).formatToParts(date).filter(part=>part.type!=="literal").map(part=>[part.type,Number(part.value)]));
+  const parts = Object.fromEntries(new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",year:"numeric",month:"numeric",day:"numeric"}).formatToParts(date).filter(part=>part.type!=="literal").map(part=>[part.type,Number(part.value)]));
   const shanghaiDay = new Date(Date.UTC(parts.year, parts.month - 1, parts.day));
   const weekday = shanghaiDay.getUTCDay() || 7;
   shanghaiDay.setUTCDate(shanghaiDay.getUTCDate() - weekday + 1);
@@ -262,7 +262,7 @@ function filteredRadar() {
 
 function weekLabel(key, compact = false) {
   if (key === "all") return "全部周次";
-  const start = new Date(`${key}T12:00:00+08:00`);
+  const start = new Date(`${key}T12:00:00Z`);
   const end = new Date(start);
   end.setDate(end.getDate() + 6);
   const range = `${start.getMonth()+1}/${start.getDate()}-${end.getMonth()+1}/${end.getDate()}`;
@@ -418,7 +418,7 @@ function render() {
   renderX(visibleX);
   insightFeed.innerHTML = visibleInsights.length ? `<header class="insight-head"><div><span>PEOPLE & SOURCE WATCH</span><h3>人物与来源动态</h3></div><p>观点、实践与技术解读单独标注，不与已确认公司事件混写。</p></header><div class="insight-grid">${visibleInsights.map(item=>`<article class="insight-item"><div class="insight-author"><strong>${item.person}</strong><span>${item.handle}</span><small>${item.org}</small></div><div class="insight-copy"><div><span class="category">${item.kind}</span><time>${item.date}</time></div><h4>${item.title}</h4><p>${item.summary}</p><small>${item.signal}</small></div><a href="${item.url}" target="_blank" rel="noopener" aria-label="打开 ${item.person} 的原始来源">${item.source} ↗</a></article>`).join("")}</div>` : "";
   if (activeWeek === currentWeekKey && companySignals.length + githubSignals.length + visibleX.length + visibleInsights.length === 0) {
-    empty.innerHTML = `<strong>本周情报正在更新</strong><span>本周已建立，今天 14:00 起会持续写入最新事件。</span>`;
+    empty.innerHTML = `<strong>本周情报正在更新</strong><span>本周已建立，按纽约时间周一、周三、周五上午 10:00 增量更新。</span>`;
   } else {
     empty.innerHTML = `<strong>没有匹配的情报</strong><span>换一个区域、赛道或搜索词试试。</span>`;
   }
@@ -430,7 +430,7 @@ function renderPipelineStatus() {
   const status = pipeline.status || {};
   document.querySelector("#pipelineCandidates").textContent = String(radarItems.length);
   document.querySelector("#pipelineSources").textContent = String(status.sources_total || 0);
-  document.querySelector("#pipelineUpdated").textContent = status.generated_at ? new Intl.DateTimeFormat("zh-CN",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit",hour12:false,timeZone:"Asia/Shanghai"}).format(new Date(status.generated_at)) : "尚未运行";
+  document.querySelector("#pipelineUpdated").textContent = status.generated_at ? new Intl.DateTimeFormat("zh-CN",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit",hour12:false,timeZone:"America/New_York"}).format(new Date(status.generated_at)) : "尚未运行";
   const ingested = status.last_ingest?.count || 0;
   document.querySelector("#pipelineMessage").textContent = status.generated_at ? `本轮浏览器采集 ${ingested} 条，${status.sources_agent || 0} 个来源由每日 Codex 任务直接检查，${status.sources_error || 0} 个来源失败。` : "候选雷达等待首次采集，不影响已经验证的历史内容。";
 }
