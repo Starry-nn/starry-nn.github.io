@@ -432,7 +432,7 @@ function renderPipelineStatus() {
   document.querySelector("#pipelineSources").textContent = String(status.sources_total || 0);
   document.querySelector("#pipelineUpdated").textContent = status.generated_at ? new Intl.DateTimeFormat("zh-CN",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit",hour12:false,timeZone:"America/New_York"}).format(new Date(status.generated_at)) : "尚未运行";
   const ingested = status.last_ingest?.count || 0;
-  document.querySelector("#pipelineMessage").textContent = status.generated_at ? `本轮浏览器采集 ${ingested} 条，${status.sources_agent || 0} 个来源由每日 Codex 任务直接检查，${status.sources_error || 0} 个来源失败。` : "候选雷达等待首次采集，不影响已经验证的历史内容。";
+  document.querySelector("#pipelineMessage").textContent = status.generated_at ? `本轮浏览器采集 ${ingested} 条，${status.sources_agent || 0} 个来源由定时 Codex 任务直接检查，${status.sources_error || 0} 个来源失败。` : "候选雷达等待首次采集，不影响已经验证的历史内容。";
 }
 
 function renderAtlas() {
